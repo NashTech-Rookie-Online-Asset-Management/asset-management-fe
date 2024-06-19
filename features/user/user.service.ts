@@ -1,37 +1,25 @@
-'use client'
+'use client';
 
-import HttpService from '@/lib/services/http.service'
-import {
-    AuthUserResponse,
-    LoginRequest,
-    RegisterRequest,
-    User,
-} from './user.types'
+import HttpService from '@/lib/services/http.service';
+
+import type { User } from './user.types';
 
 class UserApiService extends HttpService {
-    register(data: RegisterRequest) {
-        return this.post<AuthUserResponse>('/users/register', data)
-    }
+  getUserById(id: string) {
+    return this.get<User>(`/users/${id}`);
+  }
 
-    login(data: LoginRequest) {
-        return this.post<AuthUserResponse>('/users/login', data)
-    }
+  getUsers() {
+    return this.get<User[]>(`/users`);
+  }
 
-    getUserById(id: string) {
-        return this.get<User>(`/users/${id}`)
-    }
+  getMe() {
+    return this.get<User>(`/users/@me`);
+  }
 
-    getUsers() {
-        return this.get<User[]>(`/users`)
-    }
-
-    getMe() {
-        return this.get<User>(`/users/@me`)
-    }
-
-    getUser = this.getMe
+  getUser = this.getMe;
 }
 
-const userApi = new UserApiService()
+const userApi = new UserApiService();
 
-export default userApi
+export default userApi;

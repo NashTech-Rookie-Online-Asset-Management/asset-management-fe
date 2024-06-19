@@ -1,21 +1,17 @@
-type AxiosRequestConfig = import('axios').AxiosRequestConfig
+/* eslint-disable @typescript-eslint/consistent-type-imports */
+type AxiosRequestConfig = import('axios').AxiosRequestConfig;
 
 interface IAuthToken {
-    access_token?: string
-    refresh_token?: string
-    access_token_expires_in?: number
-    access_token_expires_at?: number
+  access_token?: string;
+  refresh_token?: string;
+  access_token_expires_in?: number;
+  access_token_expires_at?: number;
 }
 
 type ApiDataError = {
-    type?: string
-    title: string
-    status?: number
-    errors?: {
-        [key: string]: any
-    }
-    detail?: string
-    instance?: string
-}
+  error?: string;
+  message?: string;
+  statusCode: number;
+};
 
-type AppAxiosError = import('axios').AxiosError<ApiDataError, any>
+type AppAxiosError = import('axios').AxiosError<ApiDataError, any>;
