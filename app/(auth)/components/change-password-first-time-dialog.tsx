@@ -28,13 +28,7 @@ import useProfile from '@/features/auth/useProfile';
 
 import { changePasswordFirstTimeSchema } from '../schema';
 
-function ChangePasswordFirstTimeDialog({
-  isOpen,
-  onOpenChange,
-}: {
-  isOpen: boolean;
-  onOpenChange: (isOpen: boolean) => void;
-}) {
+function ChangePasswordFirstTimeDialog() {
   const form = useForm<z.infer<typeof changePasswordFirstTimeSchema>>({
     resolver: zodResolver(changePasswordFirstTimeSchema),
     defaultValues: {
@@ -42,7 +36,8 @@ function ChangePasswordFirstTimeDialog({
     },
   });
   const { mutate: submit, isPending, isSuccess } = useChangePasswordFirstTime();
-  const { refetch: refetchProfile } = useProfile();
+  const { refetch: refetchProfile, data: profile } = useProfile();
+  const [isOpen, setIsOpen] = React.useState(false);
 
   function onSubmit(values: z.infer<typeof changePasswordFirstTimeSchema>) {
     submit(values);
@@ -50,9 +45,9 @@ function ChangePasswordFirstTimeDialog({
 
   const handleDialogOpenChange = (open: boolean) => {
     if (isSuccess) {
-      onOpenChange(open);
+      setIsOpen(open);
     } else {
-      onOpenChange(true);
+      setIsOpen(true);
     }
   };
 
@@ -61,6 +56,13 @@ function ChangePasswordFirstTimeDialog({
       refetchProfile();
     }
   }, [isSuccess, refetchProfile]);
+
+  React.useEffect(() => {
+    if (profile) {
+      if (profile.status === 'CREATED') setIsOpen(true);
+      else setIsOpen(false);
+    }
+  }, [profile]);
 
   return (
     <Dialog open={isOpen} onOpenChange={handleDialogOpenChange} modal>
