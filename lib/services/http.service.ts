@@ -7,7 +7,6 @@ import type {
   AxiosResponse,
 } from 'axios';
 import axios from 'axios';
-import _omitBy from 'lodash/omitBy';
 
 import axiosConfig from '@/lib/configs/api.config';
 
@@ -92,9 +91,11 @@ export default class HttpService {
   }
 
   public setHttpConfigs(config?: Partial<AxiosRequestConfig>) {
-    this.instance.defaults = {
-      ...this.instance.defaults,
-      ..._omitBy(config, 'baseURL'),
-    };
+    if (config?.baseURL) {
+      this.instance.defaults = {
+        ...this.instance.defaults,
+        baseURL: config.baseURL,
+      };
+    }
   }
 }
