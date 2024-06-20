@@ -35,13 +35,11 @@ const NavLink = ({
   href,
   title,
   className,
-  key,
 }: (typeof authNavLinks)[0] & {
   className: string;
-  key?: React.Key;
 }) => {
   return (
-    <Link href={href} className="font-bold" key={key}>
+    <Link href={href} className="font-bold">
       <li className={cn(`py-2 px-4`, className)}>{title}</li>
     </Link>
   );
@@ -66,7 +64,8 @@ const Sidebar = () => {
       </div>
       <ul className="space-y-2">
         <NavLink href="/" title="Home" className={isActive('/')} />
-        {user?.type !== 'STAFF' &&
+        {user &&
+          user.type !== 'STAFF' &&
           authNavLinks.map((link) => (
             <NavLink
               {...link}

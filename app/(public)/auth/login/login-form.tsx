@@ -1,7 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useRouter } from 'next/navigation';
+import { useRouter } from 'next-nprogress-bar';
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import type { z } from 'zod';
@@ -37,10 +37,17 @@ function LoginForm() {
       password: '',
     },
   });
-  const { mutate: login, isPending, error, isError, isSuccess } = useLogin();
+  const {
+    mutateAsync: login,
+    isPending,
+    error,
+    isError,
+    isSuccess,
+  } = useLogin();
 
-  function onSubmit(values: z.infer<typeof loginFormSchema>) {
-    login(values);
+  async function onSubmit(values: z.infer<typeof loginFormSchema>) {
+    await login(values);
+    router.refresh();
   }
 
   React.useEffect(() => {
@@ -49,12 +56,6 @@ function LoginForm() {
       form.setError('password', { message: error.response?.data?.message });
     }
   }, [error, isError, form]);
-
-  React.useEffect(() => {
-    if (isSuccess) {
-      router.refresh();
-    }
-  }, [isSuccess, router]);
 
   return (
     <Form {...form}>
@@ -103,9 +104,9 @@ function LoginForm() {
               className="w-full"
               type="submit"
               isLoading={isPending}
-              disabled={!form.formState.isValid}
+              disabled={!form.formState.isValid || isSuccess || isPending}
             >
-              Login
+              {isSuccess ? 'Logging you in...' : 'Login'}
             </LoadingButton>
           </CardFooter>
         </Card>

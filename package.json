@@ -56,6 +56,7 @@
     "lodash": "^4.17.21",
     "lucide-react": "^0.372.0",
     "next": "14.2.2",
+    "next-nprogress-bar": "^2.3.12",
     "next-themes": "^0.3.0",
     "react": "^18",
     "react-day-picker": "^8.10.1",

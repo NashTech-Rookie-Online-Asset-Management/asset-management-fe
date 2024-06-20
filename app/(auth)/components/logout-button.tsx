@@ -1,7 +1,7 @@
 'use client';
 
 import { LogOut } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { useRouter } from 'next-nprogress-bar';
 import React from 'react';
 
 import { LoadingButton } from '@/components/custom/loading-button';
@@ -23,18 +23,18 @@ function LogoutButton({
     | undefined;
 }) {
   const router = useRouter();
-  const { isSuccess, isPending, mutate: logout } = useLogout();
+  const { isSuccess, isPending, mutateAsync: logout } = useLogout();
 
-  React.useEffect(() => {
-    if (isSuccess) {
-      router.refresh();
-    }
-  }, [isSuccess, router]);
+  async function handleOnClick() {
+    await logout();
+    router.refresh();
+  }
 
   return (
     <LoadingButton
       isLoading={isPending}
-      onClick={() => logout()}
+      disabled={isSuccess}
+      onClick={() => handleOnClick()}
       className={className}
       size="sm"
       variant={variant}

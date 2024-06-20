@@ -60,7 +60,7 @@ function AuthHeader() {
           />
           <h1 className="text-xl font-bold text-primary-foreground">
             {navHeadings.find((heading) => heading.path === pathname)
-              ?.heading || pathname}
+              ?.heading || 'OAM'}
           </h1>
         </div>
         <div className="flex items-center space-x-2">

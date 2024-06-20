@@ -79,13 +79,13 @@ function ChangePasswordDialog({
   }, [isError, error, isSuccess, refetchProfile, form, onOpenChange]);
 
   return (
-    <Dialog open={isOpen} modal>
+    <Dialog open={isOpen} onOpenChange={onOpenChange} modal>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Change Password</DialogTitle>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
             <FormField
               control={form.control}
               name="oldPassword"
