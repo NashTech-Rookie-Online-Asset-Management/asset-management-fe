@@ -3,7 +3,7 @@
 import { RectangleEllipsis, User } from 'lucide-react';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import React from 'react';
+import { useState } from 'react';
 
 import { ModeToggle } from '@/components/custom/mode-toggle';
 import { Button } from '@/components/ui/button';
@@ -16,6 +16,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import useProfile from '@/features/auth/useProfile';
 
+import ChangePasswordDialog from './change-password-dialog';
 import LogoutButton from './logout-button';
 
 const navHeadings = [
@@ -43,6 +44,7 @@ const navHeadings = [
 
 function AuthHeader() {
   const { data, isPending } = useProfile();
+  const [dialogOpen, setDialogOpen] = useState(false);
   const pathname = usePathname();
 
   return (
@@ -70,7 +72,7 @@ function AuthHeader() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56">
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setDialogOpen(true)}>
                 <RectangleEllipsis className="mr-2 size-4" />
                 <span>Change password</span>
               </DropdownMenuItem>
@@ -86,6 +88,7 @@ function AuthHeader() {
           <ModeToggle />
         </div>
       </div>
+      <ChangePasswordDialog isOpen={dialogOpen} onOpenChange={setDialogOpen} />
     </div>
   );
 }

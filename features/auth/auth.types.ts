@@ -6,6 +6,10 @@ export type LoginRequest = {
 export type ChangePasswordFirstTimeRequest = {
   newPassword: string;
 };
+export type ChangePasswordRequest = {
+  oldPassword: string;
+  newPassword: string;
+};
 
 export type AuthUserResponse = {
   accessToken: string;

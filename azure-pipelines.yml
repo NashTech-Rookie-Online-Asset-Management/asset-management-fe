@@ -9,7 +9,8 @@
 
 trigger:
 - main
-- staging
+- dev
+- TK-0058-User-is-able-to-access-app
 
 resources:
 - repo: self
@@ -23,20 +24,26 @@ variables:
 
 stages:
 - stage: Build
-  displayName: Build 
+  displayName: Build
   jobs:
   - job: Build
-    displayName: Build 
+    displayName: Build
     steps:
     - task: Docker@2
       inputs:
         containerRegistry: $(containerRegistry)
         repository: minhledang/asset-management-fe
-        command: buildAndPush
+        command: build
         Dockerfile: Dockerfile
         tags: latest
-        
-        
+        arguments: --build-arg API_URL=$(API_URL) --build-arg NEXT_PUBLIC_APP_URL=$(NEXT_PUBLIC_APP_URL)
+    - task: Docker@2
+      inputs:
+        containerRegistry: $(containerRegistry)
+        repository: minhledang/asset-management-fe
+        command: push
+        tags: latest
+
 - stage: Deploy
   displayName: Deploy
   dependsOn: Build

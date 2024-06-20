@@ -3,6 +3,7 @@ import BaseApiService from '@/lib/services/baseApi.service';
 import type {
   AuthUserResponse,
   ChangePasswordFirstTimeRequest,
+  ChangePasswordRequest,
   LoginRequest,
   Profile,
 } from './auth.types';
@@ -27,6 +28,10 @@ class AuthApiService extends BaseApiService {
     );
   }
 
+  changePassword(data: ChangePasswordRequest) {
+    return this.httpClient.patch<ApiMessage>('/change-password', data);
+  }
+
   getProfile() {
     return this.httpClient.get<Profile>(`/profile`);
   }
@@ -36,6 +41,7 @@ class AuthApiService extends BaseApiService {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
+      baseURL: `${process.env.API_URL}/api/auth`,
     });
   }
 }

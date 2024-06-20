@@ -103,6 +103,7 @@ function LoginForm() {
               className="w-full"
               type="submit"
               isLoading={isPending}
+              disabled={!form.formState.isValid}
             >
               Login
             </LoadingButton>

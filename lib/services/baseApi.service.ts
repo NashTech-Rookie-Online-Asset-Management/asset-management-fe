@@ -7,7 +7,7 @@ class BaseApiService {
   constructor(serviceName: string) {
     this.httpClient = new Http({
       ...axiosConfig,
-      baseURL: `${axiosConfig.baseURL}${serviceName}`,
+      baseURL: `/api/${serviceName}`,
     });
   }
 }
