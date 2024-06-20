@@ -7,6 +7,7 @@ import { useForm } from 'react-hook-form';
 import type { z } from 'zod';
 
 import { LoadingButton } from '@/components/custom/loading-button';
+import { PasswordInput } from '@/components/custom/password-input';
 import {
   Card,
   CardContent,
@@ -48,6 +49,7 @@ function LoginForm() {
   async function onSubmit(values: z.infer<typeof loginFormSchema>) {
     await login(values);
     router.refresh();
+    window.location.reload();
   }
 
   React.useEffect(() => {
@@ -73,9 +75,15 @@ function LoginForm() {
               name="username"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Username</FormLabel>
+                  <FormLabel>
+                    <span className="required">Username</span>
+                  </FormLabel>
                   <FormControl>
-                    <Input placeholder="username1" autoFocus {...field} />
+                    <Input
+                      placeholder="enter your stunning username"
+                      autoFocus
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -86,11 +94,12 @@ function LoginForm() {
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Password</FormLabel>
+                  <FormLabel>
+                    <span className="required">Password</span>
+                  </FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder="secured password"
-                      type="password"
+                    <PasswordInput
+                      placeholder="enter your secured password"
                       {...field}
                     />
                   </FormControl>

@@ -5,8 +5,8 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import React from 'react';
 
+import { Button } from '@/components/ui/button';
 import useProfile from '@/features/auth/useProfile';
-import { cn } from '@/lib/utils';
 
 const authNavLinks: { title: string; href: string }[] = [
   {
@@ -34,14 +34,20 @@ const authNavLinks: { title: string; href: string }[] = [
 const NavLink = ({
   href,
   title,
-  className,
+  isActive = false,
 }: (typeof authNavLinks)[0] & {
-  className: string;
+  isActive?: boolean;
 }) => {
   return (
-    <Link href={href} className="font-bold">
-      <li className={cn(`py-2 px-4`, className)}>{title}</li>
-    </Link>
+    <Button
+      asChild
+      variant={isActive ? 'default' : 'secondary'}
+      className="w-full justify-start rounded-none font-bold"
+    >
+      <Link href={href}>
+        <li>{title}</li>
+      </Link>
+    </Button>
   );
 };
 
@@ -49,29 +55,22 @@ const Sidebar = () => {
   const { data: user } = useProfile();
   const currentPath = usePathname();
 
-  const isActive = (path: any) =>
-    currentPath === path
-      ? 'bg-red-600 text-white hover:bg-red-700'
-      : 'bg-gray-100 text-black hover:bg-gray-200';
+  const isActive = (path: any) => currentPath === path;
 
   return (
     <nav className="mt-10 w-64">
-      <div className=" mb-6">
+      <div className="mb-6">
         <Image src="/nashtech-logo.png" alt="Logo" width={110} height={110} />
-        <h4 className="text-lg font-bold text-red-500">
+        <h4 className="text-lg font-bold text-primary">
           Online Asset Management
         </h4>
       </div>
-      <ul className="space-y-2">
-        <NavLink href="/" title="Home" className={isActive('/')} />
+      <ul>
+        <NavLink href="/" title="Home" isActive={isActive('/')} />
         {user &&
           user.type !== 'STAFF' &&
           authNavLinks.map((link) => (
-            <NavLink
-              {...link}
-              className={isActive(link.href)}
-              key={link.href}
-            />
+            <NavLink {...link} isActive={isActive(link.href)} key={link.href} />
           ))}
       </ul>
     </nav>

@@ -1,11 +1,12 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import type { z } from 'zod';
 
 import { LoadingButton } from '@/components/custom/loading-button';
+import { PasswordInput } from '@/components/custom/password-input';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -23,8 +24,6 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { toast } from '@/components/ui/use-toast';
 import useChangePassword from '@/features/auth/useChangePassword';
 import useProfile from '@/features/auth/useProfile';
 
@@ -50,6 +49,7 @@ function ChangePasswordDialog({
     isSuccess,
     isError,
     error,
+    reset,
   } = useChangePassword();
   const { refetch: refetchProfile } = useProfile();
 
@@ -69,14 +69,12 @@ function ChangePasswordDialog({
     if (isSuccess) {
       refetchProfile();
       form.reset();
-      toast({
-        title: 'Change Password',
-        description: 'Your password has been changed successfully',
-        variant: 'success',
-      });
-      onOpenChange(false);
     }
   }, [isError, error, isSuccess, refetchProfile, form, onOpenChange]);
+
+  useEffect(() => {
+    reset();
+  }, [isOpen, reset]);
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange} modal>
@@ -84,56 +82,77 @@ function ChangePasswordDialog({
         <DialogHeader>
           <DialogTitle>Change Password</DialogTitle>
         </DialogHeader>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
-            <FormField
-              control={form.control}
-              name="oldPassword"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Old Password</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="your old password"
-                      type="password"
-                      autoFocus
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="newPassword"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>New Password</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="your new password"
-                      type="password"
-                      autoFocus
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <DialogFooter className="mt-10">
-              <LoadingButton type="submit" isLoading={isPending}>
-                Save
-              </LoadingButton>
+        {isSuccess ? (
+          <>
+            <div className="pb-4">
+              Your password has been changed successfully!
+            </div>
+            <DialogFooter>
               <DialogClose asChild>
                 <Button variant="secondary" onClick={handleCancelDialog}>
-                  Cancel
+                  Close
                 </Button>
               </DialogClose>
             </DialogFooter>
-          </form>
-        </Form>
+          </>
+        ) : (
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
+              <FormField
+                control={form.control}
+                name="oldPassword"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      <span className="required">Old Password</span>
+                    </FormLabel>
+                    <FormControl>
+                      <PasswordInput
+                        placeholder="your old password"
+                        autoFocus
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="newPassword"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      <span className="required">New Password</span>
+                    </FormLabel>
+                    <FormControl>
+                      <PasswordInput
+                        placeholder="your new password"
+                        autoFocus
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <DialogFooter>
+                <LoadingButton
+                  type="submit"
+                  isLoading={isPending}
+                  disabled={!form.formState.isValid}
+                >
+                  Save
+                </LoadingButton>
+                <DialogClose asChild>
+                  <Button variant="secondary" onClick={handleCancelDialog}>
+                    Cancel
+                  </Button>
+                </DialogClose>
+              </DialogFooter>
+            </form>
+          </Form>
+        )}
       </DialogContent>
     </Dialog>
   );

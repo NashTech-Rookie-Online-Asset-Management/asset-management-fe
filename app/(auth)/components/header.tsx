@@ -1,6 +1,6 @@
 'use client';
 
-import { RectangleEllipsis, User } from 'lucide-react';
+import { LogOut, RectangleEllipsis, User } from 'lucide-react';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
@@ -17,7 +17,7 @@ import {
 import useProfile from '@/features/auth/useProfile';
 
 import ChangePasswordDialog from './change-password-dialog';
-import LogoutButton from './logout-button';
+import LogoutDialog from './logout-dialog';
 
 const navHeadings = [
   {
@@ -44,7 +44,9 @@ const navHeadings = [
 
 function AuthHeader() {
   const { data, isPending } = useProfile();
-  const [dialogOpen, setDialogOpen] = useState(false);
+  const [changePasswordDialogOpen, setChangePasswordDialogOpen] =
+    useState(false);
+  const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
   const pathname = usePathname();
 
   return (
@@ -72,23 +74,30 @@ function AuthHeader() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56">
-              <DropdownMenuItem onClick={() => setDialogOpen(true)}>
+              <DropdownMenuItem
+                onClick={() => setChangePasswordDialogOpen(true)}
+              >
                 <RectangleEllipsis className="mr-2 size-4" />
                 <span>Change password</span>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>
-                <LogoutButton
-                  className="m-0 w-full justify-start p-0"
-                  variant="ghost"
-                />
+              <DropdownMenuItem onClick={() => setLogoutDialogOpen(true)}>
+                <LogOut className="mr-2 size-4" />
+                <span>Logout</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
           <ModeToggle />
         </div>
       </div>
-      <ChangePasswordDialog isOpen={dialogOpen} onOpenChange={setDialogOpen} />
+      <ChangePasswordDialog
+        isOpen={changePasswordDialogOpen}
+        onOpenChange={setChangePasswordDialogOpen}
+      />
+      <LogoutDialog
+        isOpen={logoutDialogOpen}
+        onOpenChange={setLogoutDialogOpen}
+      />
     </div>
   );
 }

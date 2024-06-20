@@ -3,9 +3,11 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import React from 'react';
 import { useForm } from 'react-hook-form';
+import { useOnClickOutside } from 'usehooks-ts';
 import type { z } from 'zod';
 
 import { LoadingButton } from '@/components/custom/loading-button';
+import { PasswordInput } from '@/components/custom/password-input';
 import {
   Dialog,
   DialogContent,
@@ -22,13 +24,13 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
 import useChangePasswordFirstTime from '@/features/auth/useChangePasswordFirstTime';
 import useProfile from '@/features/auth/useProfile';
 
 import { changePasswordFirstTimeSchema } from '../schema';
 
 function ChangePasswordFirstTimeDialog() {
+  const modalRef = React.useRef<HTMLDivElement>(null);
   const form = useForm<z.infer<typeof changePasswordFirstTimeSchema>>({
     resolver: zodResolver(changePasswordFirstTimeSchema),
     defaultValues: {
@@ -64,9 +66,20 @@ function ChangePasswordFirstTimeDialog() {
     }
   }, [profile]);
 
+  useOnClickOutside(modalRef, (e) => {
+    e.preventDefault();
+    form.setError(
+      'newPassword',
+      {
+        message: 'You need to change your password first!',
+      },
+      { shouldFocus: true },
+    );
+  });
+
   return (
     <Dialog open={isOpen} onOpenChange={handleDialogOpenChange} modal>
-      <DialogContent>
+      <DialogContent hideCloseButton ref={modalRef}>
         <DialogHeader>
           <DialogTitle>Change Password</DialogTitle>
           <DialogDescription>
@@ -81,11 +94,12 @@ function ChangePasswordFirstTimeDialog() {
               name="newPassword"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>New Password</FormLabel>
+                  <FormLabel>
+                    <span className="required">New Password</span>
+                  </FormLabel>
                   <FormControl>
-                    <Input
+                    <PasswordInput
                       placeholder="your new password"
-                      type="password"
                       autoFocus
                       {...field}
                     />
@@ -98,7 +112,7 @@ function ChangePasswordFirstTimeDialog() {
               <LoadingButton
                 type="submit"
                 isLoading={isPending}
-                disabled={isSuccess}
+                disabled={isSuccess || !form.formState.isValid}
               >
                 Change Password
               </LoadingButton>

@@ -58,3 +58,9 @@
         @apply bg-background text-foreground;
     }
 }
+
+@layer utilities {
+    .required {
+        @apply after:content-['*'] after:ml-0.5 after:text-red-500;
+    }
+}
