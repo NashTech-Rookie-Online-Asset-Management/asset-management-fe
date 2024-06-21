@@ -99,7 +99,7 @@ function ChangePasswordDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange} modal>
-      <DialogContent>
+      <DialogContent hideCloseButton>
         <DialogHeader>
           <DialogTitle>Change Password</DialogTitle>
         </DialogHeader>
