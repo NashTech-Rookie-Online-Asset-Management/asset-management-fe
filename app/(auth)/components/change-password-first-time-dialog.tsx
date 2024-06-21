@@ -8,8 +8,10 @@ import type { z } from 'zod';
 
 import { LoadingButton } from '@/components/custom/loading-button';
 import { PasswordInput } from '@/components/custom/password-input';
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -41,6 +43,21 @@ function ChangePasswordFirstTimeDialog() {
   const { refetch: refetchProfile, data: profile } = useProfile();
   const [isOpen, setIsOpen] = React.useState(false);
 
+  const newPasswordValue = form.watch('newPassword');
+  const newPasswordError = form.getFieldState('newPassword').error;
+
+  React.useEffect(() => {
+    if (!newPasswordError) return;
+    if (!newPasswordValue) {
+      form.clearErrors('newPassword');
+    }
+  }, [newPasswordValue, form, newPasswordError]);
+
+  const handleCancelDialog = () => {
+    form.reset();
+    setIsOpen(false);
+  };
+
   function onSubmit(values: z.infer<typeof changePasswordFirstTimeSchema>) {
     submit(values);
   }
@@ -62,7 +79,7 @@ function ChangePasswordFirstTimeDialog() {
   React.useEffect(() => {
     if (profile) {
       if (profile.status === 'CREATED') setIsOpen(true);
-      else setIsOpen(false);
+      // else setIsOpen(false);
     }
   }, [profile]);
 
@@ -82,43 +99,60 @@ function ChangePasswordFirstTimeDialog() {
       <DialogContent hideCloseButton ref={modalRef}>
         <DialogHeader>
           <DialogTitle>Change Password</DialogTitle>
-          <DialogDescription>
-            This is the first time you logged in. You have to change your to
-            continue.
-          </DialogDescription>
+          {!isSuccess && (
+            <DialogDescription>
+              This is the first time you logged in. You have to change your to
+              continue.
+            </DialogDescription>
+          )}
         </DialogHeader>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)}>
-            <FormField
-              control={form.control}
-              name="newPassword"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>
-                    <span className="required">New Password</span>
-                  </FormLabel>
-                  <FormControl>
-                    <PasswordInput
-                      placeholder="your new password"
-                      autoFocus
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <DialogFooter className="mt-10">
-              <LoadingButton
-                type="submit"
-                isLoading={isPending}
-                disabled={isSuccess || !form.formState.isValid}
-              >
-                Change Password
-              </LoadingButton>
+        {isSuccess ? (
+          <>
+            <div className="pb-4">
+              Your password has been changed successfully!
+            </div>
+            <DialogFooter>
+              <DialogClose asChild>
+                <Button variant="secondary" onClick={handleCancelDialog}>
+                  Close
+                </Button>
+              </DialogClose>
             </DialogFooter>
-          </form>
-        </Form>
+          </>
+        ) : (
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)}>
+              <FormField
+                control={form.control}
+                name="newPassword"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      <span className="required">New Password</span>
+                    </FormLabel>
+                    <FormControl>
+                      <PasswordInput
+                        placeholder="your new password"
+                        autoFocus
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <DialogFooter className="mt-10">
+                <LoadingButton
+                  type="submit"
+                  isLoading={isPending}
+                  disabled={!form.getValues('newPassword') || isSuccess}
+                >
+                  Change Password
+                </LoadingButton>
+              </DialogFooter>
+            </form>
+          </Form>
+        )}
       </DialogContent>
     </Dialog>
   );

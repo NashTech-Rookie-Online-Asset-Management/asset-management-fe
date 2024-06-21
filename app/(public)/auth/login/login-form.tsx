@@ -46,6 +46,24 @@ function LoginForm() {
     isSuccess,
   } = useLogin();
 
+  const usernameValue = form.watch('username');
+  const usernameError = form.getFieldState('username').error;
+  const passwordValue = form.watch('password');
+  const passwordError = form.getFieldState('password').error;
+
+  React.useEffect(() => {
+    if (!usernameError) return;
+    if (!usernameValue) {
+      form.clearErrors('username');
+    }
+  }, [usernameValue, form, usernameError]);
+  React.useEffect(() => {
+    if (!passwordError) return;
+    if (!passwordValue) {
+      form.clearErrors('password');
+    }
+  }, [passwordValue, form, passwordError]);
+
   async function onSubmit(values: z.infer<typeof loginFormSchema>) {
     await login(values);
     router.refresh();
@@ -113,7 +131,11 @@ function LoginForm() {
               className="w-full"
               type="submit"
               isLoading={isPending}
-              disabled={!form.formState.isValid || isSuccess || isPending}
+              disabled={
+                !(form.getValues('password') && form.getValues('username')) ||
+                isSuccess ||
+                isPending
+              }
             >
               {isSuccess ? 'Logging you in...' : 'Login'}
             </LoadingButton>

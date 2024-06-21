@@ -1,7 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import type { z } from 'zod';
 
@@ -57,10 +57,31 @@ function ChangePasswordDialog({
     submit(values);
   }
 
+  const oldPasswordValue = form.watch('oldPassword');
+  const oldPasswordError = form.getFieldState('oldPassword').error;
+  const newPasswordValue = form.watch('newPassword');
+  const newPasswordError = form.getFieldState('newPassword').error;
+
+  React.useEffect(() => {
+    if (!oldPasswordError) return;
+    if (!oldPasswordValue) {
+      form.clearErrors('oldPassword');
+    }
+  }, [oldPasswordValue, form, oldPasswordError]);
+  React.useEffect(() => {
+    if (!newPasswordError) return;
+    if (!newPasswordValue) {
+      form.clearErrors('newPassword');
+    }
+  }, [newPasswordValue, form, newPasswordError]);
+
   const handleCancelDialog = () => {
-    form.reset();
     onOpenChange(false);
   };
+
+  useEffect(() => {
+    if (!isOpen) form.reset();
+  }, [form, isOpen]);
   useEffect(() => {
     if (isError && error) {
       form.setError('oldPassword', { message: error.response?.data?.message });
@@ -140,7 +161,12 @@ function ChangePasswordDialog({
                 <LoadingButton
                   type="submit"
                   isLoading={isPending}
-                  disabled={!form.formState.isValid}
+                  disabled={
+                    !(
+                      form.getValues('oldPassword') &&
+                      form.getValues('newPassword')
+                    )
+                  }
                 >
                   Save
                 </LoadingButton>
