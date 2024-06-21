@@ -1,3 +1,5 @@
+import type { AccountType, UserStatus } from '@/lib/@types/api';
+
 export type LoginRequest = {
   username: string;
   password: string;

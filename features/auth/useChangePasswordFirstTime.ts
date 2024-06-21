@@ -1,5 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 
+import type { ApiMessage } from '@/lib/@types/api';
+
 import authApi from './auth.service';
 import type { ChangePasswordFirstTimeRequest } from './auth.types';
 

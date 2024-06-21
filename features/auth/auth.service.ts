@@ -1,3 +1,4 @@
+import type { ApiMessage } from '@/lib/@types/api';
 import BaseApiService from '@/lib/services/baseApi.service';
 
 import type {

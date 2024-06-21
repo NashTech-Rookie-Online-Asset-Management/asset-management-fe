@@ -1,27 +1,27 @@
 /* eslint-disable unused-imports/no-unused-vars */
-enum UserStatus {
+export enum UserStatus {
   CREATED = 'CREATED',
   ACTIVE = 'ACTIVE',
   DISABLED = 'DISABLED',
 }
 
-enum AccountType {
+export enum AccountType {
   ADMIN = 'ADMIN',
   STAFF = 'STAFF',
 }
 
-enum Location {
+export enum Location {
   HCM = 'HCM',
   HN = 'HN',
   DN = 'DN',
 }
 
-enum Gender {
+export enum Gender {
   MALE = 'MALE',
   FEMALE = 'FEMALE',
 }
 
-enum AssetState {
+export enum AssetState {
   AVAILABLE = 'AVAILABLE',
   UNAVAILABLE = 'UNAVAILABLE',
   ASSIGNED = 'ASSIGNED',
@@ -29,17 +29,22 @@ enum AssetState {
   RECYCLED = 'RECYCLED',
 }
 
-enum AssignmentState {
+export enum AssignmentState {
   WAITING_FOR_ACCEPTANCE = 'WAITING_FOR_ACCEPTANCE',
   ACCEPTED = 'ACCEPTED',
   IS_REQUESTED = 'IS_REQUESTED',
 }
 
-enum RequestState {
+export enum RequestState {
   WAITING_FOR_RETURNING = 'WAITING_FOR_RETURNING',
   COMPLETED = 'COMPLETED',
 }
 
-type ApiMessage = {
+export type ApiMessage = {
   message?: string;
 };
+
+export enum Order {
+  ASC = 'asc',
+  DESC = 'desc',
+}

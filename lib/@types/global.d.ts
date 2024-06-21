@@ -15,3 +15,11 @@ type ApiDataError = {
 };
 
 type AppAxiosError = import('axios').AxiosError<ApiDataError, any>;
+
+type GetList<T> = {
+  data: T[];
+  pagination: {
+    totalPages: number;
+    totalCount: number;
+  };
+};
