@@ -113,7 +113,11 @@ function ChangePasswordFirstTimeDialog() {
             </div>
             <DialogFooter>
               <DialogClose asChild>
-                <Button variant="secondary" onClick={handleCancelDialog}>
+                <Button
+                  data-id="cancel-button"
+                  variant="secondary"
+                  onClick={handleCancelDialog}
+                >
                   Close
                 </Button>
               </DialogClose>
@@ -143,6 +147,7 @@ function ChangePasswordFirstTimeDialog() {
               />
               <DialogFooter className="mt-10">
                 <LoadingButton
+                  data-id="change-password-first-time-button"
                   type="submit"
                   isLoading={isPending}
                   disabled={!form.getValues('newPassword') || isSuccess}

@@ -128,6 +128,7 @@ function LoginForm() {
           </CardContent>
           <CardFooter>
             <LoadingButton
+              data-id="login-button"
               className="w-full"
               type="submit"
               isLoading={isPending}

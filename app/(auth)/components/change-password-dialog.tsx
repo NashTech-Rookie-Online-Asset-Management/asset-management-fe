@@ -110,7 +110,11 @@ function ChangePasswordDialog({
             </div>
             <DialogFooter>
               <DialogClose asChild>
-                <Button variant="secondary" onClick={handleCancelDialog}>
+                <Button
+                  data-id="cancel-button"
+                  variant="secondary"
+                  onClick={handleCancelDialog}
+                >
                   Close
                 </Button>
               </DialogClose>
@@ -159,6 +163,7 @@ function ChangePasswordDialog({
               />
               <DialogFooter>
                 <LoadingButton
+                  data-id="change-password-button"
                   type="submit"
                   isLoading={isPending}
                   disabled={
@@ -171,7 +176,11 @@ function ChangePasswordDialog({
                   Save
                 </LoadingButton>
                 <DialogClose asChild>
-                  <Button variant="secondary" onClick={handleCancelDialog}>
+                  <Button
+                    variant="secondary"
+                    onClick={handleCancelDialog}
+                    data-id="change-password-cancel-button"
+                  >
                     Cancel
                   </Button>
                 </DialogClose>

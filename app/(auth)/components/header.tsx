@@ -67,7 +67,7 @@ function AuthHeader() {
         </div>
         <div className="flex items-center space-x-2">
           <DropdownMenu>
-            <DropdownMenuTrigger asChild>
+            <DropdownMenuTrigger data-id="header-dropdown" asChild>
               <Button variant="outline">
                 <User className="mr-2 size-4" />
                 {isPending ? 'Loading' : data?.username || 'Unauthenticated'}
@@ -75,13 +75,17 @@ function AuthHeader() {
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56">
               <DropdownMenuItem
+                data-id="header-change-password-button"
                 onClick={() => setChangePasswordDialogOpen(true)}
               >
                 <RectangleEllipsis className="mr-2 size-4" />
                 <span>Change password</span>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => setLogoutDialogOpen(true)}>
+              <DropdownMenuItem
+                data-id="header-logout-button"
+                onClick={() => setLogoutDialogOpen(true)}
+              >
                 <LogOut className="mr-2 size-4" />
                 <span>Logout</span>
               </DropdownMenuItem>
