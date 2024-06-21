@@ -1,10 +1,9 @@
 'use client';
 
-import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import React from 'react';
 
+import NashTechLogo from '@/components/custom/nashtech-logo';
 import { Button } from '@/components/ui/button';
 import useProfile from '@/features/auth/useProfile';
 
@@ -61,12 +60,14 @@ const Sidebar = () => {
   return (
     <nav className="mt-10 w-64">
       <div className="mb-6">
-        <Image src="/nashtech-logo.png" alt="Logo" width={110} height={110} />
+        <div className="my-2 aspect-square size-40 dark:bg-gradient-to-r dark:from-[#831963] dark:to-[#cd0021] dark:p-2">
+          <NashTechLogo className="size-full dark:fill-white" />
+        </div>
         <h4 className="text-lg font-bold text-primary">
           Online Asset Management
         </h4>
       </div>
-      <ul>
+      <ul className="rounded bg-muted">
         <NavLink href="/" title="Home" isActive={isActive('/')} />
         {user &&
           user.type !== 'STAFF' &&

@@ -8,10 +8,8 @@ export const metadata = {
 
 function SigninPage() {
   return (
-    <div className="container mx-auto">
-      <div className="flex items-center justify-center py-24">
-        <LoginForm />
-      </div>
+    <div className="container mx-auto flex flex-1 items-center justify-center">
+      <LoginForm />
     </div>
   );
 }

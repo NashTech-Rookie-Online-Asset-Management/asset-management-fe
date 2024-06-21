@@ -38,20 +38,14 @@ function ChangePasswordFirstTimeDialog() {
     defaultValues: {
       newPassword: '',
     },
+    reValidateMode: 'onSubmit',
   });
   const { mutate: submit, isPending, isSuccess } = useChangePasswordFirstTime();
   const { refetch: refetchProfile, data: profile } = useProfile();
   const [isOpen, setIsOpen] = React.useState(false);
 
-  const newPasswordValue = form.watch('newPassword');
-  const newPasswordError = form.getFieldState('newPassword').error;
-
-  React.useEffect(() => {
-    if (!newPasswordError) return;
-    if (!newPasswordValue) {
-      form.clearErrors('newPassword');
-    }
-  }, [newPasswordValue, form, newPasswordError]);
+  const newPasswordValue = form.getValues('newPassword');
+  const requiredErrorMessage = 'You need to change your password first!';
 
   const handleCancelDialog = () => {
     form.reset();
@@ -79,16 +73,21 @@ function ChangePasswordFirstTimeDialog() {
   React.useEffect(() => {
     if (profile) {
       if (profile.status === 'CREATED') setIsOpen(true);
-      // else setIsOpen(false);
     }
   }, [profile]);
+
+  React.useEffect(() => {
+    if (newPasswordValue.length <= 0) {
+      form.clearErrors('newPassword');
+    }
+  }, [form, newPasswordValue]);
 
   useOnClickOutside(modalRef, (e) => {
     e.preventDefault();
     form.setError(
       'newPassword',
       {
-        message: 'You need to change your password first!',
+        message: requiredErrorMessage,
       },
       { shouldFocus: true },
     );

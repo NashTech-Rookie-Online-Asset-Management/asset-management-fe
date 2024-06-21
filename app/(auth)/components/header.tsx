@@ -1,7 +1,6 @@
 'use client';
 
 import { LogOut, RectangleEllipsis, User } from 'lucide-react';
-import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 
@@ -16,6 +15,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import useProfile from '@/features/auth/useProfile';
 
+import NashTechLogo from '@/components/custom/nashtech-logo';
 import ChangePasswordDialog from './change-password-dialog';
 import LogoutDialog from './logout-dialog';
 
@@ -53,13 +53,9 @@ function AuthHeader() {
     <div className="w-full bg-primary">
       <div className="container mx-auto flex items-center justify-between py-2">
         <div className="flex items-center space-x-2">
-          <Image
-            width={110}
-            height={110}
-            src="/nashtech-logo.png"
-            alt="NashTech's Logo"
-            className="aspect-square w-12"
-          />
+          <div className="aspect-square bg-white p-1 size-12">
+            <NashTechLogo className="w-full h-full" />
+          </div>
           <h1 className="text-xl font-bold text-primary-foreground">
             {navHeadings.find((heading) => heading.path === pathname)
               ?.heading || 'OAM'}
