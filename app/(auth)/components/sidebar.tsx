@@ -41,7 +41,7 @@ const NavLink = ({
     <Button
       asChild
       variant={isActive ? 'default' : 'secondary'}
-      className="w-full justify-start rounded-none font-bold"
+      className="w-full justify-start font-bold"
       data-id={`side-bar-${title.toLowerCase().replaceAll(/\s+/g, '-')}`}
     >
       <Link href={href}>
