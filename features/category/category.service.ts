@@ -1,10 +1,18 @@
-import HttpService from '@/lib/services/http.service';
+import BaseApiService from '@/lib/services/baseApi.service';
 
-import type { Category } from './category.types';
+import type { Category, CreateCategoryRequest } from './category.types';
 
-class CategoryApiService extends HttpService {
+class CategoryApiService extends BaseApiService {
+  constructor() {
+    super('category');
+  }
+
   getCategories() {
-    return this.get<Category[]>('category');
+    return this.httpClient.get<Category[]>('/');
+  }
+
+  createCategory(data: CreateCategoryRequest) {
+    return this.httpClient.post<Category>('/', data);
   }
 }
 

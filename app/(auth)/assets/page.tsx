@@ -7,6 +7,7 @@ import {
   Pencil,
   Trash2,
 } from 'lucide-react';
+import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
 import { MultipleSelect } from '@/components/custom/multiple-select';
@@ -173,8 +174,8 @@ export default function AssetList() {
             onChange={(e) => handleSearch(e.target.value)}
           />
         </div>
-        <Button variant="default" className="lg:col-span-1">
-          Create new asset
+        <Button variant="default" className="lg:col-span-1" asChild>
+          <Link href="/assets/create">Create new asset</Link>
         </Button>
       </div>
 

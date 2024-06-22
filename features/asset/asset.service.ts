@@ -1,7 +1,7 @@
 import type { Order } from '@/lib/@types/api';
 import HttpService from '@/lib/services/http.service';
 
-import type { Asset, AssetSortField } from './asset.types';
+import type { Asset, AssetSortField, CreateAssetRequest } from './asset.types';
 
 class AssetApiService extends HttpService {
   getAssets({
@@ -36,6 +36,10 @@ class AssetApiService extends HttpService {
 
   getAsset({ assetId }: { assetId: number }) {
     return this.get<Asset>(`assets/${assetId}`);
+  }
+
+  createAsset(data: CreateAssetRequest) {
+    return this.post<Asset>('assets', data);
   }
 }
 

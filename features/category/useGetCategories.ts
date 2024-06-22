@@ -4,7 +4,7 @@ import categoryApi from './category.service';
 
 function useGetCategories() {
   return useQuery({
-    queryKey: [`category`],
+    queryKey: [`categories`],
     queryFn: () => categoryApi.getCategories(),
     placeholderData: keepPreviousData,
   });

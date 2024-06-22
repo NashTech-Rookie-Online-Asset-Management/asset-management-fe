@@ -7,9 +7,9 @@ function AuthLayout({ children }: React.PropsWithChildren) {
   return (
     <div>
       <AuthHeader />
-      <div className="container flex space-x-4 pb-24 pt-4">
+      <div className="container mx-auto flex space-x-8 pb-24 pt-4">
         <Sidebar />
-        <div className="w-full">{children}</div>
+        <div className="flex-1">{children}</div>
       </div>
     </div>
   );

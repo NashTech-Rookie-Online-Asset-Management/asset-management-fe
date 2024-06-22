@@ -55,7 +55,8 @@ const Sidebar = () => {
   const { data: user } = useProfile();
   const currentPath = usePathname();
 
-  const isActive = (path: any) => currentPath === path;
+  const isActive = (path: any) =>
+    path.length > 1 ? currentPath.includes(path) : currentPath === path;
 
   return (
     <nav className="mt-10 w-64">

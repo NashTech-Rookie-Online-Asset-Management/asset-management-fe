@@ -31,3 +31,11 @@ export type Asset = {
 };
 
 export type AssetSortField = 'assetCode' | 'name' | 'category' | 'state';
+
+export type CreateAssetRequest = {
+  name: string;
+  categoryId: number;
+  specification?: string;
+  installedDate: Date;
+  state: AssetState;
+};
