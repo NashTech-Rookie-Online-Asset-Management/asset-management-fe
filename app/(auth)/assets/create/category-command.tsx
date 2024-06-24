@@ -33,7 +33,22 @@ function CategoryCommand({ fieldValue, onSelect }: Props) {
   const { data: categories, isPending } = useGetCategories();
 
   return (
-    <Command>
+    <Command
+      filter={(value, search) => {
+        const item = categories?.find(
+          (category) => category.id === Number(value),
+        );
+        if (!item) return 0;
+        if (
+          item.name.includes(search) ||
+          item.name.toLowerCase().includes(search) ||
+          item.prefix.includes(search) ||
+          item.prefix.toLowerCase().includes(search)
+        )
+          return 1;
+        return 0;
+      }}
+    >
       <CommandInput placeholder="Search category..." />
       <CommandEmpty>
         {isPending ? 'Loading categories...' : 'No category found.'}

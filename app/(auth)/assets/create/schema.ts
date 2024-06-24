@@ -7,14 +7,14 @@ export const createNewAssetSchema = z.object({
   name: z
     .string()
     .min(5, 'Asset name must be at least 5 characters long')
-    .max(50, 'Asset name must be at most 50 characters long'),
+    .max(64, 'Asset name must be at most 64 characters long'),
   category: z.string({
     required_error: 'Please select a category.',
   }),
   specification: z
     .string()
     .min(5, 'Asset description must be at least 5 characters long')
-    .max(100, 'Asset description must be at most 100 characters long'),
+    .max(256, 'Asset description must be at most 256 characters long'),
   installedDate: z
     .string()
     .refine((value) => !!value, 'Please select a date')
@@ -31,6 +31,6 @@ export const createNewAssetSchema = z.object({
 });
 
 export const createNewCategorySchema = z.object({
-  name: z.string().min(2),
-  prefix: z.string().length(2).trim().toUpperCase(),
+  name: z.string().min(2).max(64).trim(),
+  prefix: z.string().refine((value) => /[A-Z]{2,2}/g.test(value)),
 });

@@ -38,19 +38,6 @@ function CreateCategoryForm({ onClose, onSelect }: Props) {
     onClose();
   }
 
-  const prefixValue = form.getValues('prefix');
-
-  React.useEffect(() => {
-    if (form.formState.isValid) return;
-    if (prefixValue) {
-      const newValue = prefixValue
-        .replaceAll(/[^A-Za-z]/g, '')
-        .slice(0, 2)
-        .toUpperCase();
-      form.setValue('prefix', newValue);
-    }
-  }, [form, prefixValue]);
-
   return (
     <Form {...form}>
       <div className="flex max-w-xs items-center justify-center space-x-2">
@@ -69,13 +56,27 @@ function CreateCategoryForm({ onClose, onSelect }: Props) {
           <FormField
             control={form.control}
             name="prefix"
-            render={({ field }) => (
-              <FormItem>
-                <FormControl>
-                  <Input className="max-w-[64px]" placeholder="BM" {...field} />
-                </FormControl>
-              </FormItem>
-            )}
+            render={({ field }) => {
+              return (
+                <FormItem>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      className="max-w-[64px]"
+                      placeholder="BM"
+                      onChange={(e) =>
+                        field.onChange(
+                          e.target.value
+                            .replaceAll(/[^A-Za-z]/g, '')
+                            .slice(0, 2)
+                            .toUpperCase(),
+                        )
+                      }
+                    />
+                  </FormControl>
+                </FormItem>
+              );
+            }}
           />
         </div>
         <div className="flex items-center space-x-1">

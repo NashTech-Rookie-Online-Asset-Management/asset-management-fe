@@ -148,7 +148,11 @@ function CreateAssetForm() {
               </FormLabel>
               <div>
                 <FormControl>
-                  <Textarea autoFocus {...field} />
+                  <Textarea
+                    autoFocus
+                    className="min-h-48 resize-none"
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </div>
