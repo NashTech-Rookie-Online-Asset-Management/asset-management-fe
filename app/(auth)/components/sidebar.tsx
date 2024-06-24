@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation';
 import NashTechLogo from '@/components/custom/nashtech-logo';
 import { Button } from '@/components/ui/button';
 import useProfile from '@/features/auth/useProfile';
+import { PROTECTED_ROUTES } from '@/lib/constants/protected-routes';
 import { cn } from '@/lib/utils';
 
 const authNavLinks: { title: string; href: string }[] = [
@@ -75,9 +76,16 @@ const Sidebar = () => {
       <ul className="rounded-lg bg-secondary">
         <NavLink href="/" title="Home" isActive={isActive('/')} />
         {user &&
-          user.type !== 'STAFF' &&
-          authNavLinks.map((link) => (
-            <NavLink {...link} isActive={isActive(link.href)} key={link.href} />
+          PROTECTED_ROUTES.filter(
+            (route) =>
+              route.title !== 'Home' && route.accountTypes.includes(user.type),
+          ).map((route) => (
+            <NavLink
+              title={route.title}
+              href={route.path}
+              isActive={isActive(route.path)}
+              key={route.path}
+            />
           ))}
       </ul>
     </nav>

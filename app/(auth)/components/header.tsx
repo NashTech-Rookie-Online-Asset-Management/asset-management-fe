@@ -15,32 +15,10 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import useProfile from '@/features/auth/useProfile';
+import { PROTECTED_ROUTES } from '@/lib/constants/protected-routes';
 
 import ChangePasswordDialog from './change-password-dialog';
 import LogoutDialog from './logout-dialog';
-
-const navHeadings = [
-  {
-    path: '/assets',
-    heading: 'Assets',
-  },
-  {
-    path: '/users',
-    heading: 'Users',
-  },
-  {
-    path: '/assignments',
-    heading: 'Assignments',
-  },
-  {
-    path: '/returning-requests',
-    heading: 'Returning Requests',
-  },
-  {
-    path: '/',
-    heading: 'Home',
-  },
-];
 
 function AuthHeader() {
   const { data, isPending } = useProfile();
@@ -57,7 +35,7 @@ function AuthHeader() {
             <NashTechLogo className="size-full" />
           </div>
           <h1 className="text-xl font-bold text-primary-foreground">
-            {navHeadings.find((heading) => pathname.includes(heading.path))
+            {PROTECTED_ROUTES.find((route) => pathname.includes(route.path))
               ?.heading || 'OAM'}
           </h1>
         </div>

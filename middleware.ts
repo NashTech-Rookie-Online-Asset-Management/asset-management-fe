@@ -3,11 +3,13 @@ import { NextResponse } from 'next/server';
 
 import authApi from './features/auth/auth.service';
 import CookieKeys from './lib/constants/cookieKeys';
+import { PROTECTED_ROUTES } from './lib/constants/protected-routes';
 
 export async function middleware(request: NextRequest) {
   const accessToken = request.cookies.get(CookieKeys.ACCESS_TOKEN)?.value;
   const authPath = '/auth';
   const signInPath = `${authPath}/login`;
+  const pathName = request.nextUrl.pathname;
 
   if (!accessToken && request.nextUrl.pathname.includes(authPath)) {
     return NextResponse.next();
@@ -15,11 +17,17 @@ export async function middleware(request: NextRequest) {
 
   if (accessToken) {
     try {
-      await authApi.checkAuth(accessToken);
+      const user = await authApi.checkAuth(accessToken);
 
-      return request.nextUrl.pathname.includes(authPath)
-        ? NextResponse.redirect(new URL('/', request.url))
-        : NextResponse.next();
+      const isAccountTypeValid = PROTECTED_ROUTES[
+        PROTECTED_ROUTES.findIndex((route) => pathName.includes(route.path))
+      ].accountTypes.includes(user.type);
+
+      if (isAccountTypeValid && !pathName.includes(authPath)) {
+        return NextResponse.next();
+      }
+
+      return NextResponse.redirect(new URL('/', request.url));
     } catch (error: unknown) {
       const redirectRes = NextResponse.redirect(
         new URL(signInPath, request.url),

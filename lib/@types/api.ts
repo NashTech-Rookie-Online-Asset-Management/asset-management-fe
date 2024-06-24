@@ -8,6 +8,7 @@ export enum UserStatus {
 export enum AccountType {
   ADMIN = 'ADMIN',
   STAFF = 'STAFF',
+  ROOT = 'ROOT',
 }
 
 export enum Location {
