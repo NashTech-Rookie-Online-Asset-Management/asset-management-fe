@@ -42,7 +42,7 @@ function LogoutDialog({
           <LoadingButton
             data-id="logout-confirm-button"
             isLoading={isPending}
-            disabled={isSuccess}
+            disabled={isSuccess || isPending}
             onClick={() => handleOnClick()}
             size="sm"
           >
