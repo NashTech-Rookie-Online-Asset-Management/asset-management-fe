@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation';
 import NashTechLogo from '@/components/custom/nashtech-logo';
 import { Button } from '@/components/ui/button';
 import useProfile from '@/features/auth/useProfile';
+import { cn } from '@/lib/utils';
 
 const authNavLinks: { title: string; href: string }[] = [
   {
@@ -41,7 +42,10 @@ const NavLink = ({
     <Button
       asChild
       variant={isActive ? 'default' : 'secondary'}
-      className="w-full justify-start font-bold"
+      className={cn(
+        'w-full justify-start font-bold',
+        !isActive && 'hover:bg-slate-200 dark:hover:bg-slate-800',
+      )}
       data-id={`side-bar-${title.toLowerCase().replaceAll(/\s+/g, '-')}`}
     >
       <Link href={href}>
@@ -68,7 +72,7 @@ const Sidebar = () => {
           Online Asset Management
         </h4>
       </div>
-      <ul className="rounded bg-muted">
+      <ul className="rounded-lg bg-secondary">
         <NavLink href="/" title="Home" isActive={isActive('/')} />
         {user &&
           user.type !== 'STAFF' &&

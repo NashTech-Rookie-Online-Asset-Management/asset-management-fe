@@ -149,9 +149,11 @@ function ChangePasswordFirstTimeDialog() {
                   data-id="change-password-first-time-button"
                   type="submit"
                   isLoading={isPending}
-                  disabled={!form.getValues('newPassword') || isSuccess}
+                  disabled={
+                    !form.getValues('newPassword') || isSuccess || isPending
+                  }
                 >
-                  Change Password
+                  Save
                 </LoadingButton>
               </DialogFooter>
             </form>

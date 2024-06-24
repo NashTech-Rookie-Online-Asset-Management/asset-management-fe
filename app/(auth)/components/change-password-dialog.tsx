@@ -170,7 +170,9 @@ function ChangePasswordDialog({
                     !(
                       form.getValues('oldPassword') &&
                       form.getValues('newPassword')
-                    )
+                    ) ||
+                    isPending ||
+                    isSuccess
                   }
                 >
                   Save
