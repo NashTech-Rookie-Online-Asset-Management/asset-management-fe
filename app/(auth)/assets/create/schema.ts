@@ -1,4 +1,4 @@
-import { isAfter, isDate, isPast, isValid } from 'date-fns';
+import { isAfter, isDate, isValid } from 'date-fns';
 import { z } from 'zod';
 
 import { AssetState } from '@/lib/@types/api';
@@ -18,7 +18,6 @@ export const createNewAssetSchema = z.object({
   installedDate: z
     .string()
     .refine((value) => !!value, 'Please select a date')
-    .refine((value) => isPast(new Date(value)), 'Please select a past date')
     .refine(
       (value) =>
         isAfter(new Date(value), new Date(1970, 1, 1)) &&

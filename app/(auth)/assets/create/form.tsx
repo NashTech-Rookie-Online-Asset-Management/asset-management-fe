@@ -76,7 +76,7 @@ function CreateAssetForm() {
           control={form.control}
           name="name"
           render={({ field }) => (
-            <FormItem className="grid grid-cols-2">
+            <FormItem>
               <FormLabel>
                 <span className="required">Name</span>
               </FormLabel>
@@ -93,7 +93,7 @@ function CreateAssetForm() {
           control={form.control}
           name="category"
           render={({ field }) => (
-            <FormItem className="grid grid-cols-2">
+            <FormItem>
               <FormLabel>
                 <span className="required">Category</span>
               </FormLabel>
@@ -121,7 +121,7 @@ function CreateAssetForm() {
                   </FormControl>
                 </PopoverTrigger>
                 <PopoverContent
-                  className="w-96 max-w-xs p-0"
+                  className="popover-content-width-full p-0"
                   id="category_list"
                   ref={categoryRef}
                 >
@@ -142,7 +142,7 @@ function CreateAssetForm() {
           control={form.control}
           name="specification"
           render={({ field }) => (
-            <FormItem className="grid grid-cols-2">
+            <FormItem>
               <FormLabel>
                 <span className="required">Specification</span>
               </FormLabel>
@@ -163,7 +163,7 @@ function CreateAssetForm() {
           control={form.control}
           name="installedDate"
           render={({ field }) => (
-            <FormItem className="grid grid-cols-2">
+            <FormItem>
               <FormLabel>
                 <span className="required">Installed Date</span>
               </FormLabel>
@@ -180,7 +180,7 @@ function CreateAssetForm() {
           control={form.control}
           name="state"
           render={({ field }) => (
-            <FormItem className="grid grid-cols-2">
+            <FormItem>
               <FormLabel>
                 <span className="required">State</span>
               </FormLabel>

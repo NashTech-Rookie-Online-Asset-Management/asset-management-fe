@@ -72,7 +72,12 @@ function CategoryCommand({ fieldValue, onSelect }: Props) {
                       : 'opacity-0',
                   )}
                 />
-                {category.name}
+                <span className="flex w-full items-center justify-between">
+                  <span>{category.name}</span>
+                  <span className="px-2 font-mono font-semibold">
+                    {category.prefix}
+                  </span>
+                </span>
               </CommandItem>
             ))}
         </CommandList>

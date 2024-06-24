@@ -63,4 +63,9 @@
     .required {
         @apply after:content-['*'] after:ml-0.5 after:text-red-500;
     }
+
+    .popover-content-width-full {
+        width: var(--radix-popover-trigger-width);
+        max-height: var(--radix-popover-content-available-height);
+    }
 }

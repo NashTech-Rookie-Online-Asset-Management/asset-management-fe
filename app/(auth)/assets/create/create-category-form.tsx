@@ -40,15 +40,19 @@ function CreateCategoryForm({ onClose, onSelect }: Props) {
 
   return (
     <Form {...form}>
-      <div className="flex max-w-xs items-center justify-center space-x-2">
-        <div className="flex items-center space-x-1">
+      <div className="flex w-full items-center justify-center space-x-2">
+        <div className="flex flex-1 items-center space-x-1">
           <FormField
             control={form.control}
             name="name"
             render={({ field }) => (
-              <FormItem>
+              <FormItem className="flex-1">
                 <FormControl>
-                  <Input placeholder="Bluetooth Mouse" {...field} />
+                  <Input
+                    className="w-full"
+                    placeholder="Bluetooth Mouse"
+                    {...field}
+                  />
                 </FormControl>
               </FormItem>
             )}
