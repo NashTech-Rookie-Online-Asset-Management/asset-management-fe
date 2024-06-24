@@ -1,4 +1,4 @@
-import type { Order } from '@/lib/@types/api';
+import type { ApiMessage, Order } from '@/lib/@types/api';
 import HttpService from '@/lib/services/http.service';
 
 import type { Asset, AssetSortField, CreateAssetRequest } from './asset.types';
@@ -40,6 +40,10 @@ class AssetApiService extends HttpService {
 
   createAsset(data: CreateAssetRequest) {
     return this.post<Asset>('assets', data);
+  }
+
+  deleteAsset(assetId: number) {
+    return this.delete(`assets/${assetId}`) as Promise<ApiMessage>;
   }
 }
 

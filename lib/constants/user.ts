@@ -3,6 +3,7 @@ import { AccountType, Gender, Location } from '../@types/api';
 export const AccountTypeOptions = {
   [AccountType.ADMIN]: 'Admin',
   [AccountType.STAFF]: 'Staff',
+  [AccountType.ROOT]: 'Root',
 };
 
 export const GenderOptions = {

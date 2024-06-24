@@ -37,6 +37,7 @@ import { AssetStateOptions } from '@/lib/constants/asset';
 import { PAGE_SIZE } from '@/lib/constants/pagination';
 import useDebounce from '@/lib/hooks/useDebounce';
 
+import DeleteAssetDialog from '../components/delete-asset-dialog';
 import DetailedAssetDialog from '../components/show-detailed-asset-dialog';
 
 const columns = [
@@ -57,6 +58,9 @@ export default function AssetList() {
 
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedAssetId, setSelectedAssetId] = useState<number | null>(null);
+
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [deletedAsset, setDeletedAsset] = useState<Asset | null>(null);
 
   const { data: assets, refetch: refetchAssets } = useGetAssets({
     page,
@@ -119,8 +123,13 @@ export default function AssetList() {
     setDialogOpen(true);
   };
 
+  const handleDeleteDialog = (asset: Asset) => {
+    setDeletedAsset(asset);
+    setDeleteDialogOpen(true);
+  };
+
   return (
-    <div className="flex flex-col gap-4 p-8">
+    <div className="flex flex-col gap-4">
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-4">
         <div className="lg:col-span-1">
           <MultipleSelect
@@ -184,7 +193,7 @@ export default function AssetList() {
           <TableHeader>
             <TableRow>
               {columns.map((column) => (
-                <TableHead key={column.key}>
+                <TableHead key={column.key} className="text-center">
                   <Button
                     variant="ghost"
                     onClick={() =>
@@ -212,13 +221,17 @@ export default function AssetList() {
                   onClick={() => handleOpenDialog(row.id)}
                   className="cursor-pointer"
                 >
-                  <TableCell className="py-2">{row.assetCode}</TableCell>
-                  <TableCell className="py-2">{row.name}</TableCell>
-                  <TableCell className="py-2">{row.category.name}</TableCell>
-                  <TableCell className="py-2">
+                  <TableCell className="py-2 text-center">
+                    {row.assetCode}
+                  </TableCell>
+                  <TableCell className="py-2 text-center">{row.name}</TableCell>
+                  <TableCell className="py-2 text-center">
+                    {row.category.name}
+                  </TableCell>
+                  <TableCell className="py-2 text-center">
                     {AssetStateOptions[row.state]}
                   </TableCell>
-                  <TableCell className="py-2">
+                  <TableCell className="py-2 text-center">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button variant="ghost" className="size-8 p-0">
@@ -226,13 +239,23 @@ export default function AssetList() {
                           <MoreHorizontal className="size-4" />
                         </Button>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent align="center">
+                      <DropdownMenuContent
+                        align="center"
+                        className="z-10"
+                        onClick={(e) => e.stopPropagation()}
+                      >
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem>
+                        <DropdownMenuItem className="cursor-pointer">
                           <Pencil className="mr-4 size-4" />
                           Edit
                         </DropdownMenuItem>
-                        <DropdownMenuItem disabled>
+                        <DropdownMenuItem
+                          disabled={row.state === AssetState.ASSIGNED}
+                          className="cursor-pointer"
+                          onClick={() => {
+                            handleDeleteDialog(row);
+                          }}
+                        >
                           <Trash2 className="mr-4 size-4" />
                           Delete
                         </DropdownMenuItem>
@@ -266,6 +289,15 @@ export default function AssetList() {
           isOpen={dialogOpen}
           onOpenChange={setDialogOpen}
           assetId={selectedAssetId}
+        />
+      )}
+
+      {deleteDialogOpen && deletedAsset && (
+        <DeleteAssetDialog
+          asset={deletedAsset}
+          isOpen={deleteDialogOpen}
+          onOpenChange={setDeleteDialogOpen}
+          refetchAssets={refetchAssets}
         />
       )}
     </div>
