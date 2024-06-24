@@ -3,7 +3,12 @@
 import type { Order } from '@/lib/@types/api';
 import HttpService from '@/lib/services/http.service';
 
-import type { User, UserSortField } from './user.types';
+import type {
+  CreateUserRequest,
+  CreateUserResponse,
+  User,
+  UserSortField,
+} from './user.types';
 
 class UserApiService extends HttpService {
   getUserById(id: string) {
@@ -42,6 +47,10 @@ class UserApiService extends HttpService {
 
   getUser(username: string) {
     return this.get<User>(`users/${username}`);
+  }
+
+  postUser(data: CreateUserRequest) {
+    return this.post<CreateUserResponse>('/users', data);
   }
 }
 

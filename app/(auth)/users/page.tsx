@@ -1,3 +1,6 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable no-restricted-globals */
+
 'use client';
 
 import {
@@ -8,6 +11,7 @@ import {
   Trash2,
 } from 'lucide-react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 import { MultipleSelect } from '@/components/custom/multiple-select';
@@ -52,6 +56,9 @@ const columns = [
 ];
 
 export default function UserList() {
+  const searchParams = useSearchParams();
+  const newUserParam = searchParams.get('new');
+
   const [page, setPage] = useState(1);
   const [searchValue, setSearchValue] = useState('');
   const debouncedSearchValue = useDebounce(searchValue, 700);
@@ -59,9 +66,11 @@ export default function UserList() {
     AccountType.ADMIN,
     AccountType.STAFF,
   ]);
-  const [sortField, setSortField] = useState<UserSortField>('name');
-  const [sortOrder, setSortOrder] = useState<Order>(Order.ASC);
-
+  const sortFieldName =
+    newUserParam === 'true' ? 'updatedAt' : ('name' as UserSortField);
+  const [sortField, setSortField] = useState<UserSortField>(sortFieldName);
+  const sortOrderValue = newUserParam === 'true' ? Order.DESC : Order.ASC;
+  const [sortOrder, setSortOrder] = useState<Order>(sortOrderValue);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedUsername, setSelectedUsername] = useState<string | null>(null);
 
@@ -84,6 +93,12 @@ export default function UserList() {
     sortOrder,
     refetchUsers,
   ]);
+
+  useEffect(() => {
+    if (newUserParam === 'true') {
+      history.replaceState({ new: true }, '', '/users');
+    }
+  }, []);
 
   const handlePageChange = (newPage: number) => {
     setPage(newPage);

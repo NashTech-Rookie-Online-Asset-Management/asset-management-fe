@@ -18,8 +18,8 @@ export enum Location {
 }
 
 export enum Gender {
-  MALE = 'MALE',
   FEMALE = 'FEMALE',
+  MALE = 'MALE',
 }
 
 export enum AssetState {

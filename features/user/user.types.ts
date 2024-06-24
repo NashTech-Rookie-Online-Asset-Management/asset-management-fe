@@ -13,4 +13,31 @@ export type User = {
   location: Location;
 };
 
-export type UserSortField = 'staffCode' | 'name' | 'joinedDate' | 'type';
+export type UserSortField =
+  | 'staffCode'
+  | 'name'
+  | 'joinedDate'
+  | 'type'
+  | 'updatedAt';
+
+export type CreateUserRequest = {
+  firstName: string;
+  lastName: string;
+  dob: string;
+  gender: string;
+  joinedAt: string;
+  type: string;
+  location?: string | undefined;
+};
+
+export type CreateUserResponse = {
+  staffCode: string;
+  firstName: string;
+  lastName: string;
+  username: string;
+  password: string;
+  dob: Date;
+  gender: Gender;
+  joinedAt: Date;
+  type: AccountType;
+};
