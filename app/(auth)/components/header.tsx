@@ -21,10 +21,6 @@ import LogoutDialog from './logout-dialog';
 
 const navHeadings = [
   {
-    path: '/',
-    heading: 'Home',
-  },
-  {
     path: '/assets',
     heading: 'Assets',
   },
@@ -39,6 +35,10 @@ const navHeadings = [
   {
     path: '/returning-requests',
     heading: 'Returning Requests',
+  },
+  {
+    path: '/',
+    heading: 'Home',
   },
 ];
 
@@ -57,7 +57,7 @@ function AuthHeader() {
             <NashTechLogo className="size-full" />
           </div>
           <h1 className="text-xl font-bold text-primary-foreground">
-            {navHeadings.find((heading) => heading.path === pathname)
+            {navHeadings.find((heading) => pathname.includes(heading.path))
               ?.heading || 'OAM'}
           </h1>
         </div>
