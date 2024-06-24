@@ -2,13 +2,10 @@ import { keepPreviousData, useQuery } from '@tanstack/react-query';
 
 import assetApi from './asset.service';
 
-function useGetAsset({ assetId }: { assetId: number }) {
+function useGetAsset(assetId: number) {
   return useQuery({
-    queryKey: ['asset', assetId],
-    queryFn: () =>
-      assetApi.getAsset({
-        assetId,
-      }),
+    queryKey: ['assets', assetId],
+    queryFn: () => assetApi.getAsset(assetId),
     placeholderData: keepPreviousData,
   });
 }

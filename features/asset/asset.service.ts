@@ -34,7 +34,7 @@ class AssetApiService extends HttpService {
     });
   }
 
-  getAsset({ assetId }: { assetId: number }) {
+  getAsset(assetId: number) {
     return this.get<Asset>(`assets/${assetId}`);
   }
 

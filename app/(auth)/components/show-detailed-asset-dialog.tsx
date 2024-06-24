@@ -19,6 +19,7 @@ import {
 } from '@/components/ui/table';
 import useGetAsset from '@/features/asset/useGetAsset';
 import { AssetStateOptions } from '@/lib/constants/asset';
+import { LocationOptions } from '@/lib/constants/user';
 import { displayDate } from '@/lib/utils/date';
 
 const columns = ['Date', 'Assigned to', 'Assigned by', 'Returned date'];
@@ -32,7 +33,7 @@ export default function DetailedAssetDialog({
   isOpen: boolean;
   onOpenChange: (isOpen: boolean) => void;
 }) {
-  const { data: asset, isLoading } = useGetAsset({ assetId });
+  const { data: asset, isLoading } = useGetAsset(assetId);
 
   return (
     <Dialog open={isOpen} modal onOpenChange={onOpenChange}>
@@ -56,6 +57,7 @@ export default function DetailedAssetDialog({
                 value: displayDate(asset.installedDate),
               },
               { label: 'State', value: AssetStateOptions[asset.state] },
+              { label: 'Location', value: LocationOptions[asset.location] },
               { label: 'Specification', value: asset.specification },
             ].map(({ label, value }) => (
               <DataRow key={label} label={label} value={value} />

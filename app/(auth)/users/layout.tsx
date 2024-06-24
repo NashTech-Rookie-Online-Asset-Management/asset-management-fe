@@ -7,7 +7,7 @@ export const metadata = {
 };
 
 function UserLayout({ children }: React.PropsWithChildren<Props>) {
-  return <div>{children}</div>;
+  return <div className="py-8">{children}</div>;
 }
 
 export default UserLayout;

@@ -53,7 +53,7 @@ export function MultipleSelect({
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-[200px] justify-between"
+          className="w-full justify-between"
         >
           {selectedItems.length === 0
             ? title
@@ -62,7 +62,7 @@ export function MultipleSelect({
           <Filter className="ml-2 size-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="max-h-80 w-[200px] overflow-y-auto p-0">
+      <PopoverContent className="max-h-80 w-full min-w-72 overflow-y-auto p-0">
         <Command>
           {items && items.length > 0 ? (
             <CommandList>
