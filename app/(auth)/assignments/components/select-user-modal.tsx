@@ -44,7 +44,7 @@ export default function SelectUserModal(props: ModalProps) {
 
   return (
     <Dialog open={props.open} onOpenChange={props.setOpen}>
-      <DialogContent className="max-w-3xl py-3">
+      <DialogContent hideCloseButton className="max-w-3xl py-3">
         <DialogHeader className="flex flex-row items-center justify-between">
           <TypographyH5 className="text-primary">Select User</TypographyH5>
           <div className="relative w-5/12">
@@ -60,8 +60,8 @@ export default function SelectUserModal(props: ModalProps) {
         <RadioGroup value={user} onValueChange={(value) => setUser(value)}>
           <div className="relative max-h-[60vh] overflow-y-auto">
             <Table>
-              <TableHeader className="sticky top-0 z-10">
-                <TableRow className="bg-white hover:bg-white">
+              <TableHeader className="sticky top-0 z-10 bg-background">
+                <TableRow>
                   <TableHead />
                   <TableHead>Staff Code</TableHead>
                   <TableHead>Fullname</TableHead>

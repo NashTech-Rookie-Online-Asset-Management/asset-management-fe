@@ -100,7 +100,9 @@ export default function AssignmentForm() {
             name="staffCode"
             render={({ field }) => (
               <FormItem className="space-y-2">
-                <FormLabel className="font-normal">User</FormLabel>
+                <FormLabel className="font-normal">
+                  <span className="required">User</span>
+                </FormLabel>
                 <FormControl>
                   <div className="relative">
                     <Input readOnly {...field} />
@@ -120,7 +122,9 @@ export default function AssignmentForm() {
             name="assetCode"
             render={({ field }) => (
               <FormItem className="space-y-2">
-                <FormLabel className="font-normal">Asset</FormLabel>
+                <FormLabel className="font-normal">
+                  <span className="required">Asset</span>
+                </FormLabel>
                 <FormControl>
                   <div className="relative">
                     <Input readOnly {...field} />
@@ -140,7 +144,9 @@ export default function AssignmentForm() {
             name="assignedDate"
             render={({ field }) => (
               <FormItem className="flex flex-col space-y-2">
-                <FormLabel className="font-normal">Date of birth</FormLabel>
+                <FormLabel className="font-normal">
+                  <span className="required">Assigned Date</span>
+                </FormLabel>
                 <Popover>
                   <PopoverTrigger asChild>
                     <FormControl>

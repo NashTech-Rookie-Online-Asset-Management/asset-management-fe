@@ -43,7 +43,7 @@ export default function SelectAssetModal(props: ModalProps) {
 
   return (
     <Dialog open={props.open} onOpenChange={props.setOpen}>
-      <DialogContent className="max-w-3xl py-3">
+      <DialogContent hideCloseButton className="max-w-3xl py-3">
         <DialogHeader className="flex flex-row items-center justify-between">
           <TypographyH5 className="text-primary">Select Asset</TypographyH5>
           <div className="relative w-5/12">
@@ -59,8 +59,8 @@ export default function SelectAssetModal(props: ModalProps) {
         <RadioGroup value={asset} onValueChange={(value) => setAsset(value)}>
           <div className="relative max-h-[60vh] overflow-y-auto">
             <Table>
-              <TableHeader className="sticky top-0 z-10">
-                <TableRow className="bg-white hover:bg-white">
+              <TableHeader className="sticky top-0 z-10 bg-background">
+                <TableRow>
                   <TableHead />
                   <TableHead>Asset Code</TableHead>
                   <TableHead>Asset Name</TableHead>
