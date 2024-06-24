@@ -63,7 +63,7 @@ const Sidebar = () => {
     path.length > 1 ? currentPath.includes(path) : currentPath === path;
 
   return (
-    <nav className="mt-10 w-64">
+    <nav className="w-64">
       <div className="mb-6">
         <div className="my-2 aspect-square size-40 dark:bg-gradient-to-r dark:from-[#831963] dark:to-[#cd0021] dark:p-2">
           <NashTechLogo className="size-full dark:fill-white" />

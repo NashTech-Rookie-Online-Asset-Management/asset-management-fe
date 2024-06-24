@@ -64,3 +64,7 @@
         @apply after:content-['*'] after:ml-0.5 after:text-red-500;
     }
 }
+
+html {
+    font-size: 14px;
+}
