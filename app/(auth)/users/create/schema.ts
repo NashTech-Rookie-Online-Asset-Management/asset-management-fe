@@ -41,12 +41,23 @@ export const createUserFormSchema = z
     location: z.string().optional(),
   })
   .refine(
-    (schema) =>
-      new Date(schema.joinedAt).getFullYear() -
-        new Date(schema.dob).getFullYear() >=
-      18,
+    (schema) => {
+      return new Date(schema.joinedAt) > new Date(schema.dob);
+    },
     {
-      path: ['general'],
+      path: ['joinedAt'],
+      message: 'Invalid joined date. It must be after the date of birth.',
+    },
+  )
+  .refine(
+    (schema) => {
+      const timeDiff =
+        new Date(schema.joinedAt).getTime() - new Date(schema.dob).getTime();
+      const daysDiff = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+      return daysDiff > 18 * 365;
+    },
+    {
+      path: ['joinedAt'],
       message:
         'Invalid joined date. It must be at least 18 years after the date of birth.',
     },

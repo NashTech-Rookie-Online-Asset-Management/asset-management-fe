@@ -1,7 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import Link from 'next/link';
+import { useRouter } from 'next-nprogress-bar';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import type { z } from 'zod';
@@ -42,6 +42,7 @@ import CreateUserResultDialog from './result-dialog';
 import { createUserFormSchema } from './schema';
 
 function CreateUserForm() {
+  const router = useRouter();
   const form = useForm<z.infer<typeof createUserFormSchema>>({
     resolver: zodResolver(createUserFormSchema),
   });
@@ -246,18 +247,15 @@ function CreateUserForm() {
                   )}
                 />
               )}
-              <p className="text-sm font-medium text-destructive">
-                {(form.formState.errors as any)?.general?.message}
-              </p>
             </CardContent>
             <CardFooter className="mt-3 flex gap-4">
               <Button
                 variant="secondary"
-                asChild
                 className="w-1/2"
                 data-id="cancel-button"
+                onClick={() => router.back()}
               >
-                <Link href="/users">Cancel</Link>
+                Cancel
               </Button>
               <LoadingButton
                 className="w-1/2"
