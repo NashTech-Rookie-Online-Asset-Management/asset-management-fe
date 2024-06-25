@@ -8,7 +8,12 @@ import {
   Trash2,
 } from 'lucide-react';
 import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
+import {
+  parseAsArrayOf,
+  parseAsString,
+  parseAsStringEnum,
+  useQueryState,
+} from 'nuqs';
 import { useEffect, useState } from 'react';
 
 import { MultipleSelect } from '@/components/custom/multiple-select';
@@ -30,13 +35,17 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import type { Asset, AssetSortField } from '@/features/asset/asset.types';
+import {
+  type Asset,
+  type AssetSortField,
+  assetSortFields,
+} from '@/features/asset/asset.types';
 import useGetAssets from '@/features/asset/useGetAssets';
 import useGetCategories from '@/features/category/useGetCategories';
 import { AssetState, Order } from '@/lib/@types/api';
 import { AssetStateOptions } from '@/lib/constants/asset';
 import { PAGE_SIZE } from '@/lib/constants/pagination';
-import useDebounce from '@/lib/hooks/useDebounce';
+import usePagination from '@/lib/hooks/usePagination';
 
 import DeleteAssetDialog from '../components/delete-asset-dialog';
 import DetailedAssetDialog from '../components/show-detailed-asset-dialog';
@@ -49,37 +58,38 @@ const columns = [
 ];
 
 export default function AssetList() {
-  const searchParams = useSearchParams();
-  const newAssetParam = searchParams.get('new');
-
-  const [page, setPage] = useState(1);
-  const [searchValue, setSearchValue] = useState('');
-  const debouncedSearchValue = useDebounce(searchValue, 700);
-  const [selectedAssetStates, setSelectedAssetStates] = useState<string[]>(
-    newAssetParam
-      ? [newAssetParam]
-      : [AssetState.ASSIGNED, AssetState.AVAILABLE, AssetState.UNAVAILABLE],
+  const [selectedAssetStates, setSelectedAssetStates] = useQueryState(
+    'states',
+    parseAsArrayOf(
+      parseAsStringEnum<AssetState>(Object.values(AssetState)),
+    ).withDefault([
+      AssetState.ASSIGNED,
+      AssetState.AVAILABLE,
+      AssetState.UNAVAILABLE,
+    ]),
   );
-  const [selectedCategoryIds, setSelectedCategoryIds] = useState<string[]>([]);
-  const sortFieldName: AssetSortField = newAssetParam
-    ? 'updatedAt'
-    : 'assetCode';
-  const [sortField, setSortField] = useState<AssetSortField>(sortFieldName);
-  const sortOrderValue = newAssetParam ? Order.DESC : Order.ASC;
-  const [sortOrder, setSortOrder] = useState<Order>(sortOrderValue);
-
+  const [selectedCategoryIds, setSelectedCategoryIds] = useQueryState(
+    'categoryIds',
+    parseAsArrayOf(parseAsString).withDefault([] as string[]),
+  );
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedAssetId, setSelectedAssetId] = useState<number | null>(null);
-
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [deletedAsset, setDeletedAsset] = useState<Asset | null>(null);
+  const pagination = usePagination({
+    sortFields: assetSortFields,
+    defaultSortField: 'assetCode',
+  });
+  const { page, searchValue, sortField, sortOrder } = pagination.metadata;
+  const { handlePageChange, handleSearch, handleSortColumn } =
+    pagination.handlers;
 
   const { data: assets, refetch: refetchAssets } = useGetAssets({
     page,
     take: PAGE_SIZE,
-    search: debouncedSearchValue,
-    states: selectedAssetStates,
-    categoryIds: selectedCategoryIds,
+    search: searchValue,
+    states: selectedAssetStates as string[],
+    categoryIds: selectedCategoryIds as string[],
     sortField,
     sortOrder,
   });
@@ -87,17 +97,11 @@ export default function AssetList() {
   const { data: categories, refetch: refetchCategories } = useGetCategories();
 
   useEffect(() => {
-    if (newAssetParam) {
-      window.history.replaceState({ new: true }, '', '/assets');
-    }
-  }, []);
-
-  useEffect(() => {
     refetchAssets();
     refetchCategories();
   }, [
     page,
-    debouncedSearchValue,
+    searchValue,
     selectedAssetStates,
     selectedCategoryIds,
     sortField,
@@ -106,34 +110,14 @@ export default function AssetList() {
     refetchCategories,
   ]);
 
-  const handlePageChange = (newPage: number) => {
-    setPage(newPage);
-  };
-
-  const handleSearch = (value: string) => {
-    setSearchValue(value);
-    setPage(1);
-  };
-
   const handleSetSelectedAssetStates = (selectedItems: string[]) => {
-    setSelectedAssetStates(selectedItems);
-    setPage(1);
+    setSelectedAssetStates(selectedItems as AssetState[]);
+    handlePageChange(1);
   };
 
   const handleSetSelectedCategoryIds = (selectedItems: string[]) => {
     setSelectedCategoryIds(selectedItems);
-    setPage(1);
-  };
-
-  const handleSortColumn = (column: AssetSortField) => {
-    if (sortField === column) {
-      setSortOrder((prevOrder) =>
-        prevOrder === Order.ASC ? Order.DESC : Order.ASC,
-      );
-    } else {
-      setSortField(column);
-      setSortOrder(Order.ASC);
-    }
+    handlePageChange(1);
   };
 
   const handleOpenDialog = (assetId: number) => {
@@ -174,10 +158,8 @@ export default function AssetList() {
                 value: AssetState.RECYCLED,
               },
             ]}
-            selectedItems={selectedAssetStates}
-            setSelectedItems={(selectedItems: string[]) =>
-              handleSetSelectedAssetStates(selectedItems)
-            }
+            selectedItems={selectedAssetStates as string[]}
+            setSelectedItems={handleSetSelectedAssetStates}
           />
         </div>
         <div className="lg:col-span-1">
@@ -187,10 +169,8 @@ export default function AssetList() {
               label: category.name,
               value: category.id.toString(),
             }))}
-            selectedItems={selectedCategoryIds}
-            setSelectedItems={(selectedItems: string[]) =>
-              handleSetSelectedCategoryIds(selectedItems)
-            }
+            selectedItems={selectedCategoryIds as string[]}
+            setSelectedItems={handleSetSelectedCategoryIds}
           />
         </div>
         <div className="lg:col-span-1">

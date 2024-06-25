@@ -58,6 +58,7 @@
     "next": "14.2.2",
     "next-nprogress-bar": "^2.3.12",
     "next-themes": "^0.3.0",
+    "nuqs": "^1.17.4",
     "react": "^18",
     "react-day-picker": "^8.10.1",
     "react-dom": "^18",

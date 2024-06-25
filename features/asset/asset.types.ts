@@ -30,12 +30,15 @@ export type Asset = {
   }[];
 };
 
-export type AssetSortField =
-  | 'assetCode'
-  | 'name'
-  | 'category'
-  | 'state'
-  | 'updatedAt';
+export const assetSortFields = [
+  'assetCode',
+  'name',
+  'category',
+  'state',
+  'updatedAt',
+] as const;
+
+export type AssetSortField = (typeof assetSortFields)[number];
 
 export type CreateAssetRequest = {
   name: string;
