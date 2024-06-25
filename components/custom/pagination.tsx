@@ -1,16 +1,16 @@
 // eslint-disable-next-line simple-import-sort/imports
-import { useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 
 import {
   PaginationContent,
   PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
   PaginationNext,
   PaginationPrevious,
   Pagination as UIPagination,
 } from '@/components/ui/pagination';
 import { Input } from '../ui/input';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import ReactPagination from 'react-paginate';
 
 const Pagination = ({
   totalPages,
@@ -22,35 +22,17 @@ const Pagination = ({
   onPageChange: (page: number) => void;
 }) => {
   const maxPages = 3;
+  const [inputValue, setInputValue] = useState(currentPage.toString());
 
-  const [paginationRange, setPaginationRange] = useState<number[]>([]);
-
-  useEffect(() => {
-    const calculatePaginationRange = () => {
-      const halfMaxPages = Math.floor(maxPages / 2);
-      const startPage = Math.max(1, currentPage - halfMaxPages);
-      const endPage = Math.min(totalPages, startPage + maxPages - 1);
-
-      const range = Array.from(
-        { length: endPage - startPage + 1 },
-        (_, i) => startPage + i,
-      );
-
-      if (currentPage === totalPages && totalPages >= maxPages) {
-        range.unshift(currentPage - 2);
+  const handlePageChange = useCallback(
+    (page: number) => {
+      if (page !== currentPage && page > 0 && page <= totalPages) {
+        onPageChange(page);
+        setInputValue(page.toString());
       }
-
-      setPaginationRange(range);
-    };
-
-    calculatePaginationRange();
-  }, [currentPage, maxPages, totalPages]);
-
-  const handlePageChange = (page: number) => {
-    if (page !== currentPage && page > 0 && page <= totalPages) {
-      onPageChange(page);
-    }
-  };
+    },
+    [currentPage, onPageChange, totalPages],
+  );
 
   if (totalPages <= 1) {
     return null;
@@ -59,127 +41,67 @@ const Pagination = ({
   return (
     <UIPagination className="flex justify-end gap-8">
       <PaginationContent>
-        <PaginationItem>
-          <PaginationPrevious
-            aria-disabled={currentPage <= 1}
-            tabIndex={currentPage <= 1 ? -1 : 0}
-            className={currentPage <= 1 ? 'pointer-events-none opacity-50' : ''}
-            onClick={() => {
-              handlePageChange(currentPage - 1);
-            }}
-          >
-            Previous
-          </PaginationPrevious>
-        </PaginationItem>
-
-        {currentPage === maxPages && totalPages > maxPages && (
-          <PaginationItem>
-            <PaginationLink
-              onClick={() => {
-                handlePageChange(1);
-              }}
+        <ReactPagination
+          pageCount={totalPages}
+          pageRangeDisplayed={maxPages}
+          marginPagesDisplayed={1}
+          initialPage={currentPage - 1}
+          onPageChange={(data) => {
+            handlePageChange(data.selected + 1);
+          }}
+          forcePage={currentPage - 1}
+          disableInitialCallback
+          breakLinkClassName="null"
+          containerClassName="flex items-center gap-2"
+          pageLinkClassName="inline-flex size-10 items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground"
+          activeLinkClassName="inline-flex size-10 items-center justify-center whitespace-nowrap rounded-md border border-gray-300 text-sm font-medium ring-offset-background transition-colors"
+          previousLabel={
+            <PaginationPrevious
+              aria-disabled={currentPage <= 1}
+              tabIndex={currentPage <= 1 ? -1 : 0}
+              className={
+                currentPage <= 1
+                  ? 'cursor-default opacity-50 hover:bg-white'
+                  : ''
+              }
             >
-              1
-            </PaginationLink>
-          </PaginationItem>
-        )}
-
-        {paginationRange[0] > maxPages - 1 && (
-          <>
-            <PaginationItem>
-              <PaginationLink
-                onClick={() => {
-                  handlePageChange(1);
-                }}
-              >
-                1
-              </PaginationLink>
-            </PaginationItem>
-
-            <PaginationItem>
-              <PaginationEllipsis />
-            </PaginationItem>
-          </>
-        )}
-
-        {paginationRange.map((page) => (
-          <PaginationItem key={page}>
-            <PaginationLink
-              isActive={currentPage === page}
-              onClick={() => {
-                handlePageChange(page);
-              }}
+              Previous
+            </PaginationPrevious>
+          }
+          nextLabel={
+            <PaginationNext
+              aria-disabled={currentPage >= totalPages}
+              tabIndex={currentPage >= totalPages ? -1 : 0}
+              className={
+                currentPage >= totalPages
+                  ? 'cursor-default opacity-50 hover:bg-white'
+                  : ''
+              }
             >
-              {page}
-            </PaginationLink>
-          </PaginationItem>
-        ))}
-
-        {currentPage === totalPages - maxPages + 1 && totalPages > maxPages && (
-          <PaginationItem>
-            <PaginationLink
-              onClick={() => {
-                handlePageChange(totalPages);
-              }}
-            >
-              {totalPages}
-            </PaginationLink>
-          </PaginationItem>
-        )}
-
-        {paginationRange[paginationRange.length - 1] < totalPages - 1 && (
-          <>
-            <PaginationItem>
-              <PaginationEllipsis />
-            </PaginationItem>
-
-            <PaginationItem>
-              <PaginationLink
-                onClick={() => {
-                  handlePageChange(totalPages);
-                }}
-              >
-                {totalPages}
-              </PaginationLink>
-            </PaginationItem>
-          </>
-        )}
-
-        <PaginationItem>
-          <PaginationNext
-            aria-disabled={currentPage >= totalPages}
-            tabIndex={currentPage >= totalPages ? -1 : 0}
-            className={
-              currentPage >= totalPages ? 'pointer-events-none opacity-50' : ''
-            }
-            onClick={() => {
-              handlePageChange(currentPage + 1);
-            }}
-          >
-            Next
-          </PaginationNext>
-        </PaginationItem>
+              Next
+            </PaginationNext>
+          }
+          breakLabel={<PaginationEllipsis />}
+        />
       </PaginationContent>
 
       <Input
         type="number"
         placeholder="Go to"
         className="w-20"
+        value={inputValue}
         min={1}
         max={totalPages}
         onChange={(e) => {
-          const value = Number(e.target.value);
-          let page = value;
-          if (value < 1) {
-            page = 1;
-          } else if (value > totalPages) {
-            page = totalPages;
+          let value = Number(e.target.value);
+          if (value) {
+            value = Math.min(Math.max(value, 1), totalPages);
+            e.target.value = value.toString();
+            handlePageChange(value);
+          } else {
+            e.target.value = '';
           }
-
-          if (page) {
-            e.target.value = String(page);
-            handlePageChange(page);
-          }
+          setInputValue(e.target.value);
         }}
       />
     </UIPagination>

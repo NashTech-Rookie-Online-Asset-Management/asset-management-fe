@@ -56,7 +56,9 @@ export default function AssetList() {
   const [searchValue, setSearchValue] = useState('');
   const debouncedSearchValue = useDebounce(searchValue, 700);
   const [selectedAssetStates, setSelectedAssetStates] = useState<string[]>(
-    newAssetParam ? [newAssetParam] : [],
+    newAssetParam
+      ? [newAssetParam]
+      : [AssetState.ASSIGNED, AssetState.AVAILABLE, AssetState.UNAVAILABLE],
   );
   const [selectedCategoryIds, setSelectedCategoryIds] = useState<string[]>([]);
   const sortFieldName: AssetSortField = newAssetParam

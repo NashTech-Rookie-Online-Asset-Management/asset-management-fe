@@ -63,10 +63,7 @@ export default function UserList() {
   const [page, setPage] = useState(1);
   const [searchValue, setSearchValue] = useState('');
   const debouncedSearchValue = useDebounce(searchValue, 700);
-  const [selectedUserTypes, setSelectedUsertTypes] = useState<string[]>([
-    AccountType.ADMIN,
-    AccountType.STAFF,
-  ]);
+  const [selectedUserTypes, setSelectedUsertTypes] = useState<string[]>([]);
   const sortFieldName =
     newUserParam === 'true' ? 'updatedAt' : ('name' as UserSortField);
   const [sortField, setSortField] = useState<UserSortField>(sortFieldName);
