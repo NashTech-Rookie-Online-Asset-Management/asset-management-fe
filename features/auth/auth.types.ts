@@ -22,6 +22,6 @@ export type Profile = {
   id: number | string;
   staffCode: string;
   username: string;
-  status: UserStatus;
+  status: keyof typeof UserStatus;
   type: AccountType;
 };

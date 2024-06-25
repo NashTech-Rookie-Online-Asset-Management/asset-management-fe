@@ -63,8 +63,8 @@ function CreateAssetForm() {
       installedDate: new Date(installedDate),
       ...values,
     };
-    const { assetCode } = await createAsset(data);
-    router.push(`/assets?newAsset=${assetCode}`);
+    const { state } = await createAsset(data);
+    router.push(`/assets?new=${state}`);
   }
 
   useOnClickOutside(categoryRef, closeCategory);

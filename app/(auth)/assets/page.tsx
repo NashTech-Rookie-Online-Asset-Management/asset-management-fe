@@ -8,6 +8,7 @@ import {
   Trash2,
 } from 'lucide-react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 import { MultipleSelect } from '@/components/custom/multiple-select';
@@ -48,13 +49,22 @@ const columns = [
 ];
 
 export default function AssetList() {
+  const searchParams = useSearchParams();
+  const newAssetParam = searchParams.get('new');
+
   const [page, setPage] = useState(1);
   const [searchValue, setSearchValue] = useState('');
   const debouncedSearchValue = useDebounce(searchValue, 700);
-  const [selectedAssetStates, setSelectedAssetStates] = useState<string[]>([]);
+  const [selectedAssetStates, setSelectedAssetStates] = useState<string[]>(
+    newAssetParam ? [newAssetParam] : [],
+  );
   const [selectedCategoryIds, setSelectedCategoryIds] = useState<string[]>([]);
-  const [sortField, setSortField] = useState<AssetSortField>('assetCode');
-  const [sortOrder, setSortOrder] = useState<Order>(Order.ASC);
+  const sortFieldName: AssetSortField = newAssetParam
+    ? 'updatedAt'
+    : 'assetCode';
+  const [sortField, setSortField] = useState<AssetSortField>(sortFieldName);
+  const sortOrderValue = newAssetParam ? Order.DESC : Order.ASC;
+  const [sortOrder, setSortOrder] = useState<Order>(sortOrderValue);
 
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedAssetId, setSelectedAssetId] = useState<number | null>(null);
@@ -73,6 +83,12 @@ export default function AssetList() {
   });
 
   const { data: categories, refetch: refetchCategories } = useGetCategories();
+
+  useEffect(() => {
+    if (newAssetParam) {
+      window.history.replaceState({ new: true }, '', '/assets');
+    }
+  }, []);
 
   useEffect(() => {
     refetchAssets();
@@ -243,12 +259,12 @@ export default function AssetList() {
                         onClick={(e) => e.stopPropagation()}
                       >
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <Link href="/assets/edit">
-                          <DropdownMenuItem className="cursor-pointer">
+                        <DropdownMenuItem className="cursor-pointer" asChild>
+                          <Link href="/assets/edit">
                             <Pencil className="mr-4 size-4" />
                             Edit
-                          </DropdownMenuItem>
-                        </Link>
+                          </Link>
+                        </DropdownMenuItem>
                         <DropdownMenuItem
                           disabled={row.state === AssetState.ASSIGNED}
                           className="cursor-pointer"

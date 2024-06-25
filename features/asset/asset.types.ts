@@ -6,10 +6,10 @@ export type Asset = {
   id: number;
   assetCode: string;
   name: string;
-  state: AssetState;
+  state: keyof typeof AssetState;
   category: Omit<Category, 'prefix'>;
   installedDate: string;
-  location: Location;
+  location: keyof typeof Location;
   specification: string;
   // TODO: Change to Assignment type
   assignments: {
@@ -30,12 +30,21 @@ export type Asset = {
   }[];
 };
 
-export type AssetSortField = 'assetCode' | 'name' | 'category' | 'state';
+export type AssetSortField =
+  | 'assetCode'
+  | 'name'
+  | 'category'
+  | 'state'
+  | 'updatedAt';
 
 export type CreateAssetRequest = {
   name: string;
   categoryId: number;
   specification?: string;
   installedDate: Date;
-  state: AssetState;
+  state: keyof typeof AssetState;
 };
+
+export type UpdateAssetRequest = Partial<
+  Omit<CreateAssetRequest, 'categoryId'>
+> & { id: number };
