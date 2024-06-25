@@ -261,8 +261,12 @@ export default function AssetList() {
                         onClick={(e) => e.stopPropagation()}
                       >
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem className="cursor-pointer" asChild>
-                          <Link href="/assets/edit">
+                        <DropdownMenuItem
+                          className="cursor-pointer"
+                          asChild
+                          disabled={row.state === AssetState.ASSIGNED}
+                        >
+                          <Link href={`/assets/${row.id}`}>
                             <Pencil className="mr-4 size-4" />
                             Edit
                           </Link>
