@@ -141,7 +141,7 @@ export default function UserList() {
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-4">
         <div className="lg:col-span-1">
           <MultipleSelect
-            title="State"
+            title="Type"
             items={[
               {
                 label: AccountTypeOptions[AccountType.ADMIN],
@@ -250,7 +250,7 @@ export default function UserList() {
                           }}
                         >
                           <Trash2 className="mr-4 size-4" />
-                          Delete
+                          Disable
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
