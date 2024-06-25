@@ -19,15 +19,20 @@ export async function middleware(request: NextRequest) {
     try {
       const user = await authApi.checkAuth(accessToken);
 
-      const isAccountTypeValid = PROTECTED_ROUTES[
-        PROTECTED_ROUTES.findIndex((route) => pathName.includes(route.path))
-      ].accountTypes.includes(user.type);
+      const isAccountTypeValid = !!PROTECTED_ROUTES.find((route) =>
+        pathName.includes(route.path),
+      )?.accountTypes.includes(user.type);
 
-      if (isAccountTypeValid && !pathName.includes(authPath)) {
-        return NextResponse.next();
+      const closedRoute =
+        [...PROTECTED_ROUTES]
+          .sort((a, b) => (b.order > a.order ? -1 : 1))
+          .find((route) => route.accountTypes.includes(user.type))?.path || '/';
+
+      if (!isAccountTypeValid || pathName.includes(authPath)) {
+        return NextResponse.redirect(new URL(closedRoute, request.url));
       }
 
-      return NextResponse.redirect(new URL('/', request.url));
+      return NextResponse.next();
     } catch (error: unknown) {
       const redirectRes = NextResponse.redirect(
         new URL(signInPath, request.url),

@@ -74,19 +74,19 @@ const Sidebar = () => {
         </h4>
       </div>
       <ul className="rounded-lg bg-secondary">
-        <NavLink href="/" title="Home" isActive={isActive('/')} />
         {user &&
-          PROTECTED_ROUTES.filter(
-            (route) =>
-              route.title !== 'Home' && route.accountTypes.includes(user.type),
-          ).map((route) => (
-            <NavLink
-              title={route.title}
-              href={route.path}
-              isActive={isActive(route.path)}
-              key={route.path}
-            />
-          ))}
+          PROTECTED_ROUTES.filter((route) =>
+            route.accountTypes.includes(user.type),
+          )
+            .sort((a, b) => (b.order > a.order ? -1 : 1))
+            .map((route) => (
+              <NavLink
+                title={route.title}
+                href={route.path}
+                isActive={isActive(route.path)}
+                key={route.path}
+              />
+            ))}
       </ul>
     </nav>
   );
