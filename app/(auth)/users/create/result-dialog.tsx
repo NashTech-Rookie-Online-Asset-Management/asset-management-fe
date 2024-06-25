@@ -65,6 +65,7 @@ function CreateUserResultDialog(props: CreateUserResultDialogProps) {
             className="mt-3 w-full"
             disabled={false}
             onClick={handleConfirmDialog}
+            data-id="confirm-button"
           >
             Confirm
           </Button>

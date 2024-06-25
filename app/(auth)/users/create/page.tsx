@@ -1,4 +1,4 @@
-import CreateUserForm from './create-user-form';
+import CreateUserForm from './form';
 
 export const metadata = {
   title: 'Create User | OAM',

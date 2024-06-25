@@ -170,7 +170,12 @@ export default function UserList() {
             onChange={(e) => handleSearch(e.target.value)}
           />
         </div>
-        <Button variant="default" className="lg:col-span-1" asChild>
+        <Button
+          variant="default"
+          className="lg:col-span-1"
+          asChild
+          data-id="create-button"
+        >
           <Link href="/users/create">Create new user</Link>
         </Button>
       </div>

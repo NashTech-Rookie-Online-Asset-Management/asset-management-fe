@@ -49,12 +49,12 @@ class UserApiService extends HttpService {
     return this.get<User>(`users/${username}`);
   }
 
-  deleteUser(staffCode: string) {
-    return this.delete(`users/${staffCode}`) as Promise<ApiMessage>;
-  }
-
   postUser(data: CreateUserRequest) {
     return this.post<CreateUserResponse>('/users', data);
+  }
+
+  deleteUser(staffCode: string) {
+    return this.delete(`users/${staffCode}`) as Promise<ApiMessage>;
   }
 }
 

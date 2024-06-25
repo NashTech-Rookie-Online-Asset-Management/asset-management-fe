@@ -1,8 +1,8 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useRouter } from 'next-nprogress-bar';
-import { useEffect } from 'react';
+import Link from 'next/link';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import type { z } from 'zod';
 
@@ -38,35 +38,57 @@ import useCreateUser from '@/features/user/useCreateUser';
 import { AccountType, Gender, Location } from '@/lib/@types/api';
 import { normalizeText } from '@/lib/utils';
 
-import CreateUserResultDialog from './create-user-result-dialog';
+import CreateUserResultDialog from './result-dialog';
 import { createUserFormSchema } from './schema';
 
 function CreateUserForm() {
-  const router = useRouter();
   const form = useForm<z.infer<typeof createUserFormSchema>>({
     resolver: zodResolver(createUserFormSchema),
   });
+  const firstName = form.watch('firstName');
+  const lastName = form.watch('lastName');
+  const dob = form.watch('dob');
+  const gender = form.watch('gender');
+  const joinedAt = form.watch('joinedAt');
+  const type = form.watch('type');
+  const location = form.watch('location');
+
   const {
     mutateAsync: createUser,
     isPending,
     isSuccess,
     data,
   } = useCreateUser();
+  const { data: user } = useProfile();
+
+  const [saveButtonEnabled, setSaveButtonEnabled] = useState(false);
 
   async function onSubmit(values: z.infer<typeof createUserFormSchema>) {
     await createUser(values);
   }
-  const { data: user } = useProfile();
+
+  function checkSaveButtonEnabled(): boolean {
+    const commonFieldsFilled =
+      firstName && lastName && dob && gender && joinedAt && type;
+
+    if (user?.type === AccountType.ROOT)
+      return !!(commonFieldsFilled && location);
+    return !!commonFieldsFilled;
+  }
 
   useEffect(() => {
     form.reset();
-  }, [isSuccess]);
+  }, [form, isSuccess]);
+
+  useEffect(() => {
+    setSaveButtonEnabled(checkSaveButtonEnabled());
+  }, [firstName, lastName, dob, gender, joinedAt, type, location]);
 
   return (
     <>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
-          <Card className="w-96">
+          <Card className="w-7/12">
             <CardHeader>
               <CardTitle className="text-2xl text-red-700">
                 Create New User
@@ -78,7 +100,9 @@ function CreateUserForm() {
                 name="firstName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>First Name</FormLabel>
+                    <FormLabel>
+                      <span className="required">First Name</span>
+                    </FormLabel>
                     <FormControl>
                       <Input
                         placeholder="Type in user first name"
@@ -95,7 +119,10 @@ function CreateUserForm() {
                 name="lastName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Last Name</FormLabel>
+                    <FormLabel>
+                      {' '}
+                      <span className="required">Last Name</span>
+                    </FormLabel>
                     <FormControl>
                       <Input placeholder="Type in user last name" {...field} />
                     </FormControl>
@@ -108,7 +135,9 @@ function CreateUserForm() {
                 name="dob"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Date of Birth</FormLabel>
+                    <FormLabel>
+                      <span className="required">Date of Birth</span>
+                    </FormLabel>
                     <FormControl>
                       <Input type="date" className="block" {...field} />
                     </FormControl>
@@ -121,10 +150,12 @@ function CreateUserForm() {
                 name="gender"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Gender</FormLabel>
+                    <FormLabel>
+                      <span className="required">Gender</span>
+                    </FormLabel>
                     <FormControl>
                       <RadioGroup
-                        className="flex"
+                        className="flex gap-8"
                         onValueChange={field.onChange}
                       >
                         {Object.values(Gender).map((e) => (
@@ -150,7 +181,9 @@ function CreateUserForm() {
                 name="joinedAt"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Joined Date</FormLabel>
+                    <FormLabel>
+                      <span className="required">Joined Date</span>
+                    </FormLabel>
                     <FormControl>
                       <Input type="date" className="block" {...field} />
                     </FormControl>
@@ -163,7 +196,9 @@ function CreateUserForm() {
                 name="type"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Type</FormLabel>
+                    <FormLabel>
+                      <span className="required">Type</span>
+                    </FormLabel>
                     <FormControl>
                       <Select onValueChange={field.onChange}>
                         <SelectTrigger>
@@ -211,20 +246,25 @@ function CreateUserForm() {
                   )}
                 />
               )}
+              <p className="text-sm font-medium text-destructive">
+                {(form.formState.errors as any)?.general?.message}
+              </p>
             </CardContent>
             <CardFooter className="mt-3 flex gap-4">
               <Button
-                className="w-full border-2 border-solid bg-transparent text-gray-900"
-                disabled={false}
-                onClick={() => router.replace('/users')}
+                variant="secondary"
+                asChild
+                className="w-1/2"
+                data-id="cancel-button"
               >
-                Cancel
+                <Link href="/users">Cancel</Link>
               </Button>
               <LoadingButton
-                className="w-full"
+                className="w-1/2"
                 type="submit"
                 isLoading={isPending}
-                disabled={!form.formState.isValid || isSuccess || isPending}
+                disabled={!saveButtonEnabled || isSuccess || isPending}
+                data-id="save-button"
               >
                 Save
               </LoadingButton>

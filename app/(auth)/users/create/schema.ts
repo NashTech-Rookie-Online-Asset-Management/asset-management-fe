@@ -7,14 +7,14 @@ export const createUserFormSchema = z
   .object({
     firstName: z
       .string()
-      .min(3)
+      .min(1)
       .max(128)
       .refine((value) => /^[a-zA-Z\s]+$/.test(value), {
         message: 'Name can only contain letters and spaces',
       }),
     lastName: z
       .string()
-      .min(3)
+      .min(1)
       .max(128)
       .refine((value) => /^[a-zA-Z\s]+$/.test(value), {
         message: 'Name can only contain letters and spaces',
@@ -29,7 +29,7 @@ export const createUserFormSchema = z
       .string()
       .refine(
         (value) =>
-          new Date(value).getDay() !== 6 && new Date(value).getDay() !== 7,
+          new Date(value).getDay() !== 0 && new Date(value).getDay() !== 6,
         {
           message:
             'Joined date is Saturday or Sunday. Please select a different date',
@@ -46,6 +46,7 @@ export const createUserFormSchema = z
         new Date(schema.dob).getFullYear() >=
       18,
     {
+      path: ['general'],
       message:
         'Invalid joined date. It must be at least 18 years after the date of birth.',
     },
