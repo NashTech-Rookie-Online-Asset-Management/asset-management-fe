@@ -33,6 +33,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import useProfile from '@/features/auth/useProfile';
 import { AccountType } from '@/features/model';
 import useGetUsers from '@/features/user/useGetUsers';
 import type { User, UserSortField } from '@/features/user/user.types';
@@ -74,7 +75,7 @@ export default function UserList() {
 
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [deletedUser, setDeletedUser] = useState<User | null>(null);
-
+  const { data: userProfile } = useProfile();
   const { data: users, refetch: refetchUsers } = useGetUsers({
     page,
     take: PAGE_SIZE,
@@ -238,13 +239,16 @@ export default function UserList() {
                         onClick={(e) => e.stopPropagation()}
                       >
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <Link href="/users/edit">
-                          <DropdownMenuItem>
+                        <Link href={`/users/${row.username}`}>
+                          <DropdownMenuItem
+                            disabled={row.type === userProfile?.type}
+                          >
                             <Pencil className="mr-4 size-4" />
                             Edit
                           </DropdownMenuItem>
                         </Link>
                         <DropdownMenuItem
+                          disabled={row.type === userProfile?.type}
                           onClick={() => {
                             handleDeleteDialog(row);
                           }}

@@ -6,6 +6,8 @@ import HttpService from '@/lib/services/http.service';
 import type {
   CreateUserRequest,
   CreateUserResponse,
+  UpdateUserRequest,
+  UpdateUserResponse,
   User,
   UserSortField,
 } from './user.types';
@@ -51,6 +53,10 @@ class UserApiService extends HttpService {
 
   postUser(data: CreateUserRequest) {
     return this.post<CreateUserResponse>('/users', data);
+  }
+
+  updateUser(userStaffCode: string, data: UpdateUserRequest) {
+    return this.patch<UpdateUserResponse>(`users/${userStaffCode}`, data);
   }
 
   deleteUser(staffCode: string) {

@@ -31,12 +31,29 @@ export type CreateUserRequest = {
   location?: string | undefined;
 };
 
+export type UpdateUserRequest = {
+  dob?: string;
+  gender?: string;
+  joinedAt?: string;
+  type?: string;
+};
+
 export type CreateUserResponse = {
   staffCode: string;
   firstName: string;
   lastName: string;
   username: string;
   password: string;
+  dob: Date;
+  gender: Gender;
+  joinedAt: Date;
+  type: AccountType;
+};
+export type UpdateUserResponse = {
+  staffCode: string;
+  firstName: string;
+  lastName: string;
+  username: string;
   dob: Date;
   gender: Gender;
   joinedAt: Date;
