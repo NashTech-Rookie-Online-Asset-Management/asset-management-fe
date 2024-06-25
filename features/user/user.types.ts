@@ -11,6 +11,7 @@ export type User = {
   joinedAt: string;
   type: AccountType;
   location: Location;
+  canDisable?: boolean;
 };
 
 export type UserSortField =

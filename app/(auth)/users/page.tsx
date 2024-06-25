@@ -42,6 +42,7 @@ import { AccountTypeOptions } from '@/lib/constants/user';
 import useDebounce from '@/lib/hooks/useDebounce';
 import { displayDate } from '@/lib/utils/date';
 
+import DeleteUserDialog from '../components/delete-user-dialog';
 import DetailedUserDialog from '../components/show-detailed-user-dialog';
 
 const columns = [
@@ -73,6 +74,9 @@ export default function UserList() {
   const [sortOrder, setSortOrder] = useState<Order>(sortOrderValue);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedUsername, setSelectedUsername] = useState<string | null>(null);
+
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [deletedUser, setDeletedUser] = useState<User | null>(null);
 
   const { data: users, refetch: refetchUsers } = useGetUsers({
     page,
@@ -130,6 +134,11 @@ export default function UserList() {
     setDialogOpen(true);
   };
 
+  const handleDeleteDialog = (user: User) => {
+    setDeletedUser(user);
+    setDeleteDialogOpen(true);
+  };
+
   return (
     <div className="flex flex-col gap-4">
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-4">
@@ -171,7 +180,7 @@ export default function UserList() {
           <TableHeader>
             <TableRow>
               {columns.map((column) => (
-                <TableHead className="text-center" key={column.key}>
+                <TableHead key={column.key}>
                   {column.key === '' ? (
                     <div key={column.key} className="px-4 py-2">
                       {column.label}
@@ -205,20 +214,16 @@ export default function UserList() {
                   onClick={() => handleOpenDialog(row.username)}
                   className="cursor-pointer"
                 >
-                  <TableCell className="py-2 text-center">
-                    {row.staffCode}
-                  </TableCell>
-                  <TableCell className="py-2 text-center">{`${row.firstName} ${row.lastName}`}</TableCell>
-                  <TableCell className="py-2 text-center">
-                    {row.username}
-                  </TableCell>
-                  <TableCell className="py-2 text-center">
+                  <TableCell className="py-2 pl-8">{row.staffCode}</TableCell>
+                  <TableCell className="py-2 pl-8">{`${row.firstName} ${row.lastName}`}</TableCell>
+                  <TableCell className="py-2 pl-8">{row.username}</TableCell>
+                  <TableCell className="py-2 pl-8">
                     {displayDate(row.joinedAt)}
                   </TableCell>
-                  <TableCell className="py-2 text-center">
+                  <TableCell className="py-2 pl-8">
                     {AccountTypeOptions[row.type]}
                   </TableCell>
-                  <TableCell className="py-2 text-center">
+                  <TableCell className="py-2 pl-8">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button variant="ghost" className="size-8 p-0">
@@ -231,11 +236,17 @@ export default function UserList() {
                         onClick={(e) => e.stopPropagation()}
                       >
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem>
-                          <Pencil className="mr-4 size-4" />
-                          Edit
-                        </DropdownMenuItem>
-                        <DropdownMenuItem disabled>
+                        <Link href="/users/edit">
+                          <DropdownMenuItem>
+                            <Pencil className="mr-4 size-4" />
+                            Edit
+                          </DropdownMenuItem>
+                        </Link>
+                        <DropdownMenuItem
+                          onClick={() => {
+                            handleDeleteDialog(row);
+                          }}
+                        >
                           <Trash2 className="mr-4 size-4" />
                           Delete
                         </DropdownMenuItem>
@@ -269,6 +280,15 @@ export default function UserList() {
           username={selectedUsername}
           isOpen={dialogOpen}
           onOpenChange={setDialogOpen}
+        />
+      )}
+
+      {deleteDialogOpen && deletedUser && (
+        <DeleteUserDialog
+          user={deletedUser}
+          isOpen={deleteDialogOpen}
+          onOpenChange={setDeleteDialogOpen}
+          refetchUsers={refetchUsers}
         />
       )}
     </div>

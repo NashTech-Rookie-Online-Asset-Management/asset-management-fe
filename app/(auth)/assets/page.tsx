@@ -193,7 +193,7 @@ export default function AssetList() {
           <TableHeader>
             <TableRow>
               {columns.map((column) => (
-                <TableHead key={column.key} className="text-center">
+                <TableHead key={column.key}>
                   <Button
                     variant="ghost"
                     onClick={() =>
@@ -221,17 +221,15 @@ export default function AssetList() {
                   onClick={() => handleOpenDialog(row.id)}
                   className="cursor-pointer"
                 >
-                  <TableCell className="py-2 text-center">
-                    {row.assetCode}
-                  </TableCell>
-                  <TableCell className="py-2 text-center">{row.name}</TableCell>
-                  <TableCell className="py-2 text-center">
+                  <TableCell className="py-2 pl-8">{row.assetCode}</TableCell>
+                  <TableCell className="py-2 pl-8">{row.name}</TableCell>
+                  <TableCell className="py-2 pl-8">
                     {row.category.name}
                   </TableCell>
-                  <TableCell className="py-2 text-center">
+                  <TableCell className="py-2 pl-8">
                     {AssetStateOptions[row.state]}
                   </TableCell>
-                  <TableCell className="py-2 text-center">
+                  <TableCell className="py-2 pl-8">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button variant="ghost" className="size-8 p-0">
@@ -245,10 +243,12 @@ export default function AssetList() {
                         onClick={(e) => e.stopPropagation()}
                       >
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem className="cursor-pointer">
-                          <Pencil className="mr-4 size-4" />
-                          Edit
-                        </DropdownMenuItem>
+                        <Link href="/assets/edit">
+                          <DropdownMenuItem className="cursor-pointer">
+                            <Pencil className="mr-4 size-4" />
+                            Edit
+                          </DropdownMenuItem>
+                        </Link>
                         <DropdownMenuItem
                           disabled={row.state === AssetState.ASSIGNED}
                           className="cursor-pointer"

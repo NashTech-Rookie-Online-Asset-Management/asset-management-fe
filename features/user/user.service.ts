@@ -1,6 +1,6 @@
 'use client';
 
-import type { Order } from '@/lib/@types/api';
+import type { ApiMessage, Order } from '@/lib/@types/api';
 import HttpService from '@/lib/services/http.service';
 
 import type {
@@ -47,6 +47,10 @@ class UserApiService extends HttpService {
 
   getUser(username: string) {
     return this.get<User>(`users/${username}`);
+  }
+
+  deleteUser(staffCode: string) {
+    return this.delete(`users/${staffCode}`) as Promise<ApiMessage>;
   }
 
   postUser(data: CreateUserRequest) {
