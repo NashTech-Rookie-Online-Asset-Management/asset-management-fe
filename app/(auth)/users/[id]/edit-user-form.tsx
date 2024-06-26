@@ -1,6 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import { AxiosError } from 'axios';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
@@ -27,6 +28,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from '@/components/ui/use-toast';
 import useProfile from '@/features/auth/useProfile';
 import useEditUser from '@/features/user/useEditUser';
@@ -45,6 +47,8 @@ function EditUserForm({ id }: Props) {
     data: userData,
     isPending: isUserPending,
     isSuccess: isUserSuccess,
+    isError: isUserError,
+    error: userError,
   } = useGetUser(id);
   const {
     mutateAsync: editUser,
@@ -55,6 +59,25 @@ function EditUserForm({ id }: Props) {
   const form = useForm<z.infer<typeof editUserFormSchema>>({
     resolver: zodResolver(editUserFormSchema),
   });
+
+  useEffect(() => {
+    if (isUserError && userError) {
+      if (userError instanceof AxiosError) {
+        toast({
+          title: 'Error',
+          description: userError?.response?.data?.message,
+          variant: 'destructive',
+        });
+      } else {
+        toast({
+          title: 'Error',
+          description: userError.message,
+          variant: 'destructive',
+        });
+      }
+      router.push('/users');
+    }
+  }, [isUserError, router]);
 
   useEffect(() => {
     if (isUserSuccess && isLoggedInSuccess) {
@@ -101,7 +124,7 @@ function EditUserForm({ id }: Props) {
     router.push(`/users?new=true`);
   }
 
-  if (!user && !isUserPending) {
+  if (!userData && !isUserPending) {
     return <div>User not found</div>;
   }
 
@@ -115,12 +138,16 @@ function EditUserForm({ id }: Props) {
             <FormItem>
               <FormLabel>First Name</FormLabel>
               <FormControl>
-                <Input
-                  placeholder="Type in user first name"
-                  autoFocus
-                  {...field}
-                  disabled
-                />
+                {isUserPending ? (
+                  <Skeleton className="h-8 w-full rounded-md" />
+                ) : (
+                  <Input
+                    placeholder="Type in user first name"
+                    autoFocus
+                    {...field}
+                    disabled
+                  />
+                )}
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -133,11 +160,15 @@ function EditUserForm({ id }: Props) {
             <FormItem>
               <FormLabel>Last Name</FormLabel>
               <FormControl>
-                <Input
-                  placeholder="Type in user last name"
-                  {...field}
-                  disabled
-                />
+                {isUserPending ? (
+                  <Skeleton className="h-8 w-full rounded-md" />
+                ) : (
+                  <Input
+                    placeholder="Type in user last name"
+                    {...field}
+                    disabled
+                  />
+                )}
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -150,7 +181,11 @@ function EditUserForm({ id }: Props) {
             <FormItem>
               <FormLabel>Date of Birth</FormLabel>
               <FormControl>
-                <Input type="date" className="block" {...field} />
+                {isUserPending ? (
+                  <Skeleton className="h-8 w-full rounded-md" />
+                ) : (
+                  <Input type="date" className="block" {...field} />
+                )}
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -163,18 +198,24 @@ function EditUserForm({ id }: Props) {
             <FormItem>
               <FormLabel>Gender</FormLabel>
               <FormControl>
-                <RadioGroup className="flex" onValueChange={field.onChange}>
-                  {Object.values(Gender).map((e) => (
-                    <div
-                      className="flex items-center space-x-2"
-                      data-id={`radio_group_item_gender_${e}`}
-                      key={`radio_group_item_gender_${e}`}
-                    >
-                      <RadioGroupItem checked={field.value === e} value={e} />
-                      <Label htmlFor={`gender_${e}`}>{normalizeText(e)}</Label>
-                    </div>
-                  ))}
-                </RadioGroup>
+                {isUserPending ? (
+                  <Skeleton className="h-8 w-full rounded-md" />
+                ) : (
+                  <RadioGroup className="flex" onValueChange={field.onChange}>
+                    {Object.values(Gender).map((e) => (
+                      <div
+                        className="flex items-center space-x-2"
+                        data-id={`radio_group_item_gender_${e}`}
+                        key={`radio_group_item_gender_${e}`}
+                      >
+                        <RadioGroupItem checked={field.value === e} value={e} />
+                        <Label htmlFor={`gender_${e}`}>
+                          {normalizeText(e)}
+                        </Label>
+                      </div>
+                    ))}
+                  </RadioGroup>
+                )}
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -187,7 +228,11 @@ function EditUserForm({ id }: Props) {
             <FormItem>
               <FormLabel>Joined Date</FormLabel>
               <FormControl>
-                <Input type="date" className="block" {...field} />
+                {isUserPending ? (
+                  <Skeleton className="h-8 w-full rounded-md" />
+                ) : (
+                  <Input type="date" className="block" {...field} />
+                )}
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -200,25 +245,29 @@ function EditUserForm({ id }: Props) {
             <FormItem>
               <FormLabel>Type</FormLabel>
               <FormControl>
-                <Select
-                  value={field.value || userData?.type}
-                  onValueChange={field.onChange}
-                  disabled={user?.type === AccountType.ADMIN}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {user?.type === AccountType.ROOT && (
-                      <SelectItem value={AccountType.ADMIN}>
-                        {normalizeText(AccountType.ADMIN)}
+                {isUserPending ? (
+                  <Skeleton className="h-8 w-full rounded-md" />
+                ) : (
+                  <Select
+                    value={field.value || userData?.type}
+                    onValueChange={field.onChange}
+                    disabled={user?.type === AccountType.ADMIN}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {user?.type === AccountType.ROOT && (
+                        <SelectItem value={AccountType.ADMIN}>
+                          {normalizeText(AccountType.ADMIN)}
+                        </SelectItem>
+                      )}
+                      <SelectItem value={AccountType.STAFF}>
+                        {normalizeText(AccountType.STAFF)}
                       </SelectItem>
-                    )}
-                    <SelectItem value={AccountType.STAFF}>
-                      {normalizeText(AccountType.STAFF)}
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
+                    </SelectContent>
+                  </Select>
+                )}
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -229,11 +278,15 @@ function EditUserForm({ id }: Props) {
           <LoadingButton
             type="submit"
             isLoading={isEditUserPending}
-            disabled={isEditUserSuccess || isEditUserPending}
+            disabled={isEditUserSuccess || isEditUserPending || isUserPending}
           >
             Save
           </LoadingButton>
-          <Button variant="secondary" asChild onClick={() => router.back()}>
+          <Button
+            variant="secondary"
+            asChild
+            onClick={() => router.replace('/users')}
+          >
             <Link href="/users">Cancel</Link>
           </Button>
         </div>
