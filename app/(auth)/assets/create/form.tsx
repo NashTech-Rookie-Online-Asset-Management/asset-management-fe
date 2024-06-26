@@ -41,7 +41,7 @@ function CreateAssetForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const categoryRef = React.useRef<HTMLDivElement>(null);
-  const { mutateAsync: createAsset, isPending } = useCreateAsset();
+  const { mutateAsync: createAsset, isPending, isSuccess } = useCreateAsset();
   const { data: categories } = useGetCategories();
   const {
     value: isCategoryOpen,
@@ -217,7 +217,7 @@ function CreateAssetForm() {
           <LoadingButton
             type="submit"
             isLoading={isPending}
-            disabled={!form.formState.isValid}
+            disabled={!form.formState.isValid || isPending || isSuccess}
           >
             Save
           </LoadingButton>

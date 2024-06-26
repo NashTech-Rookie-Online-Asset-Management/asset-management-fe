@@ -257,7 +257,7 @@ function CreateUserForm() {
               data-id="create-submit-button"
               type="submit"
               isLoading={isPending}
-              disabled={!saveButtonEnabled}
+              disabled={!saveButtonEnabled || isPending || isSuccess}
             >
               Save
             </LoadingButton>
