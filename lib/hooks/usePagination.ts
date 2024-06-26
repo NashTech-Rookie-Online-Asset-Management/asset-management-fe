@@ -1,4 +1,6 @@
+import type { ParserBuilder } from 'nuqs';
 import {
+  createSerializer,
   parseAsInteger,
   parseAsString,
   parseAsStringEnum,
@@ -13,12 +15,14 @@ export type PaginationProps<T> = {
   sortFields: readonly T[];
   defaultSortField: T;
   defaultSortOrder?: Order;
+  additionalParamsParsers?: Record<string, ParserBuilder<any>>;
 };
 
 export default function usePagination<T extends string>({
   sortFields,
   defaultSortField,
   defaultSortOrder = Order.ASC,
+  additionalParamsParsers = {},
 }: PaginationProps<T>) {
   const [page, setPage] = useQueryState<number>(
     'page',
@@ -61,6 +65,16 @@ export default function usePagination<T extends string>({
     }
   };
 
+  const paginationParams = {
+    page: parseAsInteger,
+    search: parseAsString,
+    sortField: parseAsStringLiteral(sortFields),
+    sortOrder: parseAsStringEnum<Order>(Object.values(Order)),
+    ...additionalParamsParsers,
+  };
+
+  const serialize = createSerializer(paginationParams);
+
   return {
     metadata: {
       page,
@@ -72,6 +86,8 @@ export default function usePagination<T extends string>({
       handlePageChange,
       handleSearch,
       handleSortColumn,
+      serialize,
     },
+    params: paginationParams,
   };
 }

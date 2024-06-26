@@ -49,3 +49,11 @@ export enum Order {
   ASC = 'asc',
   DESC = 'desc',
 }
+
+export type PaginationApiProps<T extends string = string> = {
+  page: number;
+  take: number;
+  search: string;
+  sortField: T;
+  sortOrder: Order;
+};

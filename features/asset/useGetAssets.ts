@@ -1,39 +1,32 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 
-import type { Order } from '@/lib/@types/api';
+import type { PaginationApiProps } from '@/lib/@types/api';
 
 import assetApi from './asset.service';
-import type { AssetSortField } from './asset.types';
+import type { Asset, AssetSortField } from './asset.types';
 
-function useGetAssets({
-  page,
-  take,
-  search,
-  states,
-  categoryIds,
-  sortField,
-  sortOrder,
-}: {
-  page: number;
-  take: number;
-  search: string;
+export type GetAssetsProps = PaginationApiProps<AssetSortField> & {
   states: string[];
   categoryIds: string[];
-  sortField: AssetSortField;
-  sortOrder: Order;
-}) {
+};
+
+function useGetAssets(
+  props: GetAssetsProps,
+  queryKey?: string,
+  topAsset?: Asset,
+) {
   return useQuery({
-    queryKey: [`assets`],
-    queryFn: () =>
-      assetApi.getAssets({
-        page,
-        take,
-        search,
-        states,
-        categoryIds,
-        sortField,
-        sortOrder,
-      }),
+    queryKey: [`assets`, queryKey ?? JSON.stringify(props)],
+    queryFn: async () => {
+      let assets = await assetApi.getAssets(props);
+      if (topAsset) {
+        assets = {
+          ...assets,
+          data: [topAsset, ...assets.data.filter((a) => a.id !== topAsset.id)],
+        };
+      }
+      return assets;
+    },
     placeholderData: keepPreviousData,
   });
 }

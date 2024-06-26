@@ -3,7 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ChevronsUpDown } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { useBoolean, useOnClickOutside } from 'usehooks-ts';
@@ -38,6 +38,7 @@ import { createNewAssetSchema } from './schema';
 
 function CreateAssetForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const categoryRef = React.useRef<HTMLDivElement>(null);
   const { mutateAsync: createAsset, isPending } = useCreateAsset();
   const { data: categories } = useGetCategories();
@@ -63,8 +64,8 @@ function CreateAssetForm() {
       installedDate: new Date(installedDate),
       ...values,
     };
-    const { state } = await createAsset(data);
-    router.push(`/assets?new=${state}`);
+    const { id } = await createAsset(data);
+    router.push(`/assets?${searchParams.toString()}&newAssetId=${id}`);
   }
 
   useOnClickOutside(categoryRef, closeCategory);
@@ -222,7 +223,7 @@ function CreateAssetForm() {
             Save
           </LoadingButton>
           <Button variant="secondary" asChild>
-            <Link href="/assets">Cancel</Link>
+            <Link href={`/assets?${searchParams.toString()}`}>Cancel</Link>
           </Button>
         </div>
       </form>

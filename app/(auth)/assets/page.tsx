@@ -13,11 +13,12 @@ import Link from 'next/link';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {
   parseAsArrayOf,
+  parseAsInteger,
   parseAsString,
   parseAsStringEnum,
   useQueryState,
 } from 'nuqs';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { MultipleSelect } from '@/components/custom/multiple-select';
 import Pagination from '@/components/custom/pagination';
@@ -43,12 +44,14 @@ import {
   type Asset,
   type AssetSortField,
 } from '@/features/asset/asset.types';
+import useGetAsset from '@/features/asset/useGetAsset';
 import useGetAssets from '@/features/asset/useGetAssets';
 import useGetCategories from '@/features/category/useGetCategories';
 import { AssetState, Order } from '@/lib/@types/api';
 import { AssetStateOptions } from '@/lib/constants/asset';
 import { PAGE_SIZE } from '@/lib/constants/pagination';
 import usePagination from '@/lib/hooks/usePagination';
+import { cn } from '@/lib/utils';
 
 import DeleteAssetDialog from '../components/delete-asset-dialog';
 import DetailedAssetDialog from '../components/show-detailed-asset-dialog';
@@ -61,19 +64,26 @@ const columns = [
 ];
 
 export default function AssetList() {
+  const [newAssetId] = useQueryState(
+    'newAssetId',
+    parseAsInteger.withDefault(-1),
+  );
+  const { data: newAsset } = useGetAsset(newAssetId, true);
+  const statesParser = parseAsArrayOf(
+    parseAsStringEnum<AssetState>(Object.values(AssetState)),
+  );
   const [selectedAssetStates, setSelectedAssetStates] = useQueryState(
     'states',
-    parseAsArrayOf(
-      parseAsStringEnum<AssetState>(Object.values(AssetState)),
-    ).withDefault([
+    statesParser.withDefault([
       AssetState.ASSIGNED,
       AssetState.AVAILABLE,
       AssetState.UNAVAILABLE,
     ]),
   );
+  const categoryIdsParser = parseAsArrayOf(parseAsString);
   const [selectedCategoryIds, setSelectedCategoryIds] = useQueryState(
     'categoryIds',
-    parseAsArrayOf(parseAsString).withDefault([] as string[]),
+    categoryIdsParser.withDefault([] as string[]),
   );
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedAssetId, setSelectedAssetId] = useState<number | null>(null);
@@ -82,36 +92,36 @@ export default function AssetList() {
   const pagination = usePagination({
     sortFields: assetSortFields,
     defaultSortField: 'assetCode',
+    additionalParamsParsers: {
+      states: statesParser,
+      categoryIds: categoryIdsParser,
+    },
   });
   const { page, searchValue, sortField, sortOrder } = pagination.metadata;
-  const { handlePageChange, handleSearch, handleSortColumn } =
+  const { handlePageChange, handleSearch, handleSortColumn, serialize } =
     pagination.handlers;
 
-  const { data: assets, refetch: refetchAssets } = useGetAssets({
+  const getAssetsOptions = {
     page,
     take: PAGE_SIZE,
     search: searchValue,
     states: selectedAssetStates as string[],
-    categoryIds: selectedCategoryIds as string[],
+    categoryIds: selectedCategoryIds,
     sortField,
     sortOrder,
-  });
+  };
 
-  const { data: categories, refetch: refetchCategories } = useGetCategories();
+  const getAssetsQueryKey = serialize({ ...getAssetsOptions });
 
-  useEffect(() => {
-    refetchAssets();
-    refetchCategories();
-  }, [
-    page,
-    searchValue,
-    selectedAssetStates,
-    selectedCategoryIds,
-    sortField,
-    sortOrder,
-    refetchAssets,
-    refetchCategories,
-  ]);
+  const { data: assets, refetch: refetchAssets } = useGetAssets(
+    getAssetsOptions,
+    getAssetsQueryKey,
+    newAsset,
+  );
+
+  const { data: categories } = useGetCategories();
+
+  //   console.log(newAssetId);
 
   const handleSetSelectedAssetStates = (selectedItems: string[]) => {
     setSelectedAssetStates(selectedItems as AssetState[]);
@@ -196,7 +206,9 @@ export default function AssetList() {
           </div>
         </div>
         <Button variant="default" className="lg:col-span-1" asChild>
-          <Link href="/assets/create">Create new asset</Link>
+          <Link href={`/assets/create${getAssetsQueryKey}`}>
+            Create new asset
+          </Link>
         </Button>
       </div>
 
@@ -231,7 +243,10 @@ export default function AssetList() {
                 <TableRow
                   key={row.id}
                   onClick={() => handleOpenDialog(row.id)}
-                  className="cursor-pointer"
+                  className={cn(
+                    'cursor-pointer',
+                    newAsset?.id === row.id && 'bg-muted shadow-lg',
+                  )}
                 >
                   <TableCell className="py-2 pl-8">{row.assetCode}</TableCell>
                   <TableCell className="py-2 pl-8">{row.name}</TableCell>
@@ -260,7 +275,7 @@ export default function AssetList() {
                           asChild
                           disabled={row.state === AssetState.ASSIGNED}
                         >
-                          <Link href={`/assets/${row.id}`}>
+                          <Link href={`/assets/${row.id}${getAssetsQueryKey}`}>
                             <Pencil className="mr-4 size-4" />
                             Edit
                           </Link>

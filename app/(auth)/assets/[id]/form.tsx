@@ -3,7 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ChevronsUpDown } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import type { z } from 'zod';
@@ -34,6 +34,7 @@ import { editAssetSchema } from './schema';
 
 function EditAssetForm({ id }: { id: string }) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { data: asset, isPending: isAssetPending } = useGetAsset(Number(id));
   const { mutateAsync: updateAsset, isPending, isSuccess } = useUpdateAsset();
   const { data: categories } = useGetCategories();
@@ -43,7 +44,7 @@ function EditAssetForm({ id }: { id: string }) {
   const isAbleToEdit = asset?.state !== AssetState.ASSIGNED;
 
   async function onSubmit(values: z.infer<typeof editAssetSchema>) {
-    const { assetCode, state } = await updateAsset({
+    const { assetCode, id: assetId } = await updateAsset({
       ...values,
       id: Number(id),
       installedDate: new Date(values.installedDate),
@@ -53,7 +54,7 @@ function EditAssetForm({ id }: { id: string }) {
       description: `Successfully edited asset ${assetCode}`,
       variant: 'success',
     });
-    router.push(`/assets?new=${state}`);
+    router.push(`/assets?${searchParams.toString()}&newAssetId=${assetId}`);
   }
 
   useEffect(() => {
