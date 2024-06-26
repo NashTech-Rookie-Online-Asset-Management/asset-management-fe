@@ -40,8 +40,15 @@ function EditAssetForm({ id }: { id: string }) {
   const { data: categories } = useGetCategories();
   const form = useForm<z.infer<typeof editAssetSchema>>({
     resolver: zodResolver(editAssetSchema),
+    mode: 'onChange',
   });
   const isAbleToEdit = asset?.state !== AssetState.ASSIGNED;
+  const isNotAbleToSave =
+    !form.formState.isValid ||
+    isAssetPending ||
+    isPending ||
+    isSuccess ||
+    !isAbleToEdit;
 
   async function onSubmit(values: z.infer<typeof editAssetSchema>) {
     const { assetCode, id: assetId } = await updateAsset({
@@ -82,13 +89,17 @@ function EditAssetForm({ id }: { id: string }) {
     });
   }, [asset, form]);
 
+  useEffect(() => {
+    form.trigger();
+  }, [form]);
+
   if (!asset && !isAssetPending) {
     return <div>Asset not found</div>;
   }
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <FormField
           control={form.control}
           name="name"
@@ -292,7 +303,7 @@ function EditAssetForm({ id }: { id: string }) {
           <LoadingButton
             type="submit"
             isLoading={isPending}
-            disabled={isPending || isAssetPending || !isAbleToEdit || isSuccess}
+            disabled={isNotAbleToSave}
           >
             Save
           </LoadingButton>
