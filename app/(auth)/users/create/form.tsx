@@ -19,7 +19,6 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import {
   Select,
@@ -93,11 +92,7 @@ function CreateUserForm() {
                   <span className="required">First Name</span>
                 </FormLabel>
                 <FormControl>
-                  <Input
-                    placeholder="Type in user first name"
-                    autoFocus
-                    {...field}
-                  />
+                  <Input placeholder="Enter first name" autoFocus {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -113,7 +108,7 @@ function CreateUserForm() {
                   <span className="required">Last Name</span>
                 </FormLabel>
                 <FormControl>
-                  <Input placeholder="Type in user last name" {...field} />
+                  <Input placeholder="Enter last name" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -148,16 +143,16 @@ function CreateUserForm() {
                     onValueChange={field.onChange}
                   >
                     {Object.values(Gender).map((e) => (
-                      <div
-                        className="flex items-center space-x-2"
+                      <FormItem
+                        className="flex items-center space-x-3 space-y-0"
                         data-id={`radio-group-item-gender-${e}`}
                         key={`radio_group_item_gender_${e}`}
                       >
-                        <RadioGroupItem value={e} />
-                        <Label htmlFor={`gender_${e}`}>
-                          {normalizeText(e)}
-                        </Label>
-                      </div>
+                        <FormControl>
+                          <RadioGroupItem value={e} />
+                        </FormControl>
+                        <FormLabel>{normalizeText(e)}</FormLabel>
+                      </FormItem>
                     ))}
                   </RadioGroup>
                 </FormControl>

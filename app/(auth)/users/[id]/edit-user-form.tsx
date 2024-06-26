@@ -19,7 +19,6 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import {
   Select,
@@ -130,7 +129,7 @@ function EditUserForm({ id }: Props) {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <FormField
           control={form.control}
           name="firstName"
@@ -142,7 +141,7 @@ function EditUserForm({ id }: Props) {
                   <Skeleton className="h-8 w-full rounded-md" />
                 ) : (
                   <Input
-                    placeholder="Type in user first name"
+                    placeholder="Enter first name"
                     autoFocus
                     {...field}
                     disabled
@@ -163,11 +162,7 @@ function EditUserForm({ id }: Props) {
                 {isUserPending ? (
                   <Skeleton className="h-8 w-full rounded-md" />
                 ) : (
-                  <Input
-                    placeholder="Type in user last name"
-                    {...field}
-                    disabled
-                  />
+                  <Input placeholder="Enter last name" {...field} disabled />
                 )}
               </FormControl>
               <FormMessage />
@@ -201,18 +196,24 @@ function EditUserForm({ id }: Props) {
                 {isUserPending ? (
                   <Skeleton className="h-8 w-full rounded-md" />
                 ) : (
-                  <RadioGroup className="flex" onValueChange={field.onChange}>
+                  <RadioGroup
+                    className="flex gap-8"
+                    onValueChange={field.onChange}
+                  >
                     {Object.values(Gender).map((e) => (
-                      <div
-                        className="flex items-center space-x-2"
+                      <FormItem
+                        className="flex items-center space-x-3 space-y-0"
                         data-id={`radio-group-item-gender_${e}`}
                         key={`radio_group_item_gender_${e}`}
                       >
-                        <RadioGroupItem checked={field.value === e} value={e} />
-                        <Label htmlFor={`gender_${e}`}>
-                          {normalizeText(e)}
-                        </Label>
-                      </div>
+                        <FormControl>
+                          <RadioGroupItem
+                            checked={field.value === e}
+                            value={e}
+                          />
+                        </FormControl>
+                        <FormLabel>{normalizeText(e)}</FormLabel>
+                      </FormItem>
                     ))}
                   </RadioGroup>
                 )}

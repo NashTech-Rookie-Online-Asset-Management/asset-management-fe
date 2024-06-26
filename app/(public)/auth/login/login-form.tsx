@@ -98,7 +98,7 @@ function LoginForm() {
                   </FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="enter your stunning username"
+                      placeholder="Enter your username"
                       autoFocus
                       {...field}
                     />
@@ -117,7 +117,7 @@ function LoginForm() {
                   </FormLabel>
                   <FormControl>
                     <PasswordInput
-                      placeholder="enter your secured password"
+                      placeholder="Enter your password"
                       {...field}
                     />
                   </FormControl>

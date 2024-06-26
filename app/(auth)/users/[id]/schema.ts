@@ -9,14 +9,14 @@ export const editUserFormSchema = z
   .object({
     firstName: z
       .string()
-      .min(3)
+      .min(1)
       .max(128)
       .refine((value) => /^[a-zA-Z\s]+$/.test(value), {
         message: 'Name can only contain letters and spaces',
       }),
     lastName: z
       .string()
-      .min(3)
+      .min(1)
       .max(128)
       .refine((value) => /^[a-zA-Z\s]+$/.test(value), {
         message: 'Name can only contain letters and spaces',

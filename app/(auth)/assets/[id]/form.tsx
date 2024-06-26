@@ -102,7 +102,12 @@ function EditAssetForm({ id }: { id: string }) {
                   {isAssetPending ? (
                     <Skeleton className="h-8 w-full rounded-md" />
                   ) : (
-                    <Input disabled={!isAbleToEdit} autoFocus {...field} />
+                    <Input
+                      disabled={!isAbleToEdit}
+                      autoFocus
+                      {...field}
+                      placeholder="Enter asset name"
+                    />
                   )}
                 </FormControl>
                 <FormMessage />

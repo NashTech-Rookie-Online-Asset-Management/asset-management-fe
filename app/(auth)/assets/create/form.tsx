@@ -83,7 +83,7 @@ function CreateAssetForm() {
               </FormLabel>
               <div>
                 <FormControl>
-                  <Input autoFocus {...field} />
+                  <Input autoFocus {...field} placeholder="Enter asset name" />
                 </FormControl>
                 <FormMessage />
               </div>

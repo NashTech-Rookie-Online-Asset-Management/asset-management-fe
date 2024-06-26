@@ -135,7 +135,7 @@ function ChangePasswordFirstTimeDialog() {
                     </FormLabel>
                     <FormControl>
                       <PasswordInput
-                        placeholder="your new password"
+                        placeholder="Enter your new password"
                         autoFocus
                         {...field}
                       />

@@ -49,7 +49,7 @@ function CategoryCommand({ fieldValue, onSelect }: Props) {
         return 0;
       }}
     >
-      <CommandInput placeholder="Search category..." />
+      <CommandInput placeholder="Search category" />
       <CommandEmpty>
         {isPending ? 'Loading categories...' : 'No category found.'}
       </CommandEmpty>

@@ -133,7 +133,7 @@ function ChangePasswordDialog({
                     </FormLabel>
                     <FormControl>
                       <PasswordInput
-                        placeholder="your old password"
+                        placeholder="Enter your old password"
                         autoFocus
                         {...field}
                       />
@@ -152,7 +152,7 @@ function ChangePasswordDialog({
                     </FormLabel>
                     <FormControl>
                       <PasswordInput
-                        placeholder="your new password"
+                        placeholder="Enter your new password"
                         autoFocus
                         {...field}
                       />
