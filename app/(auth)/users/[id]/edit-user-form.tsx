@@ -205,7 +205,7 @@ function EditUserForm({ id }: Props) {
                     {Object.values(Gender).map((e) => (
                       <div
                         className="flex items-center space-x-2"
-                        data-id={`radio_group_item_gender_${e}`}
+                        data-id={`radio-group-item-gender_${e}`}
                         key={`radio_group_item_gender_${e}`}
                       >
                         <RadioGroupItem checked={field.value === e} value={e} />
@@ -242,13 +242,14 @@ function EditUserForm({ id }: Props) {
           control={form.control}
           name="type"
           render={({ field }) => (
-            <FormItem>
+            <FormItem data-id="edit-user-form-item-type">
               <FormLabel>Type</FormLabel>
               <FormControl>
                 {isUserPending ? (
                   <Skeleton className="h-8 w-full rounded-md" />
                 ) : (
                   <Select
+                    data-id="edit-user-form-select-type"
                     value={field.value || userData?.type}
                     onValueChange={field.onChange}
                     disabled={user?.type === AccountType.ADMIN}
@@ -258,11 +259,17 @@ function EditUserForm({ id }: Props) {
                     </SelectTrigger>
                     <SelectContent>
                       {user?.type === AccountType.ROOT && (
-                        <SelectItem value={AccountType.ADMIN}>
+                        <SelectItem
+                          value={AccountType.ADMIN}
+                          data-id="edit-user-form-item-type-admin"
+                        >
                           {normalizeText(AccountType.ADMIN)}
                         </SelectItem>
                       )}
-                      <SelectItem value={AccountType.STAFF}>
+                      <SelectItem
+                        value={AccountType.STAFF}
+                        data-id="edit-user-form-item-type-staff"
+                      >
                         {normalizeText(AccountType.STAFF)}
                       </SelectItem>
                     </SelectContent>
@@ -276,6 +283,7 @@ function EditUserForm({ id }: Props) {
 
         <div className="mt-2 flex w-full justify-end space-x-2">
           <LoadingButton
+            data-id="edit-user-save-button"
             type="submit"
             isLoading={isEditUserPending}
             disabled={isEditUserSuccess || isEditUserPending || isUserPending}
@@ -283,6 +291,7 @@ function EditUserForm({ id }: Props) {
             Save
           </LoadingButton>
           <Button
+            data-id="edit_user_cancel_button"
             variant="secondary"
             asChild
             onClick={() => router.replace('/users')}

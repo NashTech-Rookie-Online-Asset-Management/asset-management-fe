@@ -51,6 +51,7 @@ function AuthHeader() {
               <DropdownMenuItem
                 data-id="header-change-password-button"
                 onClick={() => setChangePasswordDialogOpen(true)}
+                className="cursor-pointer"
               >
                 <RectangleEllipsis className="mr-2 size-4" />
                 <span>Change password</span>
@@ -59,6 +60,7 @@ function AuthHeader() {
               <DropdownMenuItem
                 data-id="header-logout-button"
                 onClick={() => setLogoutDialogOpen(true)}
+                className="cursor-pointer"
               >
                 <LogOut className="mr-2 size-4" />
                 <span>Logout</span>

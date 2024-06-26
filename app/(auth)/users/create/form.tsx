@@ -150,7 +150,7 @@ function CreateUserForm() {
                     {Object.values(Gender).map((e) => (
                       <div
                         className="flex items-center space-x-2"
-                        data-id={`radio_group_item_gender_${e}`}
+                        data-id={`radio-group-item-gender-${e}`}
                         key={`radio_group_item_gender_${e}`}
                       >
                         <RadioGroupItem value={e} />
@@ -189,17 +189,17 @@ function CreateUserForm() {
                   <span className="required">Type</span>
                 </FormLabel>
                 <FormControl>
-                  <Select onValueChange={field.onChange}>
+                  <Select onValueChange={field.onChange} data-id="type">
                     <SelectTrigger>
                       <SelectValue placeholder="" />
                     </SelectTrigger>
                     <SelectContent>
                       {user?.type === AccountType.ROOT && (
-                        <SelectItem value={AccountType.ADMIN}>
+                        <SelectItem value={AccountType.ADMIN} data-id="admin">
                           {normalizeText(AccountType.ADMIN)}
                         </SelectItem>
                       )}
-                      <SelectItem value={AccountType.STAFF}>
+                      <SelectItem value={AccountType.STAFF} data-id="staff">
                         {normalizeText(AccountType.STAFF)}
                       </SelectItem>
                     </SelectContent>
@@ -213,6 +213,7 @@ function CreateUserForm() {
             <FormField
               control={form.control}
               name="location"
+              data-id="create-user-form-item-location"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Location</FormLabel>
@@ -223,7 +224,11 @@ function CreateUserForm() {
                       </SelectTrigger>
                       <SelectContent>
                         {Object.values(Location).map((e) => (
-                          <SelectItem key={e} value={e}>
+                          <SelectItem
+                            key={e}
+                            value={e}
+                            data-id={`create-user-form-item-location-item-${e}`}
+                          >
                             {getLocationText(e)}
                           </SelectItem>
                         ))}
@@ -238,13 +243,18 @@ function CreateUserForm() {
 
           <div className="mt-3 flex w-full justify-end space-x-2">
             <LoadingButton
+              data-id="create-submit-button"
               type="submit"
               isLoading={isPending}
               disabled={!saveButtonEnabled}
             >
               Save
             </LoadingButton>
-            <Button variant="secondary" onClick={() => router.back()}>
+            <Button
+              variant="secondary"
+              onClick={() => router.back()}
+              data-id="create-cancel-button"
+            >
               Cancel
             </Button>
           </div>
