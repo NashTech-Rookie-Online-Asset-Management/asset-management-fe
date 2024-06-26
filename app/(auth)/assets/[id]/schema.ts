@@ -29,7 +29,7 @@ export const editAssetSchema = z.object({
   state: z
     .enum([
       AssetState.AVAILABLE,
-      AssetState.UNAVAILABLE,
+      AssetState.NOT_AVAILABLE,
       AssetState.WAITING_FOR_RECYCLING,
       AssetState.RECYCLED,
     ])

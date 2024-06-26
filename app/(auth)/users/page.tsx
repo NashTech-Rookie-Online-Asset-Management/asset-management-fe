@@ -165,8 +165,8 @@ export default function UserList() {
           <div className="relative">
             <Input
               type="text"
-              placeholder="Search by name or staff code"
-              className="rounded-md border"
+              placeholder="Search by name, staff code"
+              className="rounded-md border pr-10"
               onChange={(e) => handleSearch(e.target.value)}
             />
             <Button

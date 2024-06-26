@@ -51,7 +51,6 @@ const Pagination = ({
           }}
           forcePage={currentPage - 1}
           disableInitialCallback
-          breakLinkClassName="null"
           containerClassName="flex items-center gap-2"
           pageLinkClassName="inline-flex size-10 items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground"
           activeLinkClassName="inline-flex size-10 items-center justify-center whitespace-nowrap rounded-md border border-gray-300 text-sm font-medium ring-offset-background transition-colors"

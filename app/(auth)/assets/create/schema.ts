@@ -26,7 +26,7 @@ export const createNewAssetSchema = z.object({
         isValid(new Date(value)),
       'Please select a valid date',
     ),
-  state: z.enum([AssetState.AVAILABLE, AssetState.UNAVAILABLE]),
+  state: z.enum([AssetState.AVAILABLE, AssetState.NOT_AVAILABLE]),
 });
 
 export const createNewCategorySchema = z.object({

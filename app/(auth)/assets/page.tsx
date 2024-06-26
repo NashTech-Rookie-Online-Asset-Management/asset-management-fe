@@ -77,7 +77,7 @@ export default function AssetList() {
     statesParser.withDefault([
       AssetState.ASSIGNED,
       AssetState.AVAILABLE,
-      AssetState.UNAVAILABLE,
+      AssetState.NOT_AVAILABLE,
     ]),
   );
   const categoryIdsParser = parseAsArrayOf(parseAsString);
@@ -159,8 +159,8 @@ export default function AssetList() {
                 value: AssetState.AVAILABLE,
               },
               {
-                label: AssetStateOptions[AssetState.UNAVAILABLE],
-                value: AssetState.UNAVAILABLE,
+                label: AssetStateOptions[AssetState.NOT_AVAILABLE],
+                value: AssetState.NOT_AVAILABLE,
               },
               {
                 label: AssetStateOptions[AssetState.WAITING_FOR_RECYCLING],
@@ -190,8 +190,8 @@ export default function AssetList() {
           <div className="relative">
             <Input
               type="text"
-              placeholder="Search by name or asset code"
-              className="rounded-md border"
+              placeholder="Search by name, asset code"
+              className="rounded-md border pr-10"
               onChange={(e) => handleSearch(e.target.value)}
             />
             <Button

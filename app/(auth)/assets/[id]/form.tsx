@@ -233,16 +233,16 @@ function EditAssetForm({ id }: { id: string }) {
                       </FormItem>
                       <FormItem
                         className="flex items-center space-x-3 space-y-0"
-                        key={AssetState.UNAVAILABLE}
+                        key={AssetState.NOT_AVAILABLE}
                       >
                         <FormControl>
                           <RadioGroupItem
-                            value={AssetState.UNAVAILABLE}
-                            checked={field.value === AssetState.UNAVAILABLE}
+                            value={AssetState.NOT_AVAILABLE}
+                            checked={field.value === AssetState.NOT_AVAILABLE}
                           />
                         </FormControl>
                         <FormLabel className="font-normal">
-                          {AssetStateOptions[AssetState.UNAVAILABLE]}
+                          {AssetStateOptions[AssetState.NOT_AVAILABLE]}
                         </FormLabel>
                       </FormItem>
                       <FormItem
