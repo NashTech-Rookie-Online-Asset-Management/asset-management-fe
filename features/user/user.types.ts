@@ -48,6 +48,7 @@ export type CreateUserResponse = {
   gender: Gender;
   joinedAt: Date;
   type: AccountType;
+  location: Location;
 };
 export type UpdateUserResponse = {
   staffCode: string;

@@ -46,7 +46,8 @@ export const createUserFormSchema = z
     },
     {
       path: ['joinedAt'],
-      message: 'Invalid joined date. It must be after the date of birth.',
+      message:
+        'Joined date is not later than Date of Birth. Please select a different date',
     },
   )
   .refine(
@@ -59,6 +60,6 @@ export const createUserFormSchema = z
     {
       path: ['joinedAt'],
       message:
-        'Invalid joined date. It must be at least 18 years after the date of birth.',
+        'Invalid joined date. It must be at least 18 years after the date of birth',
     },
   );

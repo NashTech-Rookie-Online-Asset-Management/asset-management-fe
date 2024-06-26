@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -8,13 +10,6 @@ import type { z } from 'zod';
 
 import { LoadingButton } from '@/components/custom/loading-button';
 import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
 import {
   Form,
   FormControl,
@@ -36,7 +31,7 @@ import {
 import useProfile from '@/features/auth/useProfile';
 import useCreateUser from '@/features/user/useCreateUser';
 import { AccountType, Gender, Location } from '@/lib/@types/api';
-import { normalizeText } from '@/lib/utils';
+import { getLocationText, normalizeText } from '@/lib/utils';
 
 import CreateUserResultDialog from './result-dialog';
 import { createUserFormSchema } from './schema';
@@ -88,186 +83,171 @@ function CreateUserForm() {
   return (
     <>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
-          <Card className="w-7/12">
-            <CardHeader>
-              <CardTitle className="text-2xl text-red-700">
-                Create New User
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="grid gap-4">
-              <FormField
-                control={form.control}
-                name="firstName"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      <span className="required">First Name</span>
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Type in user first name"
-                        autoFocus
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="lastName"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      {' '}
-                      <span className="required">Last Name</span>
-                    </FormLabel>
-                    <FormControl>
-                      <Input placeholder="Type in user last name" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="dob"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      <span className="required">Date of Birth</span>
-                    </FormLabel>
-                    <FormControl>
-                      <Input type="date" className="block" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="gender"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      <span className="required">Gender</span>
-                    </FormLabel>
-                    <FormControl>
-                      <RadioGroup
-                        className="flex gap-8"
-                        onValueChange={field.onChange}
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <FormField
+            control={form.control}
+            name="firstName"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>
+                  <span className="required">First Name</span>
+                </FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="Type in user first name"
+                    autoFocus
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="lastName"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>
+                  {' '}
+                  <span className="required">Last Name</span>
+                </FormLabel>
+                <FormControl>
+                  <Input placeholder="Type in user last name" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="dob"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>
+                  <span className="required">Date of Birth</span>
+                </FormLabel>
+                <FormControl>
+                  <Input type="date" className="block" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="gender"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>
+                  <span className="required">Gender</span>
+                </FormLabel>
+                <FormControl>
+                  <RadioGroup
+                    className="flex gap-8"
+                    onValueChange={field.onChange}
+                  >
+                    {Object.values(Gender).map((e) => (
+                      <div
+                        className="flex items-center space-x-2"
+                        data-id={`radio_group_item_gender_${e}`}
+                        key={`radio_group_item_gender_${e}`}
                       >
-                        {Object.values(Gender).map((e) => (
-                          <div
-                            className="flex items-center space-x-2"
-                            data-id={`radio_group_item_gender_${e}`}
-                            key={`radio_group_item_gender_${e}`}
-                          >
-                            <RadioGroupItem value={e} />
-                            <Label htmlFor={`gender_${e}`}>
-                              {normalizeText(e)}
-                            </Label>
-                          </div>
-                        ))}
-                      </RadioGroup>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="joinedAt"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      <span className="required">Joined Date</span>
-                    </FormLabel>
-                    <FormControl>
-                      <Input type="date" className="block" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="type"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      <span className="required">Type</span>
-                    </FormLabel>
-                    <FormControl>
-                      <Select onValueChange={field.onChange}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {user?.type === AccountType.ROOT && (
-                            <SelectItem value={AccountType.ADMIN}>
-                              {normalizeText(AccountType.ADMIN)}
-                            </SelectItem>
-                          )}
-                          <SelectItem value={AccountType.STAFF}>
-                            {normalizeText(AccountType.STAFF)}
+                        <RadioGroupItem value={e} />
+                        <Label htmlFor={`gender_${e}`}>
+                          {normalizeText(e)}
+                        </Label>
+                      </div>
+                    ))}
+                  </RadioGroup>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="joinedAt"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>
+                  <span className="required">Joined Date</span>
+                </FormLabel>
+                <FormControl>
+                  <Input type="date" className="block" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="type"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>
+                  <span className="required">Type</span>
+                </FormLabel>
+                <FormControl>
+                  <Select onValueChange={field.onChange}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {user?.type === AccountType.ROOT && (
+                        <SelectItem value={AccountType.ADMIN}>
+                          {normalizeText(AccountType.ADMIN)}
+                        </SelectItem>
+                      )}
+                      <SelectItem value={AccountType.STAFF}>
+                        {normalizeText(AccountType.STAFF)}
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          {user?.type === AccountType.ROOT && (
+            <FormField
+              control={form.control}
+              name="location"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Location</FormLabel>
+                  <FormControl>
+                    <Select onValueChange={field.onChange}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {Object.values(Location).map((e) => (
+                          <SelectItem key={e} value={e}>
+                            {getLocationText(e)}
                           </SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              {user?.type === AccountType.ROOT && (
-                <FormField
-                  control={form.control}
-                  name="location"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Location</FormLabel>
-                      <FormControl>
-                        <Select onValueChange={field.onChange}>
-                          <SelectTrigger>
-                            <SelectValue placeholder="" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value={Location.HN}>Ha Noi</SelectItem>
-                            <SelectItem value={Location.HCM}>
-                              Ho Chi Minh
-                            </SelectItem>
-                            <SelectItem value={Location.DN}>Da Nang</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
               )}
-            </CardContent>
-            <CardFooter className="mt-3 flex gap-4">
-              <Button
-                variant="secondary"
-                className="w-1/2"
-                data-id="cancel-button"
-                onClick={() => router.back()}
-              >
-                Cancel
-              </Button>
-              <LoadingButton
-                className="w-1/2"
-                type="submit"
-                isLoading={isPending}
-                disabled={!saveButtonEnabled || isSuccess || isPending}
-                data-id="save-button"
-              >
-                Save
-              </LoadingButton>
-            </CardFooter>
-          </Card>
+            />
+          )}
+
+          <div className="mt-3 flex w-full justify-end space-x-2">
+            <LoadingButton
+              type="submit"
+              isLoading={isPending}
+              disabled={!saveButtonEnabled}
+            >
+              Save
+            </LoadingButton>
+            <Button variant="secondary" onClick={() => router.back()}>
+              Cancel
+            </Button>
+          </div>
         </form>
       </Form>
       {isSuccess && <CreateUserResultDialog userData={data} />}

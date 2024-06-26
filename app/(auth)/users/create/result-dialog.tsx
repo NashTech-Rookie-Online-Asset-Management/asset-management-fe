@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+
 'use client';
 
 import { useRouter } from 'next-nprogress-bar';
@@ -18,7 +20,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import type { CreateUserResponse } from '@/features/user/user.types';
-import { normalizeText } from '@/lib/utils';
+import { getLocationText, normalizeText } from '@/lib/utils';
 
 export type CreateUserResultDialogProps = {
   userData: CreateUserResponse;
@@ -28,6 +30,7 @@ function CreateUserResultDialog({ userData }: CreateUserResultDialogProps) {
   const router = useRouter();
   const modalRef = useRef<HTMLDivElement>(null);
   const [isOpen, setIsOpen] = useState<boolean>(true);
+
   const handleConfirmDialog = () => {
     router.replace('/users?new=true');
   };
@@ -49,6 +52,7 @@ function CreateUserResultDialog({ userData }: CreateUserResultDialogProps) {
         <DialogHeader>
           <DialogTitle>User created</DialogTitle>
           <DialogClose data-id="close-button" />
+
           <DialogDescription>
             Warning: You will not be able to see this information again after
             closing this window.
@@ -73,7 +77,7 @@ function CreateUserResultDialog({ userData }: CreateUserResultDialogProps) {
             </Label>
             <Input value={normalizeText(userData?.gender)} readOnly />
           </div>
-          <div className="col-span-2">
+          <div className="col-span-1">
             <Label>
               <span>Date of Birth</span>
             </Label>
@@ -82,7 +86,7 @@ function CreateUserResultDialog({ userData }: CreateUserResultDialogProps) {
               readOnly
             />
           </div>
-          <div className="col-span-2">
+          <div className="col-span-1">
             <Label>
               <span>Joined Date</span>
             </Label>
@@ -91,11 +95,17 @@ function CreateUserResultDialog({ userData }: CreateUserResultDialogProps) {
               readOnly
             />
           </div>
-          <div className="col-span-2">
+          <div className="col-span-1">
+            <Label>
+              <span>Location</span>
+            </Label>
+            <Input value={getLocationText(userData?.location)} readOnly />
+          </div>
+          <div className="col-span-1">
             <Label>
               <span>Type</span>
             </Label>
-            <Input value={userData?.type} readOnly />
+            <Input value={normalizeText(userData?.type)} readOnly />
           </div>
           <div className="col-span-1">
             <Label>
@@ -104,10 +114,12 @@ function CreateUserResultDialog({ userData }: CreateUserResultDialogProps) {
             <Input value={userData?.username} readOnly />
           </div>
           <div className="col-span-1">
-            <Label>
-              <span>Password</span>
-            </Label>
-            <PasswordInput value={userData?.password} readOnly />
+            <div className="col-span-1">
+              <Label>
+                <span>Password</span>
+              </Label>
+              <PasswordInput value={userData?.password} readOnly />
+            </div>
           </div>
         </div>
         <DialogFooter>

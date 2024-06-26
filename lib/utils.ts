@@ -1,6 +1,8 @@
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
+import { Location } from './@types/api';
+
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
@@ -19,4 +21,17 @@ export function getBaseUrl() {
 
 export function normalizeText(data: string): string {
   return data.charAt(0).toUpperCase() + data.slice(1).toLowerCase();
+}
+
+export function getLocationText(location: Location): string {
+  switch (location) {
+    case Location.HCM:
+      return 'Ho Chi Minh';
+    case Location.DN:
+      return 'Da Nang';
+    case Location.HN:
+      return 'Ha Noi';
+    default:
+      return '';
+  }
 }
