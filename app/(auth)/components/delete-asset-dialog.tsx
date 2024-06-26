@@ -65,7 +65,7 @@ export default function DeleteAssetDialog({
                   isLoading={isPending}
                   onClick={handleDeleteAsset}
                 >
-                  Save
+                  Delete
                 </LoadingButton>
                 <DialogClose asChild>
                   <Button

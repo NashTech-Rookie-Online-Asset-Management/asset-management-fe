@@ -8,6 +8,7 @@ import {
   ArrowUpAZ,
   MoreHorizontal,
   Pencil,
+  Search,
   Trash2,
 } from 'lucide-react';
 import Link from 'next/link';
@@ -161,12 +162,23 @@ export default function UserList() {
         </div>
         <div className="lg:col-span-1" />
         <div className="lg:col-span-1">
-          <Input
-            type="text"
-            placeholder="Search by name or staff code"
-            className="rounded-md border"
-            onChange={(e) => handleSearch(e.target.value)}
-          />
+          <div className="relative">
+            <Input
+              type="text"
+              placeholder="Search by name or staff code"
+              className="rounded-md border"
+              onChange={(e) => handleSearch(e.target.value)}
+            />
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="absolute right-0 top-0 h-full px-4 py-2"
+              disabled
+            >
+              <Search className="size-4" aria-hidden="true" />
+            </Button>
+          </div>
         </div>
         <Button
           variant="default"
@@ -239,16 +251,19 @@ export default function UserList() {
                         onClick={(e) => e.stopPropagation()}
                       >
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <Link href={`/users/${row.username}`}>
-                          <DropdownMenuItem
-                            disabled={row.type === userProfile?.type}
-                          >
+                        <DropdownMenuItem
+                          className="cursor-pointer"
+                          asChild
+                          disabled={row.type === userProfile?.type}
+                        >
+                          <Link href={`/users/${row.username}`}>
                             <Pencil className="mr-4 size-4" />
                             Edit
-                          </DropdownMenuItem>
-                        </Link>
+                          </Link>
+                        </DropdownMenuItem>
                         <DropdownMenuItem
                           disabled={row.type === userProfile?.type}
+                          className="cursor-pointer"
                           onClick={() => {
                             handleDeleteDialog(row);
                           }}

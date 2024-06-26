@@ -1,13 +1,16 @@
 'use client';
 
+// eslint-disable-next-line simple-import-sort/imports
 import {
   ArrowDownAZ,
   ArrowUpAZ,
   MoreHorizontal,
   Pencil,
+  Search,
   Trash2,
 } from 'lucide-react';
 import Link from 'next/link';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import {
   parseAsArrayOf,
   parseAsString,
@@ -36,9 +39,9 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import {
+  assetSortFields,
   type Asset,
   type AssetSortField,
-  assetSortFields,
 } from '@/features/asset/asset.types';
 import useGetAssets from '@/features/asset/useGetAssets';
 import useGetCategories from '@/features/category/useGetCategories';
@@ -174,12 +177,23 @@ export default function AssetList() {
           />
         </div>
         <div className="lg:col-span-1">
-          <Input
-            type="text"
-            placeholder="Search by name or asset code"
-            className="rounded-md border"
-            onChange={(e) => handleSearch(e.target.value)}
-          />
+          <div className="relative">
+            <Input
+              type="text"
+              placeholder="Search by name or asset code"
+              className="rounded-md border"
+              onChange={(e) => handleSearch(e.target.value)}
+            />
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="absolute right-0 top-0 h-full px-4 py-2"
+              disabled
+            >
+              <Search className="size-4" aria-hidden="true" />
+            </Button>
+          </div>
         </div>
         <Button variant="default" className="lg:col-span-1" asChild>
           <Link href="/assets/create">Create new asset</Link>
