@@ -31,6 +31,7 @@ import type { CreateAssetRequest } from '@/features/asset/asset.types';
 import useCreateAsset from '@/features/asset/useCreateAsset';
 import useGetCategories from '@/features/category/useGetCategories';
 import { AssetState } from '@/lib/@types/api';
+import { AssetStateOptions } from '@/lib/constants/asset';
 import { cn } from '@/lib/utils';
 
 import CategoryCommand from './category-command';
@@ -200,10 +201,8 @@ function CreateAssetForm() {
                         <FormControl>
                           <RadioGroupItem value={option} />
                         </FormControl>
-                        <FormLabel className="font-normal">
-                          {option === 'AVAILABLE'
-                            ? 'Available'
-                            : 'Not available'}
+                        <FormLabel className="cursor-pointer font-normal">
+                          {AssetStateOptions[option]}
                         </FormLabel>
                       </FormItem>
                     ))}
