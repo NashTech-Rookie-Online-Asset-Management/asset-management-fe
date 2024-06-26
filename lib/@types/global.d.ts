@@ -23,3 +23,5 @@ type GetList<T> = {
     totalCount: number;
   };
 };
+
+type SortOrder = 'asc' | 'desc';

@@ -1,6 +1,7 @@
-import { Search } from 'lucide-react';
+import { ChevronDown, Search } from 'lucide-react';
 import { useState } from 'react';
 
+import Pagination from '@/components/custom/pagination';
 import { TypographyH5 } from '@/components/typos/h5';
 import { Button } from '@/components/ui/button';
 import {
@@ -19,27 +20,42 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { useAvailableUser } from '@/features/assignment/assignment.hook';
-import type assignmentService from '@/features/assignment/assignment.service';
-import useFilter from '@/lib/hooks/useFilter';
-import type { ReturnArrayPromise } from '@/lib/utilities';
+import type { AvailableUser } from '@/features/assignment/assignment.type';
 
 import type { ModalProps } from './base-modal';
-import { TableCell } from './base-modal';
+import { TableCell, usePaginate } from './base-modal';
 
-type User = ReturnArrayPromise<typeof assignmentService.getAvailableUser>;
-const filterFn = (user: User, filterValue: string) =>
-  user.staffCode.toLowerCase().includes(filterValue) ||
-  user.firstName.toLowerCase().includes(filterValue) ||
-  user.lastName.toLowerCase().includes(filterValue);
+const colums = [
+  {
+    name: 'Staff code',
+    key: 'staffCode',
+    sort: true,
+  },
+  {
+    name: 'Full name',
+    key: 'fullName',
+    sort: true,
+  },
+  {
+    name: 'Type',
+    key: 'type',
+    sort: false,
+  },
+];
 
-export default function SelectUserModal(props: ModalProps) {
-  const { data } = useAvailableUser();
-  const [user, setUser] = useState('');
-  const { setFilter, filterData, filter } = useFilter<User>(data, filterFn);
+export default function SelectUserModal(props: ModalProps<AvailableUser>) {
+  const [staffCode, setStaffCode] = useState(props.defaultValue);
+  const { pagination, setPagination } = usePaginate(5, 300, 'staffCode');
+
+  const { data } = useAvailableUser(pagination);
 
   const onSave = () => {
-    props.onSelect(user);
-    props.setOpen(false);
+    const user =
+      data && data.data.find((userTmp) => userTmp.staffCode === staffCode);
+    if (user) {
+      props.onSelect(user);
+      props.setOpen(false);
+    }
   };
 
   return (
@@ -49,44 +65,81 @@ export default function SelectUserModal(props: ModalProps) {
           <TypographyH5 className="text-primary">Select User</TypographyH5>
           <div className="relative w-5/12">
             <Input
-              defaultValue={filter}
-              placeholder="Finding users..."
+              defaultValue={pagination.search}
+              placeholder="Search by name or staff code"
               className="placeholder:text-slate-400"
-              onChange={(e) => setFilter(e.target.value)}
+              onChange={(e) => setPagination('search', e.target.value)}
             />
             <Search className="absolute right-0 top-0 m-2.5 size-4 cursor-pointer text-muted-foreground transition-colors hover:text-primary" />
           </div>
         </DialogHeader>
-        <RadioGroup value={user} onValueChange={(value) => setUser(value)}>
+        <RadioGroup
+          value={staffCode}
+          onValueChange={(value) => setStaffCode(value)}
+        >
           <div className="relative max-h-[60vh] overflow-y-auto">
             <Table>
               <TableHeader className="sticky top-0 z-10 bg-background">
                 <TableRow>
                   <TableHead />
-                  <TableHead>Staff Code</TableHead>
-                  <TableHead>Fullname</TableHead>
-                  <TableHead>Type</TableHead>
+                  {colums.map((col) => (
+                    <TableHead className="relative" key={col.key}>
+                      <span className="inline-flex items-center justify-center gap-4">
+                        {col.name}
+                        {col.sort && (
+                          <ChevronDown
+                            onClick={() => {
+                              if (pagination.sortField !== col.key) {
+                                setPagination('sortField', col.key);
+                                setPagination('sortOrder', 'asc');
+                              } else {
+                                const order =
+                                  pagination.sortOrder === 'asc'
+                                    ? 'desc'
+                                    : 'asc';
+                                setPagination('sortOrder', order);
+                              }
+                            }}
+                            data-active={
+                              pagination.sortField === col.key &&
+                              pagination.sortOrder === 'desc'
+                            }
+                            data-color={pagination.sortField === col.key}
+                            className="size-4 cursor-pointer transition-all hover:text-primary data-[active=true]:rotate-180 data-[color=true]:text-primary"
+                          />
+                        )}
+                      </span>
+                    </TableHead>
+                  ))}
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filterData.map(({ staffCode, firstName, lastName, type }) => (
-                  <TableRow key={staffCode}>
-                    <TableCell htmlFor={staffCode}>
-                      <RadioGroupItem value={staffCode} id={staffCode} />
+                {data?.data.map((u) => (
+                  <TableRow key={u.staffCode}>
+                    <TableCell htmlFor={u.staffCode}>
+                      <RadioGroupItem value={u.staffCode} id={u.staffCode} />
                     </TableCell>
-                    <TableCell htmlFor={staffCode}>{staffCode}</TableCell>
-                    <TableCell htmlFor={staffCode}>
-                      {firstName} {lastName}
+                    <TableCell htmlFor={u.staffCode}>{u.staffCode}</TableCell>
+                    <TableCell htmlFor={u.staffCode}>
+                      {u.firstName} {u.lastName}
                     </TableCell>
-                    <TableCell htmlFor={staffCode}>{type}</TableCell>
+                    <TableCell htmlFor={u.staffCode}>{u.type}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
             </Table>
           </div>
         </RadioGroup>
+        <DialogFooter>
+          <Pagination
+            className="justify-center"
+            totalPages={data?.pagination.totalPages || 1}
+            currentPage={pagination.page}
+            onPageChange={(page) => setPagination('page', page)}
+          />
+        </DialogFooter>
         <DialogFooter className="flex w-full justify-end space-x-4">
-          <Button disabled={!user} onClick={onSave}>
+          <Button disabled={!staffCode} onClick={onSave}>
             Save
           </Button>
           <Button variant="outline" onClick={() => props.setOpen(false)}>

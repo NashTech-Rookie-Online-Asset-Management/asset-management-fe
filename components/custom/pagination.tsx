@@ -11,14 +11,17 @@ import {
 import { Input } from '../ui/input';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import ReactPagination from 'react-paginate';
+import { cn } from '@/lib/utils';
 
 const Pagination = ({
   totalPages,
   currentPage,
   onPageChange,
+  className,
 }: {
   totalPages: number;
   currentPage: number;
+  className?: string;
   onPageChange: (page: number) => void;
 }) => {
   const maxPages = 3;
@@ -39,7 +42,7 @@ const Pagination = ({
   }
 
   return (
-    <UIPagination className="flex justify-end gap-8">
+    <UIPagination className={cn('flex justify-end gap-8', className)}>
       <PaginationContent>
         <ReactPagination
           pageCount={totalPages}

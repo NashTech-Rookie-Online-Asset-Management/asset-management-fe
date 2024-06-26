@@ -1,6 +1,7 @@
-import { Search } from 'lucide-react';
+import { ChevronDown, Search } from 'lucide-react';
 import { useState } from 'react';
 
+import Pagination from '@/components/custom/pagination';
 import { TypographyH5 } from '@/components/typos/h5';
 import { Button } from '@/components/ui/button';
 import {
@@ -19,26 +20,41 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { useAvailableAsset } from '@/features/assignment/assignment.hook';
-import type assignmentService from '@/features/assignment/assignment.service';
-import useFilter from '@/lib/hooks/useFilter';
-import type { ReturnArrayPromise } from '@/lib/utilities';
+import type { Asset } from '@/features/model';
 
 import type { ModalProps } from './base-modal';
-import { TableCell } from './base-modal';
+import { TableCell, usePaginate } from './base-modal';
 
-type Asset = ReturnArrayPromise<typeof assignmentService.getAvailableAsset>;
-const filterFn = (asset: Asset, filterValue: string) =>
-  asset.name.toLowerCase().includes(filterValue) ||
-  asset.assetCode.toLowerCase().includes(filterValue);
+const colums = [
+  {
+    name: 'Asset code',
+    key: 'assetCode',
+    sort: true,
+  },
+  {
+    name: 'Asset name',
+    key: 'name',
+    sort: true,
+  },
+  {
+    name: 'Category',
+    key: 'category',
+    sort: false,
+  },
+];
 
-export default function SelectAssetModal(props: ModalProps) {
-  const { data } = useAvailableAsset();
-  const [asset, setAsset] = useState('');
-  const { filterData, setFilter, filter } = useFilter<Asset>(data, filterFn);
+export default function SelectAssetModal(props: ModalProps<Asset>) {
+  const { pagination, setPagination } = usePaginate(5, 300, 'assetCode');
+  const [assetCode, setAssetCode] = useState(props.defaultValue);
+  const { data } = useAvailableAsset(pagination);
 
   const onSave = () => {
-    props.onSelect(asset);
-    props.setOpen(false);
+    const asset =
+      data && data.data.find((assetTmp) => assetTmp.assetCode === assetCode);
+    if (asset) {
+      props.onSelect(asset);
+      props.setOpen(false);
+    }
   };
 
   return (
@@ -48,42 +64,81 @@ export default function SelectAssetModal(props: ModalProps) {
           <TypographyH5 className="text-primary">Select Asset</TypographyH5>
           <div className="relative w-5/12">
             <Input
-              defaultValue={filter}
-              placeholder="Finding assets..."
+              defaultValue={pagination.search}
+              placeholder="Search by name or asset code"
               className="placeholder:text-slate-400"
-              onChange={(e) => setFilter(e.target.value)}
+              onChange={(e) => setPagination('search', e.target.value)}
             />
             <Search className="absolute right-0 top-0 m-2.5 size-4 cursor-pointer text-muted-foreground transition-colors hover:text-primary" />
           </div>
         </DialogHeader>
-        <RadioGroup value={asset} onValueChange={(value) => setAsset(value)}>
+        <RadioGroup
+          value={assetCode}
+          onValueChange={(value) => setAssetCode(value)}
+        >
           <div className="relative max-h-[60vh] overflow-y-auto">
             <Table>
               <TableHeader className="sticky top-0 z-10 bg-background">
                 <TableRow>
                   <TableHead />
-                  <TableHead>Asset Code</TableHead>
-                  <TableHead>Asset Name</TableHead>
-                  <TableHead>Category</TableHead>
+                  {colums.map((col) => (
+                    <TableHead key={col.key}>
+                      <span className="inline-flex items-center justify-center gap-4">
+                        {col.name}
+                        {col.sort && (
+                          <ChevronDown
+                            onClick={() => {
+                              if (pagination.sortField !== col.key) {
+                                setPagination('sortField', col.key);
+                                setPagination('sortOrder', 'asc');
+                              } else {
+                                const order =
+                                  pagination.sortOrder === 'asc'
+                                    ? 'desc'
+                                    : 'asc';
+                                setPagination('sortOrder', order);
+                              }
+                            }}
+                            data-active={
+                              pagination.sortField === col.key &&
+                              pagination.sortOrder === 'desc'
+                            }
+                            data-color={pagination.sortField === col.key}
+                            className="size-4 cursor-pointer transition-all hover:text-primary data-[active=true]:rotate-180 data-[color=true]:text-primary"
+                          />
+                        )}
+                      </span>
+                    </TableHead>
+                  ))}
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filterData.map(({ assetCode, name, category }) => (
-                  <TableRow key={assetCode}>
-                    <TableCell htmlFor={assetCode}>
-                      <RadioGroupItem id={assetCode} value={assetCode} />
+                {data?.data.map((as) => (
+                  <TableRow key={as.assetCode}>
+                    <TableCell htmlFor={as.assetCode}>
+                      <RadioGroupItem id={as.assetCode} value={as.assetCode} />
                     </TableCell>
-                    <TableCell htmlFor={assetCode}>{assetCode}</TableCell>
-                    <TableCell htmlFor={assetCode}>{name}</TableCell>
-                    <TableCell htmlFor={assetCode}>{category.name}</TableCell>
+                    <TableCell htmlFor={as.assetCode}>{as.assetCode}</TableCell>
+                    <TableCell htmlFor={as.assetCode}>{as.name}</TableCell>
+                    <TableCell htmlFor={as.assetCode}>
+                      {as.category.name}
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
             </Table>
           </div>
         </RadioGroup>
+        <DialogFooter>
+          <Pagination
+            className="justify-center"
+            totalPages={data?.pagination.totalPages || 1}
+            currentPage={pagination.page}
+            onPageChange={(page) => setPagination('page', page)}
+          />
+        </DialogFooter>
         <DialogFooter className="flex w-full justify-end space-x-4">
-          <Button disabled={!asset} onClick={onSave}>
+          <Button disabled={!assetCode} onClick={onSave}>
             Save
           </Button>
           <Button variant="outline" onClick={() => props.setOpen(false)}>

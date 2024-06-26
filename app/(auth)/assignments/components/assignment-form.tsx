@@ -1,17 +1,14 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { format } from 'date-fns';
-import { CalendarIcon, Search } from 'lucide-react';
+import { Search } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 import { LoadingButton } from '@/components/custom/loading-button';
 import { Button } from '@/components/ui/button';
-import { Calendar } from '@/components/ui/calendar';
 import {
   Form,
   FormControl,
@@ -21,93 +18,111 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
 import { Textarea } from '@/components/ui/textarea';
-import { useCreateAssignment } from '@/features/assignment/assignment.hook';
-import { cn } from '@/lib/utils';
+import { AssignmentState } from '@/lib/@types/api';
 
 import SelectAssetModal from './select-asset-modal';
 import SelectUserModal from './select-user-modal';
 
 const formSchema = z.object({
-  staffCode: z.string().min(2, {
-    message: 'Username must be at least 2 characters.',
+  assignedTo: z.object({
+    staffCode: z.string(),
+    name: z.string(),
   }),
-  assetCode: z.string().min(2, {
-    message: 'Username must be at least 2 characters.',
+  asset: z.object({
+    assetCode: z.string(),
+    name: z.string(),
   }),
-  assignedDate: z.date(),
+  assignedDate: z.string().date(),
   note: z.string().optional(),
+  state: z.nativeEnum(AssignmentState).optional(),
 });
 
-export default function AssignmentForm() {
+export type FormSchema = z.infer<typeof formSchema>;
+
+const defaultFormValues: FormSchema = {
+  assignedTo: {
+    staffCode: '',
+    name: '',
+  },
+  asset: {
+    assetCode: '',
+    name: '',
+  },
+  assignedDate: new Date().toISOString().split('T')[0],
+  note: '',
+  state: AssignmentState.WAITING_FOR_ACCEPTANCE,
+};
+
+type AssignmentFormProps = {
+  defaultValue?: FormSchema;
+  isPending: boolean;
+  onSubmit: (values: FormSchema) => void;
+};
+
+export default function AssignmentForm({
+  onSubmit,
+  isPending,
+  defaultValue,
+}: AssignmentFormProps) {
   const [openUserModal, setOpenUserModal] = useState(false);
   const [openAssetModal, setOpenAssetModal] = useState(false);
 
-  const router = useRouter();
-
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm<FormSchema>({
+    values: defaultValue || defaultFormValues,
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      staffCode: '',
-      assetCode: '',
-      note: '',
-      assignedDate: new Date(),
-    },
+    defaultValues: defaultValue || defaultFormValues,
   });
-
-  const { mutate, isSuccess, isPending } = useCreateAssignment();
-
-  // Redirect to assignments page after success
-  if (isSuccess) router.push('/assignments');
-
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
-    mutate(values);
-  };
-
-  const onSelectUser = (user: string) => form.setValue('staffCode', user);
-  const onSelectAsset = (asset: string) => form.setValue('assetCode', asset);
 
   const values = form.watch();
   const isDisbled =
-    !values.staffCode || !values.assetCode || !values.assignedDate;
+    !values.assignedTo.staffCode ||
+    !values.asset.assetCode ||
+    !values.assignedDate ||
+    values.state !== AssignmentState.WAITING_FOR_ACCEPTANCE;
+
+  const openUserModalHandler = () => setOpenUserModal(true);
+  const openAssetModalHandler = () => setOpenAssetModal(true);
 
   return (
     <>
       <SelectUserModal
         open={openUserModal}
         setOpen={setOpenUserModal}
-        onSelect={onSelectUser}
+        onSelect={(user) => {
+          form.setValue('assignedTo', {
+            ...user,
+            name: `${user.firstName} ${user.lastName}`,
+          });
+        }}
+        defaultValue={defaultValue?.assignedTo.staffCode}
       />
 
       <SelectAssetModal
         open={openAssetModal}
         setOpen={setOpenAssetModal}
-        onSelect={onSelectAsset}
+        defaultValue={defaultValue?.asset.assetCode}
+        onSelect={(asset) => form.setValue('asset', asset)}
       />
 
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="max-w-xl space-y-6"
+          className="max-w-xl space-y-4"
         >
           <FormField
             control={form.control}
-            name="staffCode"
+            name="assignedTo.name"
             render={({ field }) => (
               <FormItem className="space-y-2">
-                <FormLabel className="font-normal">
+                <FormLabel>
                   <span className="required">User</span>
                 </FormLabel>
                 <FormControl>
                   <div className="relative">
-                    <Input readOnly {...field} />
+                    <Input onClick={openUserModalHandler} readOnly {...field} />
                     <Search
-                      onClick={() => setOpenUserModal(true)}
+                      onClick={openUserModalHandler}
                       className="absolute right-0 top-0 m-2.5 size-4 cursor-pointer text-muted-foreground transition-colors hover:text-primary"
                     />
                   </div>
@@ -119,17 +134,21 @@ export default function AssignmentForm() {
 
           <FormField
             control={form.control}
-            name="assetCode"
+            name="asset.name"
             render={({ field }) => (
               <FormItem className="space-y-2">
-                <FormLabel className="font-normal">
+                <FormLabel>
                   <span className="required">Asset</span>
                 </FormLabel>
                 <FormControl>
                   <div className="relative">
-                    <Input readOnly {...field} />
+                    <Input
+                      onClick={openAssetModalHandler}
+                      readOnly
+                      {...field}
+                    />
                     <Search
-                      onClick={() => setOpenAssetModal(true)}
+                      onClick={openAssetModalHandler}
                       className="absolute right-0 top-0 m-2.5 size-4 cursor-pointer text-muted-foreground transition-colors hover:text-primary"
                     />
                   </div>
@@ -144,38 +163,12 @@ export default function AssignmentForm() {
             name="assignedDate"
             render={({ field }) => (
               <FormItem className="flex flex-col space-y-2">
-                <FormLabel className="font-normal">
+                <FormLabel>
                   <span className="required">Assigned Date</span>
                 </FormLabel>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <FormControl>
-                      <Button
-                        variant="outline"
-                        className={cn(
-                          'w-full pl-3 text-left font-normal',
-                          !field.value && 'text-muted-foreground',
-                        )}
-                      >
-                        {field.value ? (
-                          format(field.value, 'PPP')
-                        ) : (
-                          <span>Pick a date</span>
-                        )}
-                        <CalendarIcon className="ml-auto size-4 opacity-50" />
-                      </Button>
-                    </FormControl>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar
-                      mode="single"
-                      selected={field.value}
-                      onSelect={field.onChange}
-                      disabled={(date) => date <= new Date()}
-                      initialFocus
-                    />
-                  </PopoverContent>
-                </Popover>
+                <FormControl>
+                  <Input type="date" className="block" autoFocus {...field} />
+                </FormControl>
                 <FormMessage />
               </FormItem>
             )}
@@ -186,7 +179,7 @@ export default function AssignmentForm() {
             name="note"
             render={({ field }) => (
               <FormItem className="space-y-2">
-                <FormLabel className="font-normal">Note</FormLabel>
+                <FormLabel>Note</FormLabel>
                 <FormControl>
                   <Textarea {...field} />
                 </FormControl>
@@ -201,7 +194,7 @@ export default function AssignmentForm() {
               isLoading={isPending}
               disabled={isDisbled || isPending}
             >
-              Submit
+              Save
             </LoadingButton>
             <Link href="/assignments">
               <Button variant="outline" disabled={isPending}>
