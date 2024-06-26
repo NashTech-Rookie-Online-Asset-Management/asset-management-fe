@@ -123,7 +123,15 @@ function CreateUserForm() {
                   <span className="required">Date of Birth</span>
                 </FormLabel>
                 <FormControl>
-                  <Input type="date" className="block" {...field} />
+                  <Input
+                    type="date"
+                    className="block"
+                    {...field}
+                    onChange={(e) => {
+                      field.onChange(e);
+                      form.trigger(['dob', 'joinedAt']);
+                    }}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -169,7 +177,15 @@ function CreateUserForm() {
                   <span className="required">Joined Date</span>
                 </FormLabel>
                 <FormControl>
-                  <Input type="date" className="block" {...field} />
+                  <Input
+                    type="date"
+                    className="block"
+                    {...field}
+                    onChange={(e) => {
+                      field.onChange(e);
+                      form.trigger(['dob', 'joinedAt']);
+                    }}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>

@@ -1,3 +1,4 @@
+import { isAfter, isDate, isValid } from 'date-fns';
 import { z } from 'zod';
 
 const eighteenYearsAgo = new Date();
@@ -19,14 +20,32 @@ export const createUserFormSchema = z
       .refine((value) => /^[a-zA-Z\s]+$/.test(value), {
         message: 'Name can only contain letters and spaces',
       }),
-    dob: z.string().refine((value) => new Date(value) < eighteenYearsAgo, {
-      message: 'User is under 18. Please select a different date',
-    }),
+    dob: z
+      .string()
+      .refine(
+        (value) =>
+          isAfter(new Date(value), new Date(1970, 1, 1)) &&
+          isDate(new Date(value)) &&
+          !Number.isNaN(Date.parse(value)) &&
+          isValid(new Date(value)),
+        'Please select a valid date',
+      )
+      .refine((value) => new Date(value) < eighteenYearsAgo, {
+        message: 'User is under 18. Please select a different date',
+      }),
     gender: z.enum(['FEMALE', 'MALE'], {
       required_error: 'You need to select a gender',
     }),
     joinedAt: z
       .string()
+      .refine(
+        (value) =>
+          isAfter(new Date(value), new Date(1970, 1, 1)) &&
+          isDate(new Date(value)) &&
+          !Number.isNaN(Date.parse(value)) &&
+          isValid(new Date(value)),
+        'Please select a valid date',
+      )
       .refine(
         (value) =>
           new Date(value).getDay() !== 0 && new Date(value).getDay() !== 6,

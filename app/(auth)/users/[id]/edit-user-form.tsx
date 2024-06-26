@@ -57,7 +57,27 @@ function EditUserForm({ id }: Props) {
   const { data: user, isSuccess: isLoggedInSuccess } = useProfile();
   const form = useForm<z.infer<typeof editUserFormSchema>>({
     resolver: zodResolver(editUserFormSchema),
+    mode: 'onChange',
   });
+  const isNotAbleToSave =
+    !form.formState.isValid ||
+    isUserPending ||
+    isEditUserPending ||
+    isEditUserSuccess;
+
+  async function onSubmit(values: z.infer<typeof editUserFormSchema>) {
+    await editUser({
+      userStaffCode: userData!.staffCode,
+      data: values,
+    });
+
+    toast({
+      title: 'Edit User',
+      description: `Successfully edited user`,
+      variant: 'success',
+    });
+    router.push(`/users?new=true`);
+  }
 
   useEffect(() => {
     if (isUserError && userError) {
@@ -109,19 +129,9 @@ function EditUserForm({ id }: Props) {
     });
   }, [userData, form]);
 
-  async function onSubmit(values: z.infer<typeof editUserFormSchema>) {
-    await editUser({
-      userStaffCode: userData!.staffCode,
-      data: values,
-    });
-
-    toast({
-      title: 'Edit User',
-      description: `Successfully edited user`,
-      variant: 'success',
-    });
-    router.push(`/users?new=true`);
-  }
+  useEffect(() => {
+    form.trigger();
+  }, [form]);
 
   if (!userData && !isUserPending) {
     return <div>User not found</div>;
@@ -179,7 +189,15 @@ function EditUserForm({ id }: Props) {
                 {isUserPending ? (
                   <Skeleton className="h-8 w-full rounded-md" />
                 ) : (
-                  <Input type="date" className="block" {...field} />
+                  <Input
+                    type="date"
+                    className="block"
+                    {...field}
+                    onChange={(e) => {
+                      field.onChange(e);
+                      form.trigger(['dob', 'joinedAt']);
+                    }}
+                  />
                 )}
               </FormControl>
               <FormMessage />
@@ -232,7 +250,15 @@ function EditUserForm({ id }: Props) {
                 {isUserPending ? (
                   <Skeleton className="h-8 w-full rounded-md" />
                 ) : (
-                  <Input type="date" className="block" {...field} />
+                  <Input
+                    type="date"
+                    className="block"
+                    {...field}
+                    onChange={(e) => {
+                      field.onChange(e);
+                      form.trigger(['dob', 'joinedAt']);
+                    }}
+                  />
                 )}
               </FormControl>
               <FormMessage />
@@ -287,7 +313,7 @@ function EditUserForm({ id }: Props) {
             data-id="edit-user-save-button"
             type="submit"
             isLoading={isEditUserPending}
-            disabled={isEditUserSuccess || isEditUserPending || isUserPending}
+            disabled={isNotAbleToSave}
           >
             Save
           </LoadingButton>
