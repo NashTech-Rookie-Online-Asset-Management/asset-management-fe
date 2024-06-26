@@ -67,3 +67,9 @@ export function usePaginate(
     },
   };
 }
+
+export type TableCol = {
+  key: string;
+  name: string;
+  sort?: boolean;
+};

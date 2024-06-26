@@ -1,4 +1,4 @@
-import { ChevronDown, Search } from 'lucide-react';
+import { ArrowDownAZ, ArrowUpAZ, Search } from 'lucide-react';
 import { useState } from 'react';
 
 import Pagination from '@/components/custom/pagination';
@@ -15,24 +15,26 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import {
   Table,
   TableBody,
+  TableCell as CoreTableCell,
   TableHead,
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
 import { useAvailableAsset } from '@/features/assignment/assignment.hook';
 import type { Asset } from '@/features/model';
+import { Order } from '@/lib/@types/api';
 
-import type { ModalProps } from './base-modal';
+import type { ModalProps, TableCol } from './base-modal';
 import { TableCell, usePaginate } from './base-modal';
 
 const colums = [
   {
-    name: 'Asset code',
+    name: 'Asset Code',
     key: 'assetCode',
     sort: true,
   },
   {
-    name: 'Asset name',
+    name: 'Asset Name',
     key: 'name',
     sort: true,
   },
@@ -44,7 +46,7 @@ const colums = [
 ];
 
 export default function SelectAssetModal(props: ModalProps<Asset>) {
-  const { pagination, setPagination } = usePaginate(5, 300, 'assetCode');
+  const { pagination, setPagination } = usePaginate(5, 300, 'name');
   const [assetCode, setAssetCode] = useState(props.defaultValue);
   const { data } = useAvailableAsset(pagination);
 
@@ -54,6 +56,18 @@ export default function SelectAssetModal(props: ModalProps<Asset>) {
     if (asset) {
       props.onSelect(asset);
       props.setOpen(false);
+    }
+  };
+
+  const handleTableHeaderClick = ({ key, sort }: TableCol) => {
+    if (!sort) return;
+
+    if (pagination.sortField !== key) {
+      setPagination('sortField', key);
+      setPagination('sortOrder', 'asc');
+    } else {
+      const order = pagination.sortOrder === 'asc' ? 'desc' : 'asc';
+      setPagination('sortOrder', order);
     }
   };
 
@@ -83,31 +97,20 @@ export default function SelectAssetModal(props: ModalProps<Asset>) {
                   <TableHead />
                   {colums.map((col) => (
                     <TableHead key={col.key}>
-                      <span className="inline-flex items-center justify-center gap-4">
+                      <Button
+                        variant="ghost"
+                        className="-ml-4 flex gap-4"
+                        onClick={() => handleTableHeaderClick(col)}
+                      >
                         {col.name}
-                        {col.sort && (
-                          <ChevronDown
-                            onClick={() => {
-                              if (pagination.sortField !== col.key) {
-                                setPagination('sortField', col.key);
-                                setPagination('sortOrder', 'asc');
-                              } else {
-                                const order =
-                                  pagination.sortOrder === 'asc'
-                                    ? 'desc'
-                                    : 'asc';
-                                setPagination('sortOrder', order);
-                              }
-                            }}
-                            data-active={
-                              pagination.sortField === col.key &&
-                              pagination.sortOrder === 'desc'
-                            }
-                            data-color={pagination.sortField === col.key}
-                            className="size-4 cursor-pointer transition-all hover:text-primary data-[active=true]:rotate-180 data-[color=true]:text-primary"
-                          />
-                        )}
-                      </span>
+                        {col.sort &&
+                          pagination.sortField === col.key &&
+                          (pagination.sortOrder === Order.ASC ? (
+                            <ArrowDownAZ className="size-4" />
+                          ) : (
+                            <ArrowUpAZ className="size-4" />
+                          ))}
+                      </Button>
                     </TableHead>
                   ))}
                 </TableRow>
@@ -125,6 +128,16 @@ export default function SelectAssetModal(props: ModalProps<Asset>) {
                     </TableCell>
                   </TableRow>
                 ))}
+                {data?.data.length === 0 && (
+                  <TableRow>
+                    <CoreTableCell
+                      colSpan={5}
+                      className="py-2 text-center text-gray-400"
+                    >
+                      No assets to display.
+                    </CoreTableCell>
+                  </TableRow>
+                )}
               </TableBody>
             </Table>
           </div>

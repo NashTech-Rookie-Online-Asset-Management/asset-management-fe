@@ -34,7 +34,7 @@ const formSchema = z.object({
     name: z.string(),
   }),
   assignedDate: z.string().date(),
-  note: z.string().optional(),
+  note: z.string().max(255).optional(),
   state: z.nativeEnum(AssignmentState).optional(),
 });
 
@@ -120,7 +120,12 @@ export default function AssignmentForm({
                 </FormLabel>
                 <FormControl>
                   <div className="relative">
-                    <Input onClick={openUserModalHandler} readOnly {...field} />
+                    <Input
+                      className="cursor-pointer"
+                      onClick={openUserModalHandler}
+                      readOnly
+                      {...field}
+                    />
                     <Search
                       onClick={openUserModalHandler}
                       className="absolute right-0 top-0 m-2.5 size-4 cursor-pointer text-muted-foreground transition-colors hover:text-primary"
@@ -143,6 +148,7 @@ export default function AssignmentForm({
                 <FormControl>
                   <div className="relative">
                     <Input
+                      className="cursor-pointer"
                       onClick={openAssetModalHandler}
                       readOnly
                       {...field}
@@ -181,7 +187,7 @@ export default function AssignmentForm({
               <FormItem className="space-y-2">
                 <FormLabel>Note</FormLabel>
                 <FormControl>
-                  <Textarea {...field} />
+                  <Textarea className="min-h-48 resize-none" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -197,7 +203,7 @@ export default function AssignmentForm({
               Save
             </LoadingButton>
             <Link href="/assignments">
-              <Button variant="outline" disabled={isPending}>
+              <Button variant="secondary" disabled={isPending}>
                 Cancel
               </Button>
             </Link>
