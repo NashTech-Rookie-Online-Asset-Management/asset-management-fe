@@ -91,7 +91,7 @@ export default function AssetList() {
   const [deletedAsset, setDeletedAsset] = useState<Asset | null>(null);
   const pagination = usePagination({
     sortFields: assetSortFields,
-    defaultSortField: 'assetCode',
+    defaultSortField: 'name',
     additionalParamsParsers: {
       states: statesParser,
       categoryIds: categoryIdsParser,
