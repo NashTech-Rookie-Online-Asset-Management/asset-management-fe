@@ -189,11 +189,7 @@ function CreateAssetForm() {
               </FormLabel>
 
               <FormControl>
-                <Textarea
-                  autoFocus
-                  className="min-h-48 resize-none"
-                  {...field}
-                />
+                <Textarea className="min-h-48 resize-none" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -209,7 +205,7 @@ function CreateAssetForm() {
               </FormLabel>
 
               <FormControl>
-                <Input type="date" className="block" autoFocus {...field} />
+                <Input type="date" className="block" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>

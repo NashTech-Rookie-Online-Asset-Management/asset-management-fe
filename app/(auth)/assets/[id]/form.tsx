@@ -193,7 +193,6 @@ function EditAssetForm({ id }: { id: string }) {
                     <Skeleton className="h-48 w-full rounded-md" />
                   ) : (
                     <Textarea
-                      autoFocus
                       className="min-h-48 resize-none"
                       disabled={!isAbleToEdit}
                       {...field}
@@ -222,7 +221,6 @@ function EditAssetForm({ id }: { id: string }) {
                       disabled={!isAbleToEdit}
                       type="date"
                       className="block"
-                      autoFocus
                       {...field}
                     />
                   )}
