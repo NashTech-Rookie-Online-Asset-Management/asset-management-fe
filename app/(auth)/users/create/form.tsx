@@ -2,8 +2,10 @@
 
 'use client';
 
+// eslint-disable-next-line simple-import-sort/imports
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useRouter } from 'next-nprogress-bar';
+import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import type { z } from 'zod';
@@ -36,7 +38,7 @@ import CreateUserResultDialog from './result-dialog';
 import { createUserFormSchema } from './schema';
 
 function CreateUserForm() {
-  const router = useRouter();
+  const searchParams = useSearchParams();
   const form = useForm<z.infer<typeof createUserFormSchema>>({
     resolver: zodResolver(createUserFormSchema),
   });
@@ -261,12 +263,8 @@ function CreateUserForm() {
             >
               Save
             </LoadingButton>
-            <Button
-              variant="secondary"
-              onClick={() => router.back()}
-              data-id="create-cancel-button"
-            >
-              Cancel
+            <Button variant="secondary" asChild>
+              <Link href={`/users?${searchParams.toString()}`}>Cancel</Link>
             </Button>
           </div>
         </form>

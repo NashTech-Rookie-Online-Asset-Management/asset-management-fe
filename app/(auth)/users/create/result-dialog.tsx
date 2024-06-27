@@ -2,7 +2,9 @@
 
 'use client';
 
+// eslint-disable-next-line simple-import-sort/imports
 import { useRouter } from 'next-nprogress-bar';
+import { useSearchParams } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { useOnClickOutside } from 'usehooks-ts';
 
@@ -19,7 +21,7 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import type { CreateUserResponse } from '@/features/user/user.types';
+import { type CreateUserResponse } from '@/features/user/user.types';
 import { getLocationText, normalizeText } from '@/lib/utils';
 
 export type CreateUserResultDialogProps = {
@@ -28,11 +30,18 @@ export type CreateUserResultDialogProps = {
 
 function CreateUserResultDialog({ userData }: CreateUserResultDialogProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const modalRef = useRef<HTMLDivElement>(null);
   const [isOpen, setIsOpen] = useState<boolean>(true);
 
   const handleConfirmDialog = () => {
-    router.replace('/users?new=true');
+    const params = new URLSearchParams(searchParams.toString());
+    params.set('sortField', 'updatedAt');
+    params.set('sortOrder', 'desc');
+
+    router.push(
+      `/users?${params.toString()}&newUserUsername=${userData.username}`,
+    );
   };
 
   useOnClickOutside(modalRef, (e) => {

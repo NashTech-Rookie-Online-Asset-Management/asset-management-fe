@@ -52,7 +52,7 @@ class UserApiService extends HttpService {
   }
 
   postUser(data: CreateUserRequest) {
-    return this.post<CreateUserResponse>('/users', data);
+    return this.post<CreateUserResponse>('users', data);
   }
 
   updateUser(userStaffCode: string, data: UpdateUserRequest) {

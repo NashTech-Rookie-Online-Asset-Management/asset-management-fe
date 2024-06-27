@@ -3,7 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { AxiosError } from 'axios';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import type { z } from 'zod';
@@ -42,6 +42,7 @@ type Props = {
 };
 function EditUserForm({ id }: Props) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const {
     data: userData,
     isPending: isUserPending,
@@ -66,7 +67,7 @@ function EditUserForm({ id }: Props) {
     isEditUserSuccess;
 
   async function onSubmit(values: z.infer<typeof editUserFormSchema>) {
-    await editUser({
+    const { username } = await editUser({
       userStaffCode: userData!.staffCode,
       data: values,
     });
@@ -76,7 +77,9 @@ function EditUserForm({ id }: Props) {
       description: `Successfully edited user`,
       variant: 'success',
     });
-    router.push(`/users?new=true`);
+    router.push(
+      `/users?${searchParams.toString()}&newUserUsername=${username}`,
+    );
   }
 
   useEffect(() => {

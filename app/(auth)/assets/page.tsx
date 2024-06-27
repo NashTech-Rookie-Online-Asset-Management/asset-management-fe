@@ -121,8 +121,6 @@ export default function AssetList() {
 
   const { data: categories } = useGetCategories();
 
-  //   console.log(newAssetId);
-
   const handleSetSelectedAssetStates = (selectedItems: string[]) => {
     setSelectedAssetStates(selectedItems as AssetState[]);
     handlePageChange(1);

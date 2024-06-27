@@ -14,12 +14,15 @@ export type User = {
   canDisable?: boolean;
 };
 
-export type UserSortField =
-  | 'staffCode'
-  | 'name'
-  | 'joinedDate'
-  | 'type'
-  | 'updatedAt';
+export const userSortFields = [
+  'staffCode',
+  'name',
+  'joinedDate',
+  'type',
+  'updatedAt',
+] as const;
+
+export type UserSortField = (typeof userSortFields)[number];
 
 export type CreateUserRequest = {
   firstName: string;
