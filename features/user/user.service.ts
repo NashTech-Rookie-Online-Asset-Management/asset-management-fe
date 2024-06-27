@@ -38,7 +38,8 @@ class UserApiService extends HttpService {
         take,
         search: search || undefined,
         types: types.join(',') || undefined,
-        [`${sortField}Order`]: sortOrder,
+        sortField,
+        sortOrder,
       },
     });
   }

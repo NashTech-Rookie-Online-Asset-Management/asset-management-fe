@@ -60,11 +60,8 @@ const columns = [
   { label: 'Staff Code', key: 'staffCode' },
   { label: 'Full Name', key: 'name' },
   { label: 'Username', key: '' },
-  { label: 'Joined Date', key: 'joinedDate' },
-  {
-    label: 'Type',
-    key: 'type',
-  },
+  { label: 'Joined Date', key: 'joinedAt' },
+  { label: 'Type', key: 'type' },
 ];
 
 export default function UserList() {

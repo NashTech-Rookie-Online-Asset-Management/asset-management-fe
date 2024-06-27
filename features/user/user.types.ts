@@ -18,7 +18,7 @@ export type User = {
 export const userSortFields = [
   'staffCode',
   'name',
-  'joinedDate',
+  'joinedAt',
   'type',
 ] as const;
 
