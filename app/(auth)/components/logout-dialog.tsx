@@ -32,18 +32,19 @@ function LogoutDialog({
   }
 
   return (
-    <Dialog open={isOpen} onOpenChange={onOpenChange} modal>
-      <DialogContent className="sm:max-w-[425px]">
+    <Dialog open={isOpen} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-md" hideCloseButton>
         <DialogHeader>
           <DialogTitle>Are you sure?</DialogTitle>
         </DialogHeader>
         <div className="pb-4">Do you want to log out?</div>
-        <DialogFooter className="flex items-center justify-center space-x-2">
+        <DialogFooter className="flex flex-col items-center justify-center gap-2 md:flex-row">
           <LoadingButton
             data-id="logout-confirm-button"
             isLoading={isPending}
             disabled={isSuccess || isPending}
             onClick={() => handleOnClick()}
+            className="w-full md:w-fit"
             size="sm"
           >
             <span>Log out</span>
@@ -53,6 +54,7 @@ function LogoutDialog({
               data-id="logout-cancel-button"
               variant="secondary"
               onClick={() => onOpenChange(false)}
+              className="w-full md:w-fit"
               size="sm"
             >
               Cancel

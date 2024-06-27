@@ -9,7 +9,7 @@ function PublicHeader() {
           <div className="aspect-square size-12 bg-white p-1">
             <NashTechLogo className="size-full" />
           </div>
-          <h1 className="text-xl font-bold text-primary-foreground">
+          <h1 className="text-base font-bold text-primary-foreground md:text-xl">
             Online Asset Management
           </h1>
         </div>
