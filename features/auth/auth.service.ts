@@ -36,15 +36,6 @@ class AuthApiService extends BaseApiService {
   getProfile() {
     return this.httpClient.get<Profile>(`/profile`);
   }
-
-  checkAuth(accessToken: string) {
-    return this.httpClient.get<Profile>(`/profile`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-      baseURL: `${process.env.API_URL}/api/auth`,
-    });
-  }
 }
 
 const authApi = new AuthApiService();

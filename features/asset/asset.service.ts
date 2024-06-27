@@ -1,5 +1,5 @@
 import type { ApiMessage, Order } from '@/lib/@types/api';
-import HttpService from '@/lib/services/http.service';
+import BaseApiService from '@/lib/services/baseApi.service';
 
 import type {
   Asset,
@@ -8,7 +8,11 @@ import type {
   UpdateAssetRequest,
 } from './asset.types';
 
-class AssetApiService extends HttpService {
+class AssetApiService extends BaseApiService {
+  constructor() {
+    super('assets');
+  }
+
   getAssets({
     page,
     take,
@@ -26,7 +30,7 @@ class AssetApiService extends HttpService {
     sortField: AssetSortField;
     sortOrder: Order;
   }) {
-    return this.get<GetList<Asset>>('assets', {
+    return this.httpClient.get<GetList<Asset>>('/', {
       params: {
         page,
         take,
@@ -40,19 +44,19 @@ class AssetApiService extends HttpService {
   }
 
   getAsset(assetId: number) {
-    return this.get<Asset>(`assets/${assetId}`);
+    return this.httpClient.get<Asset>(`/${assetId}`);
   }
 
   createAsset(data: CreateAssetRequest) {
-    return this.post<Asset>('assets', data);
+    return this.httpClient.post<Asset>('/', data);
   }
 
   deleteAsset(assetId: number) {
-    return this.delete(`assets/${assetId}`) as Promise<ApiMessage>;
+    return this.httpClient.delete(`/${assetId}`) as Promise<ApiMessage>;
   }
 
   updateAsset(data: UpdateAssetRequest) {
-    return this.patch<Asset>(`assets/${data.id}`, data);
+    return this.httpClient.patch<Asset>(`/${data.id}`, data);
   }
 }
 

@@ -17,7 +17,8 @@ export async function middleware(request: NextRequest) {
 
   if (accessToken) {
     try {
-      const user = await authApi.checkAuth(accessToken);
+      authApi.setBearerToken(accessToken).useServer();
+      const user = await authApi.getProfile();
 
       const isAccountTypeValid = !!PROTECTED_ROUTES.find((route) =>
         pathName.includes(route.path),
