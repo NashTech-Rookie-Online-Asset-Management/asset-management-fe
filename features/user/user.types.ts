@@ -5,6 +5,7 @@ export type User = {
   staffCode: string;
   firstName: string;
   lastName: string;
+  fullName: string;
   username: string;
   dob: string;
   gender: Gender;
@@ -19,7 +20,6 @@ export const userSortFields = [
   'name',
   'joinedDate',
   'type',
-  'updatedAt',
 ] as const;
 
 export type UserSortField = (typeof userSortFields)[number];

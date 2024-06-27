@@ -228,7 +228,7 @@ export default function UserList() {
                   )}
                 >
                   <TableCell className="py-2 pl-8">{row.staffCode}</TableCell>
-                  <TableCell className="py-2 pl-8">{`${row.firstName} ${row.lastName}`}</TableCell>
+                  <TableCell className="py-2 pl-8">{row.fullName}</TableCell>
                   <TableCell className="py-2 pl-8">{row.username}</TableCell>
                   <TableCell className="py-2 pl-8">
                     {displayDate(row.joinedAt)}
