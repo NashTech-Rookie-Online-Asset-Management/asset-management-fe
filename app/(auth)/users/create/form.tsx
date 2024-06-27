@@ -161,7 +161,9 @@ function CreateUserForm() {
                         <FormControl>
                           <RadioGroupItem value={e} />
                         </FormControl>
-                        <FormLabel>{normalizeText(e)}</FormLabel>
+                        <FormLabel className="cursor-pointer">
+                          {normalizeText(e)}
+                        </FormLabel>
                       </FormItem>
                     ))}
                   </RadioGroup>

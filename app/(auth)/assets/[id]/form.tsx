@@ -259,7 +259,7 @@ function EditAssetForm({ id }: { id: string }) {
                             checked={field.value === AssetState.AVAILABLE}
                           />
                         </FormControl>
-                        <FormLabel className="font-normal">
+                        <FormLabel className="cursor-pointer font-normal">
                           {AssetStateOptions[AssetState.AVAILABLE]}
                         </FormLabel>
                       </FormItem>
@@ -273,7 +273,7 @@ function EditAssetForm({ id }: { id: string }) {
                             checked={field.value === AssetState.NOT_AVAILABLE}
                           />
                         </FormControl>
-                        <FormLabel className="font-normal">
+                        <FormLabel className="cursor-pointer font-normal">
                           {AssetStateOptions[AssetState.NOT_AVAILABLE]}
                         </FormLabel>
                       </FormItem>
@@ -289,7 +289,7 @@ function EditAssetForm({ id }: { id: string }) {
                             }
                           />
                         </FormControl>
-                        <FormLabel className="font-normal">
+                        <FormLabel className=" cursor-pointer font-normal">
                           {AssetStateOptions[AssetState.WAITING_FOR_RECYCLING]}
                         </FormLabel>
                       </FormItem>
@@ -303,7 +303,7 @@ function EditAssetForm({ id }: { id: string }) {
                             checked={field.value === AssetState.RECYCLED}
                           />
                         </FormControl>
-                        <FormLabel className="font-normal">
+                        <FormLabel className="cursor-pointer font-normal">
                           {AssetStateOptions[AssetState.RECYCLED]}
                         </FormLabel>
                       </FormItem>

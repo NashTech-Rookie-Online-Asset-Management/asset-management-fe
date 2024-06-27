@@ -223,7 +223,7 @@ function EditUserForm({ id }: Props) {
                   >
                     {Object.values(Gender).map((e) => (
                       <FormItem
-                        className="flex items-center space-x-3 space-y-0"
+                        className="flex cursor-pointer items-center space-x-3 space-y-0"
                         data-id={`radio-group-item-gender_${e}`}
                         key={`radio_group_item_gender_${e}`}
                       >
@@ -233,7 +233,9 @@ function EditUserForm({ id }: Props) {
                             value={e}
                           />
                         </FormControl>
-                        <FormLabel>{normalizeText(e)}</FormLabel>
+                        <FormLabel className="cursor-pointer">
+                          {normalizeText(e)}
+                        </FormLabel>
                       </FormItem>
                     ))}
                   </RadioGroup>
