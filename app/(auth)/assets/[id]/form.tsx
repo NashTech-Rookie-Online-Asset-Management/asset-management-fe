@@ -4,7 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { ChevronsUpDown } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect } from 'react';
+import React from 'react';
 import { useForm } from 'react-hook-form';
 import type { z } from 'zod';
 
@@ -50,6 +50,24 @@ function EditAssetForm({ id }: { id: string }) {
     isSuccess ||
     !isAbleToEdit;
 
+  const nameValue = form.watch('name');
+  const nameError = form.getFieldState('name').error;
+  const specificationValue = form.watch('specification');
+  const specificationError = form.getFieldState('specification').error;
+
+  React.useEffect(() => {
+    if (!nameError) return;
+    if (!nameValue) {
+      form.clearErrors('name');
+    }
+  }, [nameValue, form, nameError]);
+  React.useEffect(() => {
+    if (!specificationError) return;
+    if (!specificationValue) {
+      form.clearErrors('specification');
+    }
+  }, [specificationValue, form, specificationError]);
+
   async function onSubmit(values: z.infer<typeof editAssetSchema>) {
     const { assetCode, id: assetId } = await updateAsset({
       ...values,
@@ -64,7 +82,7 @@ function EditAssetForm({ id }: { id: string }) {
     router.push(`/assets?${searchParams.toString()}&newAssetId=${assetId}`);
   }
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (!isAbleToEdit) {
       toast({
         title: 'Asset cannot be edited',
@@ -75,7 +93,7 @@ function EditAssetForm({ id }: { id: string }) {
     }
   }, [isAbleToEdit, router]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (!asset) return;
     form.reset({
       name: asset.name,
@@ -89,7 +107,7 @@ function EditAssetForm({ id }: { id: string }) {
     });
   }, [asset, form]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     form.trigger();
   }, [form]);
 
