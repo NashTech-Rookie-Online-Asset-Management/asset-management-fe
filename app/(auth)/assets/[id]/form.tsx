@@ -23,6 +23,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from '@/components/ui/use-toast';
+import type { Asset } from '@/features/asset/asset.types';
 import useGetAsset from '@/features/asset/useGetAsset';
 import useUpdateAsset from '@/features/asset/useUpdateAsset';
 import useGetCategories from '@/features/category/useGetCategories';
@@ -32,10 +33,19 @@ import { cn } from '@/lib/utils';
 
 import { editAssetSchema } from './schema';
 
-function EditAssetForm({ id }: { id: string }) {
+type Props = {
+  initialAsset: Asset;
+};
+
+function EditAssetForm({ initialAsset }: Props) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { data: asset, isPending: isAssetPending } = useGetAsset(Number(id));
+  const { data: asset, isPending: isAssetPending } = useGetAsset(
+    initialAsset.id,
+    {
+      initialData: initialAsset,
+    },
+  );
   const { mutateAsync: updateAsset, isPending, isSuccess } = useUpdateAsset();
   const { data: categories } = useGetCategories();
   const form = useForm<z.infer<typeof editAssetSchema>>({
@@ -71,7 +81,7 @@ function EditAssetForm({ id }: { id: string }) {
   async function onSubmit(values: z.infer<typeof editAssetSchema>) {
     const { assetCode, id: assetId } = await updateAsset({
       ...values,
-      id: Number(id),
+      id: initialAsset.id,
       installedDate: new Date(values.installedDate),
     });
     toast({

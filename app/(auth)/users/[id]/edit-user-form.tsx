@@ -32,15 +32,17 @@ import { toast } from '@/components/ui/use-toast';
 import useProfile from '@/features/auth/useProfile';
 import useEditUser from '@/features/user/useEditUser';
 import useGetUser from '@/features/user/useGetUser';
+import type { User } from '@/features/user/user.types';
 import { AccountType, Gender } from '@/lib/@types/api';
 import { normalizeText } from '@/lib/utils';
 
 import { editUserFormSchema } from './schema';
 
 type Props = {
-  id: string;
+  initialUser: User;
 };
-function EditUserForm({ id }: Props) {
+
+function EditUserForm({ initialUser }: Props) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const {
@@ -49,7 +51,9 @@ function EditUserForm({ id }: Props) {
     isSuccess: isUserSuccess,
     isError: isUserError,
     error: userError,
-  } = useGetUser(id);
+  } = useGetUser(initialUser.username, {
+    initialData: initialUser,
+  });
   const {
     mutateAsync: editUser,
     isPending: isEditUserPending,

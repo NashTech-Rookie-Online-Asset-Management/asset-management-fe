@@ -3,7 +3,11 @@ import { keepPreviousData, useMutation, useQuery } from '@tanstack/react-query';
 import type { PaginationApiProps } from '@/lib/@types/api';
 
 import assignmentService from './assignment.service';
-import type { AssignmentRequest, AssignmentResponse } from './assignment.type';
+import type {
+  Assignment,
+  AssignmentRequest,
+  AssignmentResponse,
+} from './assignment.types';
 
 export function useAvailableUser(
   pagination: PaginationApiProps,
@@ -46,10 +50,19 @@ export function useCreateAssignment() {
   });
 }
 
-export function useAssignment(id: string) {
+type GetAssignmentOptions = {
+  pinned?: boolean;
+  initialData?: Assignment;
+};
+
+export function useAssignment(
+  id: string,
+  { initialData }: GetAssignmentOptions = {},
+) {
   return useQuery({
     queryKey: ['assignment', id],
     queryFn: () => assignmentService.get(id),
+    initialData: () => initialData,
   });
 }
 

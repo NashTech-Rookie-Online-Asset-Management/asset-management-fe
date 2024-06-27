@@ -11,7 +11,7 @@ type Props = {
   params: {
     id: string;
   };
-}
+};
 
 async function getAssignment(id: string) {
   const accessToken = cookies().get(CookieKeys.ACCESS_TOKEN)?.value!;
@@ -26,7 +26,7 @@ async function getAssignment(id: string) {
 }
 
 export default async function EditAssignmentPage({ params }: Props) {
-  await getAssignment(params.id);
+  const assignment = await getAssignment(params.id);
 
-  return <EditAssignmentForm id={params.id} />;
+  return <EditAssignmentForm initialAssignment={assignment} />;
 }

@@ -7,7 +7,15 @@ import {
 import assetApi from './asset.service';
 import type { Asset } from './asset.types';
 
-function useGetAsset(assetId: number, pinned?: boolean) {
+type GetAssetOptions = {
+  pinned?: boolean;
+  initialData?: Asset;
+};
+
+function useGetAsset(
+  assetId: number,
+  { pinned, initialData }: GetAssetOptions = {},
+) {
   const queryClient = useQueryClient();
   const queryKey = pinned
     ? ['assets', assetId, { pinned }]
@@ -20,6 +28,7 @@ function useGetAsset(assetId: number, pinned?: boolean) {
       }
       return assetApi.getAsset(id as number);
     },
+    initialData: () => initialData || queryClient.getQueryData<Asset>(queryKey),
     placeholderData: keepPreviousData,
   });
 }

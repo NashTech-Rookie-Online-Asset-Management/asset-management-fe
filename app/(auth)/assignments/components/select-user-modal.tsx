@@ -22,7 +22,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { useAvailableUser } from '@/features/assignment/assignment.hook';
-import type { AvailableUser } from '@/features/assignment/assignment.type';
+import type { AvailableUser } from '@/features/assignment/assignment.types';
 import { Order } from '@/lib/@types/api';
 import { AccountTypeOptions } from '@/lib/constants/user';
 

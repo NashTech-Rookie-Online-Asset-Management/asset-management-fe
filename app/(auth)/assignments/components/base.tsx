@@ -3,9 +3,8 @@ import { z } from 'zod';
 
 import { Label } from '@/components/ui/label';
 import { TableCell as CoreTableCell } from '@/components/ui/table';
-import { AccountType } from '@/features/model';
 import type { PaginationApiProps } from '@/lib/@types/api';
-import { AssignmentState, Order } from '@/lib/@types/api';
+import { AccountType, AssignmentState, Order } from '@/lib/@types/api';
 import useDebounce from '@/lib/hooks/useDebounce';
 
 interface TabaleCellProps {

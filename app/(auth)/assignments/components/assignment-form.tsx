@@ -18,8 +18,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { AccountType } from '@/features/model';
-import { AssignmentState } from '@/lib/@types/api';
+import { AccountType, AssignmentState } from '@/lib/@types/api';
 
 import type { FormSchema } from './base';
 import { formSchema } from './base';

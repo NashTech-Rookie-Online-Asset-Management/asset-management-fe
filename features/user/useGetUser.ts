@@ -7,7 +7,15 @@ import {
 import userApi from './user.service';
 import type { User } from './user.types';
 
-function useGetUser(username: string, pinned?: boolean) {
+type GetUserOptions = {
+  pinned?: boolean;
+  initialData?: User;
+};
+
+function useGetUser(
+  username: string,
+  { pinned, initialData }: GetUserOptions = {},
+) {
   const queryClient = useQueryClient();
   const queryKey = pinned
     ? ['users', username, { pinned }]
@@ -20,6 +28,7 @@ function useGetUser(username: string, pinned?: boolean) {
       }
       return userApi.getUser(userUsername as string);
     },
+    initialData: () => initialData || queryClient.getQueryData<User>(queryKey),
     placeholderData: keepPreviousData,
   });
 }

@@ -7,16 +7,19 @@ import {
   useAssignment,
   useEditAssignment,
 } from '@/features/assignment/assignment.hook';
+import type { Assignment } from '@/features/assignment/assignment.types';
 
 import AssignmentForm from '../components/assignment-form';
 
-interface Props {
-  id: string;
-}
+type Props = {
+  initialAssignment: Assignment;
+};
 
-export default function EditAssignmentForm({ id }: Props) {
+export default function EditAssignmentForm({ initialAssignment }: Props) {
   const router = useRouter();
-  const { data, isPending: queryPending } = useAssignment(id);
+  const { data, isPending: queryPending } = useAssignment(
+    initialAssignment.id.toString(),
+  );
   const { mutate, isPending: mutatePending, isSuccess } = useEditAssignment();
 
   if (isSuccess) router.push('/assignments');
@@ -29,7 +32,7 @@ export default function EditAssignmentForm({ id }: Props) {
         defaultValue={data}
         onSubmit={(values) =>
           mutate({
-            id,
+            id: initialAssignment.id.toString(),
             data: {
               assetCode: values.asset.assetCode,
               staffCode: values.assignedTo.staffCode,

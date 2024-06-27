@@ -68,7 +68,7 @@ export default function AssetList() {
     'newAssetId',
     parseAsInteger.withDefault(-1),
   );
-  const { data: newAsset } = useGetAsset(newAssetId, true);
+  const { data: newAsset } = useGetAsset(newAssetId, { pinned: true });
   const statesParser = parseAsArrayOf(
     parseAsStringEnum<AssetState>(Object.values(AssetState)),
   );

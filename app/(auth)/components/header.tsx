@@ -16,6 +16,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Sheet, SheetContent } from '@/components/ui/sheet';
+import type { Account } from '@/features/auth/auth.types';
 import useProfile from '@/features/auth/useProfile';
 import { cn } from '@/lib/utils';
 
@@ -23,8 +24,14 @@ import ChangePasswordDialog from './change-password-dialog';
 import LogoutDialog from './logout-dialog';
 import Sidebar from './sidebar';
 
-function AuthHeader() {
-  const { data, isPending } = useProfile();
+type Props = {
+  initialProfile: Account;
+};
+
+function AuthHeader({ initialProfile }: Props) {
+  const { data, isPending } = useProfile({
+    initialData: initialProfile,
+  });
   const [changePasswordDialogOpen, setChangePasswordDialogOpen] =
     useState(false);
   const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);

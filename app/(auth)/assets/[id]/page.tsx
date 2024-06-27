@@ -28,12 +28,12 @@ async function getAsset(id: number) {
 }
 
 async function EditAssetPage({ params }: { params: { id: string } }) {
-  await getAsset(Number(params.id));
+  const asset = await getAsset(Number(params.id));
 
   return (
     <div className="w-full max-w-xl py-8">
       <h3 className="mb-8 text-xl font-bold text-primary">Edit Asset</h3>
-      <EditAssetForm id={params.id} />
+      <EditAssetForm initialAsset={asset} />
     </div>
   );
 }

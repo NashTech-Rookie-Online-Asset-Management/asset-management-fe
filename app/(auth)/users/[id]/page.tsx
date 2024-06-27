@@ -36,12 +36,12 @@ async function getUser(id: string) {
 }
 
 async function EditUserPage({ params }: Props) {
-  await getUser(params.id);
+  const user = await getUser(params.id);
 
   return (
     <div className="w-full max-w-xl py-8">
       <h3 className="mb-8 text-xl font-bold text-primary">Edit User</h3>
-      <EditUserForm id={params.id} />
+      <EditUserForm initialUser={user} />
     </div>
   );
 }

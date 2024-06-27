@@ -38,7 +38,6 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import useProfile from '@/features/auth/useProfile';
-import { AccountType } from '@/features/model';
 import useGetUser from '@/features/user/useGetUser';
 import useGetUsers from '@/features/user/useGetUsers';
 import {
@@ -46,7 +45,7 @@ import {
   type User,
   type UserSortField,
 } from '@/features/user/user.types';
-import { Order } from '@/lib/@types/api';
+import { Order, AccountType } from '@/lib/@types/api';
 import { PAGE_SIZE } from '@/lib/constants/pagination';
 import { AccountTypeOptions } from '@/lib/constants/user';
 import usePagination from '@/lib/hooks/usePagination';
@@ -70,7 +69,7 @@ export default function UserList() {
     parseAsString.withDefault(''),
   );
 
-  const { data: newUser } = useGetUser(newUserUsername, true);
+  const { data: newUser } = useGetUser(newUserUsername, { pinned: true });
 
   const typesParser = parseAsArrayOf(
     parseAsStringEnum<AccountType>(Object.values(AccountType)),

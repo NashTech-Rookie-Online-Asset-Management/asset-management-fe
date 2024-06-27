@@ -1,5 +1,6 @@
 import type { AssetState, Location } from '@/lib/@types/api';
 
+import type { Assignment } from '../assignment/assignment.types';
 import type { Category } from '../category/category.types';
 
 export type Asset = {
@@ -12,22 +13,7 @@ export type Asset = {
   location: keyof typeof Location;
   specification: string;
   // TODO: Change to Assignment type
-  assignments: {
-    id: number;
-    assignedDate: string;
-    assignedTo: {
-      id: number;
-      username: string;
-    };
-    assignedBy: {
-      id: number;
-      username: string;
-    };
-    returningRequest: {
-      id: number;
-      returnedDate: string;
-    };
-  }[];
+  assignments: Assignment[];
 };
 
 export const assetSortFields = [
