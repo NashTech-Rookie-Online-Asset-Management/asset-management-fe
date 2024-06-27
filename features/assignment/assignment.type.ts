@@ -1,9 +1,6 @@
 import type { Account, Asset } from '../model';
 
-export type AvailableUser = Pick<
-  Account,
-  'staffCode' | 'firstName' | 'lastName' | 'type'
->;
+export type AvailableUser = Pick<Account, 'staffCode' | 'fullName' | 'type'>;
 
 export type AssignmentRequest = {
   staffCode: string;

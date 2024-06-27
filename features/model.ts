@@ -25,6 +25,7 @@ export type Account = {
   email: string;
   type: AccountType;
   location: Location;
+  fullName: string;
 };
 
 export type Category = {
@@ -42,4 +43,13 @@ export type Asset = {
   state: AssetState;
   location: Location;
   category: Category;
+};
+
+export type Assignment = {
+  id: number;
+  assignedDate: string;
+  note: string;
+  assignedBy: Account;
+  assignedTo: Account;
+  asset: Asset;
 };

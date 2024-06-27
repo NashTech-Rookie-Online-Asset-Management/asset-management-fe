@@ -5,7 +5,11 @@ import type { PaginationApiProps } from '@/lib/@types/api';
 import assignmentService from './assignment.service';
 import type { AssignmentRequest, AssignmentResponse } from './assignment.type';
 
-export function useAvailableUser(pagination: PaginationApiProps) {
+export function useAvailableUser(
+  pagination: PaginationApiProps,
+  id: string | string[],
+) {
+  const transformedId = Array.isArray(id) ? id.join(',') : id;
   return useQuery({
     queryKey: [
       'assignment/user/available',
@@ -15,7 +19,8 @@ export function useAvailableUser(pagination: PaginationApiProps) {
       pagination?.sortField,
       pagination?.sortOrder,
     ],
-    queryFn: () => assignmentService.getAvailableUser(pagination),
+    queryFn: () =>
+      assignmentService.getAvailableUser(pagination, transformedId),
     placeholderData: keepPreviousData,
   });
 }
@@ -54,5 +59,12 @@ export function useEditAssignment() {
   return useMutation({
     mutationFn: (props: EditAssignmentRequest) =>
       assignmentService.edit(props.id, props.data),
+  });
+}
+
+export function useAssignments() {
+  return useQuery({
+    queryKey: ['assignments'],
+    queryFn: () => assignmentService.getAll(),
   });
 }

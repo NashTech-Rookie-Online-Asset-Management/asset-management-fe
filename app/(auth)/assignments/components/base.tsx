@@ -1,17 +1,12 @@
 import { useRef, useState } from 'react';
+import { z } from 'zod';
 
 import { Label } from '@/components/ui/label';
 import { TableCell as CoreTableCell } from '@/components/ui/table';
+import { AccountType } from '@/features/model';
 import type { PaginationApiProps } from '@/lib/@types/api';
-import { Order } from '@/lib/@types/api';
+import { AssignmentState, Order } from '@/lib/@types/api';
 import useDebounce from '@/lib/hooks/useDebounce';
-
-export interface ModalProps<T> {
-  open: boolean;
-  defaultValue?: string;
-  setOpen: (open: boolean) => void;
-  onSelect: (selectValue: T) => void;
-}
 
 interface TabaleCellProps {
   htmlFor: string;
@@ -73,3 +68,32 @@ export type TableCol = {
   name: string;
   sort?: boolean;
 };
+
+export const formSchema = z.object({
+  assignedTo: z.object({
+    staffCode: z.string(),
+    fullName: z.string(),
+    type: z.nativeEnum(AccountType),
+  }),
+  asset: z.object({
+    assetCode: z.string(),
+    name: z.string(),
+    category: z.object({
+      name: z.string().optional(),
+    }),
+  }),
+  assignedDate: z.string().date(),
+  note: z.string().max(256).optional(),
+  state: z.nativeEnum(AssignmentState).optional(),
+  id: z.number().optional(),
+});
+
+export type FormSchema = z.infer<typeof formSchema>;
+export type AvailableAsset = FormSchema['asset'];
+
+export interface ModalProps<T> {
+  assignment?: FormSchema;
+  open: boolean;
+  setOpen: (open: boolean) => void;
+  onSelect: (selectValue: T) => void;
+}

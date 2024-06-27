@@ -1,4 +1,5 @@
 import { ArrowDownAZ, ArrowUpAZ, Search } from 'lucide-react';
+import { useParams } from 'next/navigation';
 import { useState } from 'react';
 
 import Pagination from '@/components/custom/pagination';
@@ -25,8 +26,8 @@ import type { AvailableUser } from '@/features/assignment/assignment.type';
 import { Order } from '@/lib/@types/api';
 import { AccountTypeOptions } from '@/lib/constants/user';
 
-import type { ModalProps, TableCol } from './base-modal';
-import { TableCell, usePaginate } from './base-modal';
+import type { ModalProps, TableCol } from './base';
+import { TableCell, usePaginate } from './base';
 
 const colums = [
   {
@@ -42,15 +43,31 @@ const colums = [
   {
     name: 'Type',
     key: 'type',
-    sort: false,
+    sort: true,
   },
 ];
 
+function UserTableRow({ user }: { user: AvailableUser }) {
+  return (
+    <TableRow key={user.staffCode}>
+      <TableCell htmlFor={user.staffCode}>
+        <RadioGroupItem value={user.staffCode} id={user.staffCode} />
+      </TableCell>
+      <TableCell htmlFor={user.staffCode}>{user.staffCode}</TableCell>
+      <TableCell htmlFor={user.staffCode}>{user.fullName}</TableCell>
+      <TableCell htmlFor={user.staffCode}>
+        {AccountTypeOptions[user.type]}
+      </TableCell>
+    </TableRow>
+  );
+}
+
 export default function SelectUserModal(props: ModalProps<AvailableUser>) {
-  const [staffCode, setStaffCode] = useState(props.defaultValue);
+  const { id } = useParams();
+  const [staffCode, setStaffCode] = useState('');
   const { pagination, setPagination } = usePaginate(5, 300, 'fullName');
 
-  const { data } = useAvailableUser(pagination);
+  const { data } = useAvailableUser(pagination, id);
 
   const onSave = () => {
     const user =
@@ -73,8 +90,13 @@ export default function SelectUserModal(props: ModalProps<AvailableUser>) {
     }
   };
 
+  const onClose = () => {
+    setStaffCode('');
+    props.setOpen(false);
+  };
+
   return (
-    <Dialog open={props.open} onOpenChange={props.setOpen}>
+    <Dialog open={props.open} onOpenChange={onClose}>
       <DialogContent hideCloseButton className="max-w-3xl py-3">
         <DialogHeader className="flex flex-row items-center justify-between">
           <TypographyH5 className="text-primary">Select User</TypographyH5>
@@ -89,7 +111,7 @@ export default function SelectUserModal(props: ModalProps<AvailableUser>) {
           </div>
         </DialogHeader>
         <RadioGroup
-          value={staffCode}
+          value={staffCode || props.assignment?.assignedTo.staffCode}
           onValueChange={(value) => setStaffCode(value)}
         >
           <div className="relative max-h-[60vh] overflow-y-auto">
@@ -118,21 +140,13 @@ export default function SelectUserModal(props: ModalProps<AvailableUser>) {
                 </TableRow>
               </TableHeader>
               <TableBody>
+                {props?.assignment && (
+                  <UserTableRow user={props.assignment.assignedTo} />
+                )}
                 {data?.data.map((u) => (
-                  <TableRow key={u.staffCode}>
-                    <TableCell htmlFor={u.staffCode}>
-                      <RadioGroupItem value={u.staffCode} id={u.staffCode} />
-                    </TableCell>
-                    <TableCell htmlFor={u.staffCode}>{u.staffCode}</TableCell>
-                    <TableCell htmlFor={u.staffCode}>
-                      {u.firstName} {u.lastName}
-                    </TableCell>
-                    <TableCell htmlFor={u.staffCode}>
-                      {AccountTypeOptions[u.type]}
-                    </TableCell>
-                  </TableRow>
+                  <UserTableRow key={u.staffCode} user={u} />
                 ))}
-                {data?.data.length === 0 && (
+                {data?.data.length === 0 && !props?.assignment && (
                   <TableRow>
                     <CoreTableCell
                       colSpan={5}
@@ -158,7 +172,7 @@ export default function SelectUserModal(props: ModalProps<AvailableUser>) {
           <Button disabled={!staffCode} onClick={onSave}>
             Save
           </Button>
-          <Button variant="outline" onClick={() => props.setOpen(false)}>
+          <Button variant="outline" onClick={onClose}>
             Cancel
           </Button>
         </DialogFooter>

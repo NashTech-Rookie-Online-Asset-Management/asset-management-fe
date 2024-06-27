@@ -1,3 +1,9 @@
+'use client';
+
+import { useAssignments } from '@/features/assignment/assignment.hook';
+
 export default function ListAssignmentPage() {
-  return <h1>Assignment Page</h1>;
+  const { data } = useAssignments();
+
+  return <h1>{JSON.stringify(data?.map((assignment) => assignment.id))}</h1>;
 }

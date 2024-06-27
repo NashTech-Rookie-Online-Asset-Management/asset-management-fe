@@ -1,7 +1,7 @@
 import type { PaginationApiProps } from '@/lib/@types/api';
 import BaseApiService from '@/lib/services/baseApi.service';
 
-import type { Asset } from '../model';
+import type { Asset, Assignment } from '../model';
 import type {
   AssignmentRequest,
   AssignmentResponse,
@@ -13,10 +13,11 @@ class AssignmentService extends BaseApiService {
     super('assignment');
   }
 
-  getAvailableUser(pagination: PaginationApiProps) {
+  getAvailableUser(pagination: PaginationApiProps, assignmentId: string) {
     return this.httpClient.get<GetList<AvailableUser>>(`/user/available`, {
       params: {
         ...pagination,
+        assignmentId,
       },
     });
   }
@@ -29,6 +30,10 @@ class AssignmentService extends BaseApiService {
     });
   }
 
+  getAll() {
+    return this.httpClient.get<Assignment[]>('/');
+  }
+
   create(data: AssignmentRequest) {
     return this.httpClient.post<AssignmentResponse>(`/`, data);
   }
@@ -38,10 +43,6 @@ class AssignmentService extends BaseApiService {
     return {
       ...result,
       assignedDate: new Date(result.assignedDate).toISOString().split('T')[0],
-      assignedTo: {
-        ...result.assignedTo,
-        name: `${result.assignedTo.firstName} ${result.assignedTo.lastName}`,
-      },
     };
   }
 

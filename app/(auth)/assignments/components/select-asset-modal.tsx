@@ -21,11 +21,10 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { useAvailableAsset } from '@/features/assignment/assignment.hook';
-import type { Asset } from '@/features/model';
 import { Order } from '@/lib/@types/api';
 
-import type { ModalProps, TableCol } from './base-modal';
-import { TableCell, usePaginate } from './base-modal';
+import type { AvailableAsset, ModalProps, TableCol } from './base';
+import { TableCell, usePaginate } from './base';
 
 const colums = [
   {
@@ -41,13 +40,26 @@ const colums = [
   {
     name: 'Category',
     key: 'category',
-    sort: false,
+    sort: true,
   },
 ];
 
-export default function SelectAssetModal(props: ModalProps<Asset>) {
+function AssetTableRow({ asset }: { asset: AvailableAsset }) {
+  return (
+    <TableRow key={asset.assetCode}>
+      <TableCell htmlFor={asset.assetCode}>
+        <RadioGroupItem value={asset.assetCode} id={asset.assetCode} />
+      </TableCell>
+      <TableCell htmlFor={asset.assetCode}>{asset.assetCode}</TableCell>
+      <TableCell htmlFor={asset.assetCode}>{asset.name}</TableCell>
+      <TableCell htmlFor={asset.assetCode}>{asset.category.name}</TableCell>
+    </TableRow>
+  );
+}
+
+export default function SelectAssetModal(props: ModalProps<AvailableAsset>) {
   const { pagination, setPagination } = usePaginate(5, 300, 'name');
-  const [assetCode, setAssetCode] = useState(props.defaultValue);
+  const [assetCode, setAssetCode] = useState('');
   const { data } = useAvailableAsset(pagination);
 
   const onSave = () => {
@@ -71,8 +83,13 @@ export default function SelectAssetModal(props: ModalProps<Asset>) {
     }
   };
 
+  const onClose = () => {
+    setAssetCode('');
+    props.setOpen(false);
+  };
+
   return (
-    <Dialog open={props.open} onOpenChange={props.setOpen}>
+    <Dialog open={props.open} onOpenChange={onClose}>
       <DialogContent hideCloseButton className="max-w-3xl py-3">
         <DialogHeader className="flex flex-row items-center justify-between">
           <TypographyH5 className="text-primary">Select Asset</TypographyH5>
@@ -87,7 +104,7 @@ export default function SelectAssetModal(props: ModalProps<Asset>) {
           </div>
         </DialogHeader>
         <RadioGroup
-          value={assetCode}
+          value={assetCode || props.assignment?.asset.assetCode}
           onValueChange={(value) => setAssetCode(value)}
         >
           <div className="relative max-h-[60vh] overflow-y-auto">
@@ -116,19 +133,13 @@ export default function SelectAssetModal(props: ModalProps<Asset>) {
                 </TableRow>
               </TableHeader>
               <TableBody>
+                {props.assignment && (
+                  <AssetTableRow asset={props.assignment.asset} />
+                )}
                 {data?.data.map((as) => (
-                  <TableRow key={as.assetCode}>
-                    <TableCell htmlFor={as.assetCode}>
-                      <RadioGroupItem id={as.assetCode} value={as.assetCode} />
-                    </TableCell>
-                    <TableCell htmlFor={as.assetCode}>{as.assetCode}</TableCell>
-                    <TableCell htmlFor={as.assetCode}>{as.name}</TableCell>
-                    <TableCell htmlFor={as.assetCode}>
-                      {as.category.name}
-                    </TableCell>
-                  </TableRow>
+                  <AssetTableRow key={as.assetCode} asset={as} />
                 ))}
-                {data?.data.length === 0 && (
+                {data?.data.length === 0 && !props.assignment && (
                   <TableRow>
                     <CoreTableCell
                       colSpan={5}
@@ -154,7 +165,7 @@ export default function SelectAssetModal(props: ModalProps<Asset>) {
           <Button disabled={!assetCode} onClick={onSave}>
             Save
           </Button>
-          <Button variant="outline" onClick={() => props.setOpen(false)}>
+          <Button variant="outline" onClick={onClose}>
             Cancel
           </Button>
         </DialogFooter>
