@@ -1,7 +1,6 @@
 'use client';
 
 import { LogOut, RectangleEllipsis, User } from 'lucide-react';
-import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 
 import { ModeToggle } from '@/components/custom/mode-toggle';
@@ -15,8 +14,8 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import useProfile from '@/features/auth/useProfile';
-import { PROTECTED_ROUTES } from '@/lib/constants/protected-routes';
 
+import Breadcrumbs from '@/components/custom/breadcrumbs';
 import ChangePasswordDialog from './change-password-dialog';
 import LogoutDialog from './logout-dialog';
 
@@ -25,7 +24,6 @@ function AuthHeader() {
   const [changePasswordDialogOpen, setChangePasswordDialogOpen] =
     useState(false);
   const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
-  const pathname = usePathname();
 
   return (
     <div className="w-full bg-primary">
@@ -35,8 +33,7 @@ function AuthHeader() {
             <NashTechLogo className="size-full" />
           </div>
           <h1 className="text-xl font-bold text-primary-foreground">
-            {PROTECTED_ROUTES.find((route) => pathname.includes(route.path))
-              ?.heading || 'OAM'}
+            <Breadcrumbs />
           </h1>
         </div>
         <div className="flex items-center space-x-2">
