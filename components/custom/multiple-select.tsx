@@ -62,7 +62,7 @@ export function MultipleSelect({
           <Filter className="ml-2 size-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="max-h-80 w-full min-w-72 overflow-y-auto p-0">
+      <PopoverContent className="popover-content-width-full max-h-80 overflow-y-auto p-0">
         <Command>
           {items && items.length > 0 ? (
             <CommandList>

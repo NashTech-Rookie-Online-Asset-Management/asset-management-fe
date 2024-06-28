@@ -63,7 +63,7 @@ function CreateUserResultDialog({ userData }: CreateUserResultDialogProps) {
           <DialogTitle>User created</DialogTitle>
           <DialogClose data-id="close-button" />
 
-          <DialogDescription className="text-orange-900">
+          <DialogDescription className="text-orange-500">
             Warning: You will not be able to see this information again after
             closing this window.
           </DialogDescription>
