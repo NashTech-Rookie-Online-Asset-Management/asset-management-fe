@@ -70,11 +70,14 @@ export const createUserFormSchema = z
     },
   )
   .refine(
-    (schema) => {
-      const timeDiff =
-        new Date(schema.joinedAt).getTime() - new Date(schema.dob).getTime();
-      const daysDiff = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
-      return daysDiff > 18 * 365;
+    (data) => {
+      const dob = new Date(data.dob);
+      const joinedAt = new Date(data.joinedAt);
+      const ageAtJoined =
+        joinedAt.getFullYear() -
+        dob.getFullYear() -
+        (joinedAt < new Date(dob.setFullYear(dob.getFullYear() + 18)) ? 1 : 0);
+      return ageAtJoined >= 18;
     },
     {
       path: ['joinedAt'],

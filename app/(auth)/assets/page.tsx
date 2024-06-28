@@ -68,7 +68,7 @@ export default function AssetList() {
     'newAssetId',
     parseAsInteger.withDefault(-1),
   );
-  const { data: newAsset } = useGetAsset(newAssetId, true);
+  const { data: newAsset } = useGetAsset(newAssetId, { pinned: true });
   const statesParser = parseAsArrayOf(
     parseAsStringEnum<AssetState>(Object.values(AssetState)),
   );
@@ -91,7 +91,7 @@ export default function AssetList() {
   const [deletedAsset, setDeletedAsset] = useState<Asset | null>(null);
   const pagination = usePagination({
     sortFields: assetSortFields,
-    defaultSortField: 'assetCode',
+    defaultSortField: 'name',
     additionalParamsParsers: {
       states: statesParser,
       categoryIds: categoryIdsParser,
@@ -120,8 +120,6 @@ export default function AssetList() {
   );
 
   const { data: categories } = useGetCategories();
-
-  //   console.log(newAssetId);
 
   const handleSetSelectedAssetStates = (selectedItems: string[]) => {
     setSelectedAssetStates(selectedItems as AssetState[]);

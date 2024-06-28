@@ -1,8 +1,6 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable no-restricted-globals */
-
 'use client';
 
+// eslint-disable-next-line simple-import-sort/imports
 import {
   ArrowDownAZ,
   ArrowUpAZ,
@@ -12,8 +10,13 @@ import {
   Trash2,
 } from 'lucide-react';
 import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import {
+  parseAsArrayOf,
+  parseAsString,
+  parseAsStringEnum,
+  useQueryState,
+} from 'nuqs';
+import { useState } from 'react';
 
 import { MultipleSelect } from '@/components/custom/multiple-select';
 import Pagination from '@/components/custom/pagination';
@@ -35,15 +38,20 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import useProfile from '@/features/auth/useProfile';
-import { AccountType } from '@/features/model';
+import useGetUser from '@/features/user/useGetUser';
 import useGetUsers from '@/features/user/useGetUsers';
-import type { User, UserSortField } from '@/features/user/user.types';
-import { Order } from '@/lib/@types/api';
+import {
+  userSortFields,
+  type User,
+  type UserSortField,
+} from '@/features/user/user.types';
+import { Order, AccountType } from '@/lib/@types/api';
 import { PAGE_SIZE } from '@/lib/constants/pagination';
 import { AccountTypeOptions } from '@/lib/constants/user';
-import useDebounce from '@/lib/hooks/useDebounce';
+import usePagination from '@/lib/hooks/usePagination';
 import { displayDate } from '@/lib/utils/date';
 
+import { cn } from '@/lib/utils';
 import DeleteUserDialog from '../components/delete-user-dialog';
 import DetailedUserDialog from '../components/show-detailed-user-dialog';
 
@@ -51,81 +59,64 @@ const columns = [
   { label: 'Staff Code', key: 'staffCode' },
   { label: 'Full Name', key: 'name' },
   { label: 'Username', key: '' },
-  { label: 'Joined Date', key: 'joinedDate' },
-  {
-    label: 'Type',
-    key: 'type',
-  },
+  { label: 'Joined Date', key: 'joinedAt' },
+  { label: 'Type', key: 'type' },
 ];
 
 export default function UserList() {
-  const searchParams = useSearchParams();
-  const newUserParam = searchParams.get('new');
+  const [newUserUsername] = useQueryState(
+    'newUserUsername',
+    parseAsString.withDefault(''),
+  );
 
-  const [page, setPage] = useState(1);
-  const [searchValue, setSearchValue] = useState('');
-  const debouncedSearchValue = useDebounce(searchValue, 700);
-  const [selectedUserTypes, setSelectedUsertTypes] = useState<string[]>([]);
-  const sortFieldName =
-    newUserParam === 'true' ? 'updatedAt' : ('name' as UserSortField);
-  const [sortField, setSortField] = useState<UserSortField>(sortFieldName);
-  const sortOrderValue = newUserParam === 'true' ? Order.DESC : Order.ASC;
-  const [sortOrder, setSortOrder] = useState<Order>(sortOrderValue);
+  const { data: newUser } = useGetUser(newUserUsername, { pinned: true });
+
+  const typesParser = parseAsArrayOf(
+    parseAsStringEnum<AccountType>(Object.values(AccountType)),
+  );
+  const [selectedUserTypes, setSelectedUsertTypes] = useQueryState(
+    'types',
+    typesParser.withDefault([] as AccountType[]),
+  );
+
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedUsername, setSelectedUsername] = useState<string | null>(null);
-
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [deletedUser, setDeletedUser] = useState<User | null>(null);
   const { data: userProfile } = useProfile();
-  const { data: users, refetch: refetchUsers } = useGetUsers({
+
+  const pagination = usePagination({
+    sortFields: userSortFields,
+    defaultSortField: 'name',
+    additionalParamsParsers: {
+      types: typesParser,
+    },
+  });
+
+  const { page, searchValue, sortField, sortOrder } = pagination.metadata;
+  const { handlePageChange, handleSearch, handleSortColumn, serialize } =
+    pagination.handlers;
+
+  const getUsersOptions = {
     page,
     take: PAGE_SIZE,
-    search: debouncedSearchValue,
+    search: searchValue,
     types: selectedUserTypes,
     sortField,
     sortOrder,
-  });
-
-  useEffect(() => {
-    refetchUsers();
-  }, [
-    page,
-    debouncedSearchValue,
-    selectedUserTypes,
-    sortField,
-    sortOrder,
-    refetchUsers,
-  ]);
-
-  useEffect(() => {
-    if (newUserParam === 'true') {
-      history.replaceState({ new: true }, '', '/users');
-    }
-  }, []);
-
-  const handlePageChange = (newPage: number) => {
-    setPage(newPage);
   };
 
-  const handleSearch = (value: string) => {
-    setSearchValue(value);
-    setPage(1);
-  };
+  const getUsersQueryKey = serialize({ ...getUsersOptions });
+
+  const { data: users, refetch: refetchUsers } = useGetUsers(
+    getUsersOptions,
+    getUsersQueryKey,
+    newUser,
+  );
 
   const handleSetSelectedUsertTypes = (selectedItems: string[]) => {
-    setSelectedUsertTypes(selectedItems);
-    setPage(1);
-  };
-
-  const handleSortColumn = (column: UserSortField) => {
-    if (sortField === column) {
-      setSortOrder((prevOrder) =>
-        prevOrder === Order.ASC ? Order.DESC : Order.ASC,
-      );
-    } else {
-      setSortField(column);
-      setSortOrder(Order.ASC);
-    }
+    setSelectedUsertTypes(selectedItems as AccountType[]);
+    handlePageChange(1);
   };
 
   const handleOpenDialog = (username: string) => {
@@ -186,7 +177,7 @@ export default function UserList() {
           asChild
           data-id="create-button"
         >
-          <Link href="/users/create">Create new user</Link>
+          <Link href={`/users/create${getUsersQueryKey}`}>Create new user</Link>
         </Button>
       </div>
 
@@ -227,10 +218,13 @@ export default function UserList() {
                 <TableRow
                   key={row.id}
                   onClick={() => handleOpenDialog(row.username)}
-                  className="cursor-pointer"
+                  className={cn(
+                    'cursor-pointer',
+                    newUser?.id === row.id && 'bg-muted shadow-lg',
+                  )}
                 >
                   <TableCell className="py-2 pl-8">{row.staffCode}</TableCell>
-                  <TableCell className="py-2 pl-8">{`${row.firstName} ${row.lastName}`}</TableCell>
+                  <TableCell className="py-2 pl-8">{row.fullName}</TableCell>
                   <TableCell className="py-2 pl-8">{row.username}</TableCell>
                   <TableCell className="py-2 pl-8">
                     {displayDate(row.joinedAt)}
@@ -256,7 +250,9 @@ export default function UserList() {
                           asChild
                           disabled={row.type === userProfile?.type}
                         >
-                          <Link href={`/users/${row.username}`}>
+                          <Link
+                            href={`/users/${row.username}${getUsersQueryKey}`}
+                          >
                             <Pencil className="mr-4 size-4" />
                             Edit
                           </Link>

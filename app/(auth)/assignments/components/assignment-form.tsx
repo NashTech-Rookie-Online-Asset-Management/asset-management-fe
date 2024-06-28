@@ -3,9 +3,8 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Search } from 'lucide-react';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useLayoutEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
 
 import { LoadingButton } from '@/components/custom/loading-button';
 import { Button } from '@/components/ui/button';
@@ -19,35 +18,25 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { AssignmentState } from '@/lib/@types/api';
+import { AccountType, AssignmentState } from '@/lib/@types/api';
 
+import type { FormSchema } from './base';
+import { formSchema } from './base';
 import SelectAssetModal from './select-asset-modal';
 import SelectUserModal from './select-user-modal';
-
-const formSchema = z.object({
-  assignedTo: z.object({
-    staffCode: z.string(),
-    name: z.string(),
-  }),
-  asset: z.object({
-    assetCode: z.string(),
-    name: z.string(),
-  }),
-  assignedDate: z.string().date(),
-  note: z.string().max(255).optional(),
-  state: z.nativeEnum(AssignmentState).optional(),
-});
-
-export type FormSchema = z.infer<typeof formSchema>;
 
 const defaultFormValues: FormSchema = {
   assignedTo: {
     staffCode: '',
-    name: '',
+    fullName: '',
+    type: AccountType.STAFF,
   },
   asset: {
     assetCode: '',
     name: '',
+    category: {
+      name: '',
+    },
   },
   assignedDate: new Date().toISOString().split('T')[0],
   note: '',
@@ -84,24 +73,31 @@ export default function AssignmentForm({
   const openUserModalHandler = () => setOpenUserModal(true);
   const openAssetModalHandler = () => setOpenAssetModal(true);
 
+  useLayoutEffect(() => {
+    const datePickerInput = document.getElementById(
+      'assignedDate',
+    ) as HTMLInputElement;
+    if (datePickerInput) {
+      const [currentDate] = new Date().toISOString().split('T');
+      datePickerInput.min = currentDate;
+    }
+  }, []);
+
   return (
     <>
       <SelectUserModal
+        assignment={defaultValue}
         open={openUserModal}
         setOpen={setOpenUserModal}
         onSelect={(user) => {
-          form.setValue('assignedTo', {
-            ...user,
-            name: `${user.firstName} ${user.lastName}`,
-          });
+          form.setValue('assignedTo', user);
         }}
-        defaultValue={defaultValue?.assignedTo.staffCode}
       />
 
       <SelectAssetModal
+        assignment={defaultValue}
         open={openAssetModal}
         setOpen={setOpenAssetModal}
-        defaultValue={defaultValue?.asset.assetCode}
         onSelect={(asset) => form.setValue('asset', asset)}
       />
 
@@ -112,7 +108,7 @@ export default function AssignmentForm({
         >
           <FormField
             control={form.control}
-            name="assignedTo.name"
+            name="assignedTo.fullName"
             render={({ field }) => (
               <FormItem className="space-y-2">
                 <FormLabel>
@@ -173,7 +169,13 @@ export default function AssignmentForm({
                   <span className="required">Assigned Date</span>
                 </FormLabel>
                 <FormControl>
-                  <Input type="date" className="block" autoFocus {...field} />
+                  <Input
+                    id="assignedDate"
+                    type="date"
+                    className="block"
+                    autoFocus
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>

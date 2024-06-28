@@ -41,6 +41,7 @@ function CreateAssetForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const categoryRef = React.useRef<HTMLDivElement>(null);
+  const [saveButtonEnabled, setSaveButtonEnabled] = React.useState(false);
   const { mutateAsync: createAsset, isPending, isSuccess } = useCreateAsset();
   const { data: categories } = useGetCategories();
   const {
@@ -51,6 +52,10 @@ function CreateAssetForm() {
   const form = useForm<z.infer<typeof createNewAssetSchema>>({
     resolver: zodResolver(createNewAssetSchema),
     defaultValues: {
+      name: '',
+      category: '',
+      specification: '',
+      installedDate: '',
       state: AssetState.AVAILABLE,
     },
   });
@@ -69,6 +74,41 @@ function CreateAssetForm() {
     router.push(`/assets?${searchParams.toString()}&newAssetId=${id}`);
   }
 
+  const nameValue = form.watch('name');
+  const nameError = form.getFieldState('name').error;
+  const specificationValue = form.watch('specification');
+  const specificationError = form.getFieldState('specification').error;
+
+  React.useEffect(() => {
+    if (!nameError) return;
+    if (!nameValue) {
+      form.clearErrors('name');
+    }
+  }, [nameValue, form, nameError]);
+  React.useEffect(() => {
+    if (!specificationError) return;
+    if (!specificationValue) {
+      form.clearErrors('specification');
+    }
+  }, [specificationValue, form, specificationError]);
+
+  function checkSaveButtonEnabled(): boolean {
+    const commonFieldsFilled =
+      form.watch('name') &&
+      form.watch('category') &&
+      form.watch('installedDate') &&
+      form.watch('state') &&
+      form.watch('specification');
+    return !!commonFieldsFilled;
+  }
+
+  React.useEffect(() => {
+    const subscription = form.watch(() => {
+      setSaveButtonEnabled(checkSaveButtonEnabled());
+    });
+    return () => subscription.unsubscribe();
+  }, [form]);
+
   useOnClickOutside(categoryRef, closeCategory);
 
   return (
@@ -82,12 +122,11 @@ function CreateAssetForm() {
               <FormLabel>
                 <span className="required">Name</span>
               </FormLabel>
-              <div>
-                <FormControl>
-                  <Input autoFocus {...field} placeholder="Enter asset name" />
-                </FormControl>
-                <FormMessage />
-              </div>
+
+              <FormControl>
+                <Input autoFocus {...field} placeholder="Enter asset name" />
+              </FormControl>
+              <FormMessage />
             </FormItem>
           )}
         />
@@ -148,16 +187,11 @@ function CreateAssetForm() {
               <FormLabel>
                 <span className="required">Specification</span>
               </FormLabel>
-              <div>
-                <FormControl>
-                  <Textarea
-                    autoFocus
-                    className="min-h-48 resize-none"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </div>
+
+              <FormControl>
+                <Textarea className="min-h-48 resize-none" {...field} />
+              </FormControl>
+              <FormMessage />
             </FormItem>
           )}
         />
@@ -169,12 +203,11 @@ function CreateAssetForm() {
               <FormLabel>
                 <span className="required">Installed Date</span>
               </FormLabel>
-              <div>
-                <FormControl>
-                  <Input type="date" className="block" autoFocus {...field} />
-                </FormControl>
-                <FormMessage />
-              </div>
+
+              <FormControl>
+                <Input type="date" className="block" {...field} />
+              </FormControl>
+              <FormMessage />
             </FormItem>
           )}
         />
@@ -217,7 +250,7 @@ function CreateAssetForm() {
           <LoadingButton
             type="submit"
             isLoading={isPending}
-            disabled={!form.formState.isValid || isPending || isSuccess}
+            disabled={!saveButtonEnabled || isPending || isSuccess}
           >
             Save
           </LoadingButton>

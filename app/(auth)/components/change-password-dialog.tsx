@@ -98,7 +98,7 @@ function ChangePasswordDialog({
   }, [isOpen, reset]);
 
   return (
-    <Dialog open={isOpen} onOpenChange={onOpenChange} modal>
+    <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent hideCloseButton>
         <DialogHeader>
           <DialogTitle>Change Password</DialogTitle>
@@ -161,11 +161,12 @@ function ChangePasswordDialog({
                   </FormItem>
                 )}
               />
-              <DialogFooter>
+              <DialogFooter className="flex flex-col items-center justify-center gap-2 md:flex-row">
                 <LoadingButton
                   data-id="change-password-button"
                   type="submit"
                   isLoading={isPending}
+                  className="w-full md:w-fit"
                   disabled={
                     !(
                       form.getValues('oldPassword') &&
@@ -181,6 +182,7 @@ function ChangePasswordDialog({
                   <Button
                     variant="secondary"
                     onClick={handleCancelDialog}
+                    className="w-full md:w-fit"
                     data-id="change-password-cancel-button"
                   >
                     Cancel

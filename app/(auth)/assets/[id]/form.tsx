@@ -4,7 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { ChevronsUpDown } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect } from 'react';
+import React from 'react';
 import { useForm } from 'react-hook-form';
 import type { z } from 'zod';
 
@@ -23,6 +23,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from '@/components/ui/use-toast';
+import type { Asset } from '@/features/asset/asset.types';
 import useGetAsset from '@/features/asset/useGetAsset';
 import useUpdateAsset from '@/features/asset/useUpdateAsset';
 import useGetCategories from '@/features/category/useGetCategories';
@@ -32,10 +33,19 @@ import { cn } from '@/lib/utils';
 
 import { editAssetSchema } from './schema';
 
-function EditAssetForm({ id }: { id: string }) {
+type Props = {
+  initialAsset: Asset;
+};
+
+function EditAssetForm({ initialAsset }: Props) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { data: asset, isPending: isAssetPending } = useGetAsset(Number(id));
+  const { data: asset, isPending: isAssetPending } = useGetAsset(
+    initialAsset.id,
+    {
+      initialData: initialAsset,
+    },
+  );
   const { mutateAsync: updateAsset, isPending, isSuccess } = useUpdateAsset();
   const { data: categories } = useGetCategories();
   const form = useForm<z.infer<typeof editAssetSchema>>({
@@ -50,10 +60,28 @@ function EditAssetForm({ id }: { id: string }) {
     isSuccess ||
     !isAbleToEdit;
 
+  const nameValue = form.watch('name');
+  const nameError = form.getFieldState('name').error;
+  const specificationValue = form.watch('specification');
+  const specificationError = form.getFieldState('specification').error;
+
+  React.useEffect(() => {
+    if (!nameError) return;
+    if (!nameValue) {
+      form.clearErrors('name');
+    }
+  }, [nameValue, form, nameError]);
+  React.useEffect(() => {
+    if (!specificationError) return;
+    if (!specificationValue) {
+      form.clearErrors('specification');
+    }
+  }, [specificationValue, form, specificationError]);
+
   async function onSubmit(values: z.infer<typeof editAssetSchema>) {
     const { assetCode, id: assetId } = await updateAsset({
       ...values,
-      id: Number(id),
+      id: initialAsset.id,
       installedDate: new Date(values.installedDate),
     });
     toast({
@@ -64,7 +92,7 @@ function EditAssetForm({ id }: { id: string }) {
     router.push(`/assets?${searchParams.toString()}&newAssetId=${assetId}`);
   }
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (!isAbleToEdit) {
       toast({
         title: 'Asset cannot be edited',
@@ -75,7 +103,7 @@ function EditAssetForm({ id }: { id: string }) {
     }
   }, [isAbleToEdit, router]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (!asset) return;
     form.reset({
       name: asset.name,
@@ -89,7 +117,7 @@ function EditAssetForm({ id }: { id: string }) {
     });
   }, [asset, form]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     form.trigger();
   }, [form]);
 
@@ -175,7 +203,6 @@ function EditAssetForm({ id }: { id: string }) {
                     <Skeleton className="h-48 w-full rounded-md" />
                   ) : (
                     <Textarea
-                      autoFocus
                       className="min-h-48 resize-none"
                       disabled={!isAbleToEdit}
                       {...field}
@@ -204,7 +231,6 @@ function EditAssetForm({ id }: { id: string }) {
                       disabled={!isAbleToEdit}
                       type="date"
                       className="block"
-                      autoFocus
                       {...field}
                     />
                   )}
@@ -243,7 +269,7 @@ function EditAssetForm({ id }: { id: string }) {
                             checked={field.value === AssetState.AVAILABLE}
                           />
                         </FormControl>
-                        <FormLabel className="font-normal">
+                        <FormLabel className="cursor-pointer font-normal">
                           {AssetStateOptions[AssetState.AVAILABLE]}
                         </FormLabel>
                       </FormItem>
@@ -257,7 +283,7 @@ function EditAssetForm({ id }: { id: string }) {
                             checked={field.value === AssetState.NOT_AVAILABLE}
                           />
                         </FormControl>
-                        <FormLabel className="font-normal">
+                        <FormLabel className="cursor-pointer font-normal">
                           {AssetStateOptions[AssetState.NOT_AVAILABLE]}
                         </FormLabel>
                       </FormItem>
@@ -273,7 +299,7 @@ function EditAssetForm({ id }: { id: string }) {
                             }
                           />
                         </FormControl>
-                        <FormLabel className="font-normal">
+                        <FormLabel className=" cursor-pointer font-normal">
                           {AssetStateOptions[AssetState.WAITING_FOR_RECYCLING]}
                         </FormLabel>
                       </FormItem>
@@ -287,7 +313,7 @@ function EditAssetForm({ id }: { id: string }) {
                             checked={field.value === AssetState.RECYCLED}
                           />
                         </FormControl>
-                        <FormLabel className="font-normal">
+                        <FormLabel className="cursor-pointer font-normal">
                           {AssetStateOptions[AssetState.RECYCLED]}
                         </FormLabel>
                       </FormItem>

@@ -18,10 +18,17 @@ export type AuthUserResponse = {
   refreshToken: string;
 };
 
-export type Profile = {
-  id: number | string;
+export type Account = {
+  id: number;
   staffCode: string;
   username: string;
-  status: keyof typeof UserStatus;
+  firstName: string;
+  lastName: string;
+  email: string;
   type: AccountType;
+  location: Location;
+  fullName: string;
+  status: UserStatus;
 };
+
+export type Profile = Account;

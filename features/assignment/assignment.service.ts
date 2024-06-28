@@ -1,22 +1,23 @@
 import type { PaginationApiProps } from '@/lib/@types/api';
 import BaseApiService from '@/lib/services/baseApi.service';
 
-import type { Asset } from '../model';
+import type { Asset } from '../asset/asset.types';
 import type {
+  Assignment,
   AssignmentRequest,
-  AssignmentResponse,
   AvailableUser,
-} from './assignment.type';
+} from './assignment.types';
 
 class AssignmentService extends BaseApiService {
   constructor() {
     super('assignment');
   }
 
-  getAvailableUser(pagination: PaginationApiProps) {
+  getAvailableUser(pagination: PaginationApiProps, assignmentId: string) {
     return this.httpClient.get<GetList<AvailableUser>>(`/user/available`, {
       params: {
         ...pagination,
+        assignmentId,
       },
     });
   }
@@ -29,24 +30,24 @@ class AssignmentService extends BaseApiService {
     });
   }
 
+  getAll() {
+    return this.httpClient.get<Assignment[]>('/');
+  }
+
   create(data: AssignmentRequest) {
-    return this.httpClient.post<AssignmentResponse>(`/`, data);
+    return this.httpClient.post<Assignment>(`/`, data);
   }
 
   async get(id: string) {
-    const result = await this.httpClient.get<AssignmentResponse>(`/${id}`);
+    const result = await this.httpClient.get<Assignment>(`/${id}`);
     return {
       ...result,
       assignedDate: new Date(result.assignedDate).toISOString().split('T')[0],
-      assignedTo: {
-        ...result.assignedTo,
-        name: `${result.assignedTo.firstName} ${result.assignedTo.lastName}`,
-      },
-    };
+    } as Assignment;
   }
 
   edit(id: string, data: AssignmentRequest) {
-    return this.httpClient.put<AssignmentResponse>(`/${id}`, data);
+    return this.httpClient.put<Assignment>(`/${id}`, data);
   }
 }
 

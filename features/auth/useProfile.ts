@@ -1,11 +1,17 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 
 import authApi from './auth.service';
+import type { Account } from './auth.types';
 
-function useProfile() {
+type GetProfileOptions = {
+  initialData?: Account;
+};
+
+function useProfile({ initialData }: GetProfileOptions = {}) {
   return useQuery({
     queryKey: [`auth/profile`],
     queryFn: () => authApi.getProfile(),
+    initialData,
     placeholderData: keepPreviousData,
   });
 }

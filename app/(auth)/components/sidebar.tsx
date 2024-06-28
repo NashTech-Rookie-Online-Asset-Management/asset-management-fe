@@ -1,13 +1,17 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 
 import NashTechLogo from '@/components/custom/nashtech-logo';
 import { Button } from '@/components/ui/button';
 import useProfile from '@/features/auth/useProfile';
 import { PROTECTED_ROUTES } from '@/lib/constants/protected-routes';
 import { cn } from '@/lib/utils';
+
+type Props = {
+  onNavClick?: () => void;
+};
 
 const authNavLinks: { title: string; href: string }[] = [
   {
@@ -36,9 +40,12 @@ const NavLink = ({
   href,
   title,
   isActive = false,
-}: (typeof authNavLinks)[0] & {
-  isActive?: boolean;
-}) => {
+  onNavClick,
+}: (typeof authNavLinks)[0] &
+  Props & {
+    isActive?: boolean;
+  }) => {
+  const router = useRouter();
   return (
     <Button
       asChild
@@ -48,6 +55,10 @@ const NavLink = ({
         !isActive && 'hover:bg-slate-200 dark:hover:bg-slate-800',
       )}
       data-id={`side-bar-${title.toLowerCase().replaceAll(/\s+/g, '-')}`}
+      onClick={() => {
+        router.push(href.toString());
+        onNavClick?.();
+      }}
     >
       <Link href={href}>
         <li>{title}</li>
@@ -56,7 +67,7 @@ const NavLink = ({
   );
 };
 
-const Sidebar = () => {
+const Sidebar = ({ onNavClick }: Props) => {
   const { data: user } = useProfile();
   const currentPath = usePathname();
 
@@ -64,7 +75,7 @@ const Sidebar = () => {
     path.length > 1 ? currentPath.includes(path) : currentPath === path;
 
   return (
-    <nav className="w-64">
+    <div>
       <div className="mb-6">
         <div className="my-2 aspect-square size-40 dark:bg-gradient-to-r dark:from-[#831963] dark:to-[#cd0021] dark:p-2">
           <NashTechLogo className="size-full dark:fill-white" />
@@ -85,10 +96,11 @@ const Sidebar = () => {
                 href={route.path}
                 isActive={isActive(route.path)}
                 key={route.path}
+                onNavClick={onNavClick}
               />
             ))}
       </ul>
-    </nav>
+    </div>
   );
 };
 

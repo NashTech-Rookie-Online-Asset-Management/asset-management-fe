@@ -1,7 +1,5 @@
-'use client';
-
 import type { ApiMessage, Order } from '@/lib/@types/api';
-import HttpService from '@/lib/services/http.service';
+import BaseApiService from '@/lib/services/baseApi.service';
 
 import type {
   CreateUserRequest,
@@ -12,9 +10,13 @@ import type {
   UserSortField,
 } from './user.types';
 
-class UserApiService extends HttpService {
+class UserApiService extends BaseApiService {
+  constructor() {
+    super('users');
+  }
+
   getUserById(id: string) {
-    return this.get<User>(`/users/${id}`);
+    return this.httpClient.get<User>(`/${id}`);
   }
 
   getUsers({
@@ -32,35 +34,36 @@ class UserApiService extends HttpService {
     sortField: UserSortField;
     sortOrder: Order;
   }) {
-    return this.get<GetList<User>>('users', {
+    return this.httpClient.get<GetList<User>>('/', {
       params: {
         page,
         take,
         search: search || undefined,
         types: types.join(',') || undefined,
-        [`${sortField}Order`]: sortOrder,
+        sortField,
+        sortOrder,
       },
     });
   }
 
   getMe() {
-    return this.get<User>(`/users/@me`);
+    return this.httpClient.get<User>(`/@me`);
   }
 
   getUser(username: string) {
-    return this.get<User>(`users/${username}`);
+    return this.httpClient.get<User>(`/${username}`);
   }
 
   postUser(data: CreateUserRequest) {
-    return this.post<CreateUserResponse>('/users', data);
+    return this.httpClient.post<CreateUserResponse>('/', data);
   }
 
   updateUser(userStaffCode: string, data: UpdateUserRequest) {
-    return this.patch<UpdateUserResponse>(`users/${userStaffCode}`, data);
+    return this.httpClient.patch<UpdateUserResponse>(`/${userStaffCode}`, data);
   }
 
   deleteUser(staffCode: string) {
-    return this.delete(`users/${staffCode}`) as Promise<ApiMessage>;
+    return this.httpClient.delete(`/${staffCode}`) as Promise<ApiMessage>;
   }
 }
 

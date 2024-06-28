@@ -3,7 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { AxiosError } from 'axios';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import type { z } from 'zod';
@@ -32,23 +32,28 @@ import { toast } from '@/components/ui/use-toast';
 import useProfile from '@/features/auth/useProfile';
 import useEditUser from '@/features/user/useEditUser';
 import useGetUser from '@/features/user/useGetUser';
+import type { User } from '@/features/user/user.types';
 import { AccountType, Gender } from '@/lib/@types/api';
 import { normalizeText } from '@/lib/utils';
 
 import { editUserFormSchema } from './schema';
 
 type Props = {
-  id: string;
+  initialUser: User;
 };
-function EditUserForm({ id }: Props) {
+
+function EditUserForm({ initialUser }: Props) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const {
     data: userData,
     isPending: isUserPending,
     isSuccess: isUserSuccess,
     isError: isUserError,
     error: userError,
-  } = useGetUser(id);
+  } = useGetUser(initialUser.username, {
+    initialData: initialUser,
+  });
   const {
     mutateAsync: editUser,
     isPending: isEditUserPending,
@@ -66,7 +71,7 @@ function EditUserForm({ id }: Props) {
     isEditUserSuccess;
 
   async function onSubmit(values: z.infer<typeof editUserFormSchema>) {
-    await editUser({
+    const { username } = await editUser({
       userStaffCode: userData!.staffCode,
       data: values,
     });
@@ -76,7 +81,9 @@ function EditUserForm({ id }: Props) {
       description: `Successfully edited user`,
       variant: 'success',
     });
-    router.push(`/users?new=true`);
+    router.push(
+      `/users?${searchParams.toString()}&newUserUsername=${username}`,
+    );
   }
 
   useEffect(() => {
@@ -220,7 +227,7 @@ function EditUserForm({ id }: Props) {
                   >
                     {Object.values(Gender).map((e) => (
                       <FormItem
-                        className="flex items-center space-x-3 space-y-0"
+                        className="flex cursor-pointer items-center space-x-3 space-y-0"
                         data-id={`radio-group-item-gender_${e}`}
                         key={`radio_group_item_gender_${e}`}
                       >
@@ -230,7 +237,9 @@ function EditUserForm({ id }: Props) {
                             value={e}
                           />
                         </FormControl>
-                        <FormLabel>{normalizeText(e)}</FormLabel>
+                        <FormLabel className="cursor-pointer">
+                          {normalizeText(e)}
+                        </FormLabel>
                       </FormItem>
                     ))}
                   </RadioGroup>

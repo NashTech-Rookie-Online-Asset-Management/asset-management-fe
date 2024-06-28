@@ -1,46 +1,32 @@
-'use client';
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
+import React from 'react';
 
-import { useRouter } from 'next/navigation';
+import assignmentApi from '@/features/assignment/assignment.service';
+import CookieKeys from '@/lib/constants/cookieKeys';
 
-import { TypographyH4 } from '@/components/typos/h4';
-import {
-  useAssignment,
-  useEditAssignment,
-} from '@/features/assignment/assignment.hook';
+import EditAssignmentForm from './form';
 
-import AssignmentForm from '../components/assignment-form';
-
-interface PageProps {
+type Props = {
   params: {
     id: string;
   };
+};
+
+async function getAssignment(id: string) {
+  const accessToken = cookies().get(CookieKeys.ACCESS_TOKEN)?.value!;
+  assignmentApi.setBearerToken(accessToken).useServer();
+
+  try {
+    const assignment = await assignmentApi.get(id);
+    return assignment;
+  } catch (error) {
+    return redirect('/assignments');
+  }
 }
 
-export default function EditAssignmentPage({ params }: PageProps) {
-  const router = useRouter();
-  const { data, isPending: queryPending } = useAssignment(params.id);
-  const { mutate, isPending: mutatePending, isSuccess } = useEditAssignment();
+export default async function EditAssignmentPage({ params }: Props) {
+  const assignment = await getAssignment(params.id);
 
-  if (isSuccess) router.push('/assignments');
-
-  return (
-    <>
-      <TypographyH4 className="mb-6 text-primary">Edit Assignment</TypographyH4>
-      <AssignmentForm
-        isPending={queryPending || mutatePending}
-        defaultValue={data}
-        onSubmit={(values) =>
-          mutate({
-            id: params.id,
-            data: {
-              assetCode: values.asset.assetCode,
-              staffCode: values.assignedTo.staffCode,
-              assignedDate: values.assignedDate,
-              note: values.note,
-            },
-          })
-        }
-      />
-    </>
-  );
+  return <EditAssignmentForm initialAssignment={assignment} />;
 }
