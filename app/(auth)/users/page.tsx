@@ -45,12 +45,13 @@ import {
   type User,
   type UserSortField,
 } from '@/features/user/user.types';
-import { Order, AccountType } from '@/lib/@types/api';
+import { AccountType, Order } from '@/lib/@types/api';
 import { PAGE_SIZE } from '@/lib/constants/pagination';
 import { AccountTypeOptions } from '@/lib/constants/user';
 import usePagination from '@/lib/hooks/usePagination';
 import { displayDate } from '@/lib/utils/date';
 
+import { CustomCell } from '@/components/custom/custom-cell';
 import { cn } from '@/lib/utils';
 import DeleteUserDialog from '../components/delete-user-dialog';
 import DetailedUserDialog from '../components/show-detailed-user-dialog';
@@ -223,15 +224,11 @@ export default function UserList() {
                     newUser?.id === row.id && 'bg-muted shadow-lg',
                   )}
                 >
-                  <TableCell className="py-2 pl-8">{row.staffCode}</TableCell>
-                  <TableCell className="py-2 pl-8">{row.fullName}</TableCell>
-                  <TableCell className="py-2 pl-8">{row.username}</TableCell>
-                  <TableCell className="py-2 pl-8">
-                    {displayDate(row.joinedAt)}
-                  </TableCell>
-                  <TableCell className="py-2 pl-8">
-                    {AccountTypeOptions[row.type]}
-                  </TableCell>
+                  <CustomCell value={row.staffCode} />
+                  <CustomCell value={row.fullName} />
+                  <CustomCell value={row.username} />
+                  <CustomCell value={displayDate(row.joinedAt)} />
+                  <CustomCell value={AccountTypeOptions[row.type]} />
                   <TableCell className="py-2 pl-8">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
