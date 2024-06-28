@@ -47,9 +47,9 @@ export type CreateUserResponse = {
   lastName: string;
   username: string;
   password: string;
-  dob: Date;
+  dob: string;
   gender: Gender;
-  joinedAt: Date;
+  joinedAt: string;
   type: AccountType;
   location: Location;
 };
