@@ -53,6 +53,7 @@ import { PAGE_SIZE } from '@/lib/constants/pagination';
 import usePagination from '@/lib/hooks/usePagination';
 import { cn } from '@/lib/utils';
 
+import { CustomCell } from '@/components/custom/custom-cell';
 import DeleteAssetDialog from '../components/delete-asset-dialog';
 import DetailedAssetDialog from '../components/show-detailed-asset-dialog';
 
@@ -246,14 +247,10 @@ export default function AssetList() {
                     newAsset?.id === row.id && 'bg-muted shadow-lg',
                   )}
                 >
-                  <TableCell className="py-2 pl-8">{row.assetCode}</TableCell>
-                  <TableCell className="py-2 pl-8">{row.name}</TableCell>
-                  <TableCell className="py-2 pl-8">
-                    {row.category.name}
-                  </TableCell>
-                  <TableCell className="py-2 pl-8">
-                    {AssetStateOptions[row.state]}
-                  </TableCell>
+                  <CustomCell value={row.assetCode} />
+                  <CustomCell value={row.name} />
+                  <CustomCell value={row.category.name} />
+                  <CustomCell value={AssetStateOptions[row.state]} />
                   <TableCell className="py-2 pl-8">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
