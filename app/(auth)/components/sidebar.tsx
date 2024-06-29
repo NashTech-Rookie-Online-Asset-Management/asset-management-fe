@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 
-import NashTechLogo from '@/components/custom/nashtech-logo';
+import DynamicLogo from '@/components/custom/dynamic-logo';
 import { Button } from '@/components/ui/button';
 import useProfile from '@/features/auth/useProfile';
 import { PROTECTED_ROUTES } from '@/lib/constants/protected-routes';
@@ -77,9 +77,7 @@ const Sidebar = ({ onNavClick }: Props) => {
   return (
     <div>
       <div className="mb-6">
-        <div className="my-2 aspect-square size-40 dark:bg-gradient-to-r dark:from-[#831963] dark:to-[#cd0021] dark:p-2">
-          <NashTechLogo className="size-full dark:fill-white" />
-        </div>
+        <DynamicLogo className="size-40 my-2 dark:p-2" />
         <h4 className="text-lg font-bold text-primary">
           Online Asset Management
         </h4>

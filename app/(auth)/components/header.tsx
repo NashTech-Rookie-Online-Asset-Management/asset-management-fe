@@ -5,8 +5,8 @@ import { useState } from 'react';
 import { useBoolean, useMediaQuery } from 'usehooks-ts';
 
 import Breadcrumbs from '@/components/custom/breadcrumbs';
+import DynamicLogo from '@/components/custom/dynamic-logo';
 import { ModeToggle } from '@/components/custom/mode-toggle';
-import NashTechLogo from '@/components/custom/nashtech-logo';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -60,9 +60,7 @@ function AuthHeader({ initialProfile }: Props) {
             )}
             {isDesktop && (
               <>
-                <div className="aspect-square size-12 bg-white p-1">
-                  <NashTechLogo className="size-full" />
-                </div>
+                <DynamicLogo className="size-12 p-1" />
                 <h1 className="text-xl font-bold text-primary-foreground">
                   <Breadcrumbs />
                 </h1>
