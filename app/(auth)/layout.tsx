@@ -5,7 +5,9 @@ import React from 'react';
 import authApi from '@/features/auth/auth.service';
 import CookieKeys from '@/lib/constants/cookieKeys';
 
+import ChangePasswordFirstTimeDialog from './components/change-password-first-time-dialog';
 import AuthHeader from './components/header';
+import ShowUserData from './components/show-user-data';
 import Sidebar from './components/sidebar';
 
 async function getProfile() {
@@ -31,6 +33,8 @@ async function AuthLayout({ children }: React.PropsWithChildren) {
         </nav>
         <div className="flex-1">{children}</div>
       </div>
+      <ShowUserData />
+      <ChangePasswordFirstTimeDialog initialProfile={profile} />
     </div>
   );
 }
