@@ -10,8 +10,8 @@ import {
 } from '@/components/ui/pagination';
 import { Input } from '../ui/input';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import ReactPagination from 'react-paginate';
 import { cn } from '@/lib/utils';
+import ReactPagination from 'react-paginate';
 
 const Pagination = ({
   totalPages,
@@ -63,7 +63,7 @@ const Pagination = ({
               tabIndex={currentPage <= 1 ? -1 : 0}
               className={
                 currentPage <= 1
-                  ? 'cursor-default opacity-50 hover:bg-white'
+                  ? 'cursor-default opacity-50 hover:bg-transparent'
                   : ''
               }
             >
@@ -76,7 +76,7 @@ const Pagination = ({
               tabIndex={currentPage >= totalPages ? -1 : 0}
               className={
                 currentPage >= totalPages
-                  ? 'cursor-default opacity-50 hover:bg-white'
+                  ? 'cursor-default opacity-50 hover:bg-transparent'
                   : ''
               }
             >
