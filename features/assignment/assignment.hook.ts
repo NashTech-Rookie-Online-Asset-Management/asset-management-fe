@@ -16,12 +16,10 @@ export function useAvailableUser(
   const transformedId = Array.isArray(id) ? id.join(',') : id;
   return useQuery({
     queryKey: [
-      'assignment/user/available',
-      pagination?.page,
-      pagination?.take,
-      pagination?.search,
-      pagination?.sortField,
-      pagination?.sortOrder,
+      'assignments',
+      ...Object.values(pagination),
+      'user',
+      'available',
     ],
     queryFn: () =>
       assignmentService.getAvailableUser(pagination, transformedId),
@@ -32,12 +30,10 @@ export function useAvailableUser(
 export function useAvailableAsset(pagination: PaginationApiProps) {
   return useQuery({
     queryKey: [
-      'assignment/asset/available',
-      pagination.page,
-      pagination.take,
-      pagination.search,
-      pagination?.sortField,
-      pagination?.sortOrder,
+      'assignments',
+      ...Object.values(pagination),
+      'asset',
+      'available',
     ],
     queryFn: () => assignmentService.getAvailableAsset(pagination),
     placeholderData: keepPreviousData,
@@ -60,7 +56,7 @@ export function useAssignment(
   { initialData }: GetAssignmentOptions = {},
 ) {
   return useQuery({
-    queryKey: ['assignment', id],
+    queryKey: ['assignments', id],
     queryFn: () => assignmentService.get(id),
     initialData: () => initialData,
   });

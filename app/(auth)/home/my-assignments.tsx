@@ -1,6 +1,5 @@
 'use client';
 
-import { formatDistanceToNow } from 'date-fns';
 import {
   ArrowDownAZ,
   ArrowUpAZ,
@@ -11,6 +10,7 @@ import {
   Undo,
   X,
 } from 'lucide-react';
+import { useState } from 'react';
 
 import { CustomCell } from '@/components/custom/custom-cell';
 import Pagination from '@/components/custom/pagination';
@@ -37,10 +37,14 @@ import type {
 } from '@/features/assignment/assignment.types';
 import { myAssignmentsSortFields } from '@/features/assignment/assignment.types';
 import useGetMyAssignments from '@/features/assignment/useGetMyAssignments';
-import { Order } from '@/lib/@types/api';
+import { AssignmentState, Order } from '@/lib/@types/api';
 import { AssignmentStateOptions } from '@/lib/constants/assignments';
 import { PAGE_SIZE } from '@/lib/constants/pagination';
 import usePagination from '@/lib/hooks/usePagination';
+import { displayDate } from '@/lib/utils/date';
+
+import AcceptAssignmentDialog from './accept-assignment-dialog';
+import DeclineAssignmentDialog from './decline-assignment-dialog';
 
 const columns = [
   { label: 'Asset Code', key: 'assetCode' },
@@ -53,21 +57,35 @@ const columns = [
 function MyAssignments() {
   const pagination = usePagination({
     sortFields: myAssignmentsSortFields,
-    defaultSortField: myAssignmentsSortFields[0],
+    defaultSortField: 'assignedDate',
+    defaultSortOrder: Order.DESC,
   });
   const { page, searchValue, sortField, sortOrder } = pagination.metadata;
   const { handlePageChange, handleSearch, handleSortColumn } =
     pagination.handlers;
 
-  const fetchOptions = {
+  const [acceptDialogOpen, setAcceptDialogOpen] = useState(false);
+  const [declineDialogOpen, setDeclineDialogOpen] = useState(false);
+  const [selectedAssignment, setSelectedAssignment] =
+    useState<Assignment | null>(null);
+
+  const { data: assignments, isPending } = useGetMyAssignments({
     page,
     search: searchValue,
     sortField,
     sortOrder,
     take: PAGE_SIZE,
+  });
+
+  const handleAcceptClick = (assignment: Assignment) => {
+    setSelectedAssignment(assignment);
+    setAcceptDialogOpen(true);
   };
 
-  const { data: assignments, isPending } = useGetMyAssignments(fetchOptions);
+  const handleDeclineClick = (assignment: Assignment) => {
+    setSelectedAssignment(assignment);
+    setDeclineDialogOpen(true);
+  };
 
   return (
     <div className="flex flex-col gap-4">
@@ -134,7 +152,7 @@ function MyAssignments() {
                   <CustomCell value={row.asset.name} />
                   <CustomCell value={row.asset.category.name} />
                   <CustomCell
-                    value={formatDistanceToNow(new Date(row.assignedDate))}
+                    value={displayDate(row.assignedDate.toString())}
                   />
                   <CustomCell value={AssignmentStateOptions[row.state]} />
                   <TableCell className="py-2 pl-8">
@@ -153,20 +171,26 @@ function MyAssignments() {
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
                         <DropdownMenuItem
                           className="cursor-pointer"
-                          //   disabled={row.state === AssetState.ASSIGNED}
+                          disabled={
+                            row.state !== AssignmentState.WAITING_FOR_ACCEPTANCE
+                          }
+                          onClick={() => handleAcceptClick(row)}
                         >
                           <Check className="mr-4 size-4" />
                           Accept
                         </DropdownMenuItem>
                         <DropdownMenuItem
                           className="cursor-pointer"
-                          //   disabled={row.state === AssetState.ASSIGNED}
+                          disabled={
+                            row.state !== AssignmentState.WAITING_FOR_ACCEPTANCE
+                          }
+                          onClick={() => handleDeclineClick(row)}
                         >
                           <X className="mr-4 size-4" />
                           Decline
                         </DropdownMenuItem>
                         <DropdownMenuItem
-                          //   disabled={row.state === AssetState.ASSIGNED}
+                          disabled={row.state !== AssignmentState.ACCEPTED}
                           className="cursor-pointer"
                           //   onClick={() => {
                           //     handleDeleteDialog(row);
@@ -199,6 +223,22 @@ function MyAssignments() {
         currentPage={page}
         onPageChange={handlePageChange}
       />
+
+      {selectedAssignment && (
+        <AcceptAssignmentDialog
+          isOpen={acceptDialogOpen}
+          onOpenChange={setAcceptDialogOpen}
+          assignment={selectedAssignment}
+        />
+      )}
+
+      {selectedAssignment && (
+        <DeclineAssignmentDialog
+          isOpen={declineDialogOpen}
+          onOpenChange={setDeclineDialogOpen}
+          assignment={selectedAssignment}
+        />
+      )}
     </div>
   );
 }

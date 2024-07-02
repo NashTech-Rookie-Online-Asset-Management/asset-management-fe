@@ -1,4 +1,4 @@
-import type { PaginationApiProps } from '@/lib/@types/api';
+import type { ApiMessage, PaginationApiProps } from '@/lib/@types/api';
 import BaseApiService from '@/lib/services/baseApi.service';
 
 import type { Asset } from '../asset/asset.types';
@@ -56,6 +56,12 @@ class AssignmentService extends BaseApiService {
       params: {
         ...pagination,
       },
+    });
+  }
+
+  respondToAssignment(id: number, state: boolean) {
+    return this.httpClient.put<ApiMessage>(`/respond/${id}`, {
+      state,
     });
   }
 }

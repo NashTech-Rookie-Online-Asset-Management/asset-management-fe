@@ -9,7 +9,7 @@ export type GetMyAssignments = PaginationApiProps<MyAssignmentSortField>;
 
 function useGetMyAssignments(props: GetMyAssignments) {
   return useQuery({
-    queryKey: [`assignments/mine`, ...Object.values(props)],
+    queryKey: [`assignments`, ...Object.values(props), 'user', 'mine'],
     queryFn: () => assignmentService.getMyAssignments(props),
     placeholderData: keepPreviousData,
   });

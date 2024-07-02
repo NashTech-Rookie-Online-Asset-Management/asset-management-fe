@@ -79,7 +79,7 @@ export default class HttpService {
   }
 
   public async put<T>(url: string, data?: any, config?: AxiosRequestConfig) {
-    return this.instance.put<T>(url, data, config);
+    return this.instance.put<T>(url, data, config) as T;
   }
 
   public async patch<T>(url: string, data: any, config?: AxiosRequestConfig) {
