@@ -21,7 +21,7 @@ export type AssignmentResponse = {
 export type Assignment = {
   state: AssignmentState;
   id: number;
-  assignedDate: Date | string;
+  assignedDate: string;
   note: string;
   assignedBy: Account;
   assignedTo: Account;

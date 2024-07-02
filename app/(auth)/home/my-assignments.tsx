@@ -15,6 +15,13 @@ import {
 import { CustomCell } from '@/components/custom/custom-cell';
 import Pagination from '@/components/custom/pagination';
 import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import {
   Table,
@@ -34,13 +41,6 @@ import { Order } from '@/lib/@types/api';
 import { AssignmentStateOptions } from '@/lib/constants/assignments';
 import { PAGE_SIZE } from '@/lib/constants/pagination';
 import usePagination from '@/lib/hooks/usePagination';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 
 const columns = [
   { label: 'Asset Code', key: 'assetCode' },
@@ -72,9 +72,8 @@ function MyAssignments() {
   return (
     <div className="flex flex-col gap-4">
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-4">
-        <div className="lg:col-span-1" />
-        <div className="lg:col-span-1" />
-        <div className="lg:col-span-2">
+        <div className="lg:col-span-3" />
+        <div className="lg:col-span-1">
           <div className="relative">
             <Input
               type="text"
@@ -95,9 +94,9 @@ function MyAssignments() {
         </div>
       </div>
 
-      <div className="rounded-md border relative">
+      <div className="relative rounded-md border">
         {isPending && (
-          <LoaderCircle className="absolute animate-spin size-4 m-4 top-0 right-0" />
+          <LoaderCircle className="absolute right-0 top-0 m-4 size-4 animate-spin" />
         )}
         <Table className="table-fixed">
           <TableHeader>
