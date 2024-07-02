@@ -37,3 +37,25 @@ export type CreateAssetRequest = {
 export type UpdateAssetRequest = Partial<
   Omit<CreateAssetRequest, 'categoryId'>
 > & { id: number };
+
+export const assetReportSortFields = [
+  'categoryName',
+  'total',
+  'assigned',
+  'available',
+  'notAvailable',
+  'waitingForRecycling',
+  'recycled',
+] as const;
+
+export type AssetReportSortField = (typeof assetReportSortFields)[number];
+
+export type ReportItem = {
+  categoryName: string;
+  total: number;
+  assigned: number;
+  available: number;
+  notAvailable: number;
+  waitingForRecycling: number;
+  recycled: number;
+};

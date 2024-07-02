@@ -3,8 +3,10 @@ import BaseApiService from '@/lib/services/baseApi.service';
 
 import type {
   Asset,
+  AssetReportSortField,
   AssetSortField,
   CreateAssetRequest,
+  ReportItem,
   UpdateAssetRequest,
 } from './asset.types';
 
@@ -57,6 +59,30 @@ class AssetApiService extends BaseApiService {
 
   updateAsset(data: UpdateAssetRequest) {
     return this.httpClient.patch<Asset>(`/${data.id}`, data);
+  }
+
+  getAssetReport({
+    page,
+    take,
+    search,
+    sortField,
+    sortOrder,
+  }: {
+    page: number;
+    take: number;
+    search: string;
+    sortField: AssetReportSortField;
+    sortOrder: Order;
+  }) {
+    return this.httpClient.get<GetList<ReportItem>>('/report', {
+      params: {
+        page,
+        take,
+        search: search || undefined,
+        sortField,
+        sortOrder,
+      },
+    });
   }
 }
 
