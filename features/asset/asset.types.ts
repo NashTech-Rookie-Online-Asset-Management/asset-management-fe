@@ -7,10 +7,10 @@ export type Asset = {
   id: number;
   assetCode: string;
   name: string;
-  state: keyof typeof AssetState;
-  category: Omit<Category, 'prefix'>;
+  state: AssetState;
+  category: Category;
   installedDate: string;
-  location: keyof typeof Location;
+  location: Location;
   specification: string;
   // TODO: Change to Assignment type
   assignments: Assignment[];

@@ -1,3 +1,5 @@
+import type { AssignmentState } from '@/lib/@types/api';
+
 import type { Asset } from '../asset/asset.types';
 import type { Account } from '../auth/auth.types';
 
@@ -17,8 +19,9 @@ export type AssignmentResponse = {
 };
 
 export type Assignment = {
+  state: AssignmentState;
   id: number;
-  assignedDate: string;
+  assignedDate: Date | string;
   note: string;
   assignedBy: Account;
   assignedTo: Account;
@@ -29,3 +32,13 @@ export type Assignment = {
   };
   asset: Asset;
 };
+
+export const myAssignmentsSortFields = [
+  'assetCode',
+  'name',
+  'category',
+  'state',
+  'assignedDate',
+] as const;
+
+export type MyAssignmentSortField = (typeof myAssignmentsSortFields)[number];

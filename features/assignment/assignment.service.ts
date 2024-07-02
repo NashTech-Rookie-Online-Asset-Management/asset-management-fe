@@ -6,6 +6,7 @@ import type {
   Assignment,
   AssignmentRequest,
   AvailableUser,
+  MyAssignmentSortField,
 } from './assignment.types';
 
 class AssignmentService extends BaseApiService {
@@ -48,6 +49,14 @@ class AssignmentService extends BaseApiService {
 
   edit(id: string, data: AssignmentRequest) {
     return this.httpClient.put<Assignment>(`/${id}`, data);
+  }
+
+  getMyAssignments(pagination: PaginationApiProps<MyAssignmentSortField>) {
+    return this.httpClient.get<GetList<Assignment>>('/user/assignments', {
+      params: {
+        ...pagination,
+      },
+    });
   }
 }
 
