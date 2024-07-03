@@ -45,6 +45,7 @@ import { displayDate } from '@/lib/utils/date';
 
 import AcceptAssignmentDialog from './accept-assignment-dialog';
 import DeclineAssignmentDialog from './decline-assignment-dialog';
+import RequestForReturningDialog from './request-for-returning-dialog';
 
 const columns = [
   { label: 'Asset Code', key: 'assetCode' },
@@ -66,6 +67,7 @@ function MyAssignments() {
 
   const [acceptDialogOpen, setAcceptDialogOpen] = useState(false);
   const [declineDialogOpen, setDeclineDialogOpen] = useState(false);
+  const [returnDialogOpen, setReturnDialogOpen] = useState(false);
   const [selectedAssignment, setSelectedAssignment] =
     useState<Assignment | null>(null);
 
@@ -85,6 +87,11 @@ function MyAssignments() {
   const handleDeclineClick = (assignment: Assignment) => {
     setSelectedAssignment(assignment);
     setDeclineDialogOpen(true);
+  };
+
+  const handleReturnClick = (assignment: Assignment) => {
+    setSelectedAssignment(assignment);
+    setReturnDialogOpen(true);
   };
 
   return (
@@ -192,9 +199,7 @@ function MyAssignments() {
                         <DropdownMenuItem
                           disabled={row.state !== AssignmentState.ACCEPTED}
                           className="cursor-pointer"
-                          //   onClick={() => {
-                          //     handleDeleteDialog(row);
-                          //   }}
+                          onClick={() => handleReturnClick(row)}
                         >
                           <Undo className="mr-4 size-4" />
                           Request for returning
@@ -236,6 +241,14 @@ function MyAssignments() {
         <DeclineAssignmentDialog
           isOpen={declineDialogOpen}
           onOpenChange={setDeclineDialogOpen}
+          assignment={selectedAssignment}
+        />
+      )}
+
+      {selectedAssignment && (
+        <RequestForReturningDialog
+          isOpen={returnDialogOpen}
+          onOpenChange={setReturnDialogOpen}
           assignment={selectedAssignment}
         />
       )}

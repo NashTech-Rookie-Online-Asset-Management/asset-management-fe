@@ -8,6 +8,7 @@ import type {
   AvailableUser,
   MyAssignmentSortField,
 } from './assignment.types';
+import { ReturningRequest } from '../returning-request/returning-request.type';
 
 class AssignmentService extends BaseApiService {
   constructor() {
@@ -63,6 +64,10 @@ class AssignmentService extends BaseApiService {
     return this.httpClient.put<ApiMessage>(`/respond/${id}`, {
       state,
     });
+  }
+
+  requestForReturning(id: number) {
+    return this.httpClient.put<ReturningRequest>(`/return/${id}`);
   }
 }
 
