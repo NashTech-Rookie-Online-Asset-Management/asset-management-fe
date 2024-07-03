@@ -30,7 +30,7 @@ stages:
     - task: Docker@2
       inputs:
         containerRegistry: $(containerRegistry)
-        repository: minhledang/asset-management-fe
+        repository: minhledang/asset-management-fe-staging
         command: build
         Dockerfile: Dockerfile
         tags: latest
@@ -38,7 +38,7 @@ stages:
     - task: Docker@2
       inputs:
         containerRegistry: $(containerRegistry)
-        repository: minhledang/asset-management-fe
+        repository: minhledang/asset-management-fe-staging
         command: push
         tags: latest
 
@@ -54,4 +54,4 @@ stages:
         inputs:
           azureSubscription: $(azureSubscription)
           appName: asset-management-fe-staging
-          containers: minhledang/asset-management-fe:latest
+          containers: minhledang/asset-management-fe-staging:latest
