@@ -1,5 +1,7 @@
 'use client';
 
+/* eslint-disable react/no-unused-prop-types */
+
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 

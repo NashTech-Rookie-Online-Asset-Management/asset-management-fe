@@ -84,6 +84,18 @@ class AssetApiService extends BaseApiService {
       },
     });
   }
+
+  async getAssetReportFileUrl(): Promise<string> {
+    const response = await this.httpClient.get<any>(
+      '/report/export?format=xlsx',
+      {
+        responseType: 'blob',
+      },
+    );
+    const blob = new Blob([response]);
+    const url = window.URL.createObjectURL(blob);
+    return url;
+  }
 }
 
 const assetApi = new AssetApiService();

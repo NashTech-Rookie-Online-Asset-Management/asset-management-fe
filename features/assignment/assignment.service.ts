@@ -2,6 +2,7 @@ import type { ApiMessage, PaginationApiProps } from '@/lib/@types/api';
 import BaseApiService from '@/lib/services/baseApi.service';
 
 import type { Asset } from '../asset/asset.types';
+import type { ReturningRequest } from '../returning-request/returning-request.type';
 import type {
   Assignment,
   AssignmentRequest,
@@ -9,7 +10,6 @@ import type {
   GetAssignmentProps,
   MyAssignmentSortField,
 } from './assignment.types';
-import { ReturningRequest } from '../returning-request/returning-request.type';
 
 class AssignmentService extends BaseApiService {
   constructor() {

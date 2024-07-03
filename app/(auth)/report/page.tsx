@@ -4,9 +4,9 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 
 import { ArrowDownAZ, ArrowUpAZ, Search } from 'lucide-react';
-import Link from 'next/link';
 
 import { CustomCell } from '@/components/custom/custom-cell';
+import { LoadingButton } from '@/components/custom/loading-button';
 import Pagination from '@/components/custom/pagination';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -24,6 +24,7 @@ import type {
 } from '@/features/asset/asset.types';
 import { assetReportSortFields } from '@/features/asset/asset.types';
 import useGetAssetReport from '@/features/asset/useGetAssetReport';
+import useGetAssetReportFileUrl from '@/features/asset/useGetAssetReportFileUrl';
 import { Order } from '@/lib/@types/api';
 import { PAGE_SIZE } from '@/lib/constants/pagination';
 import usePagination from '@/lib/hooks/usePagination';
@@ -62,6 +63,17 @@ export default function AssetReport() {
     getAssetReportQueryKey,
   );
 
+  const { mutateAsync: getAssetReportFileUrl, isPending } =
+    useGetAssetReportFileUrl();
+
+  const handleExportReport = async () => {
+    const url = await getAssetReportFileUrl();
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `OAM Report ${new Date().toLocaleDateString()}.xlsx`;
+    link.click();
+  };
+
   return (
     <div className="flex flex-col gap-4">
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-4">
@@ -72,6 +84,7 @@ export default function AssetReport() {
               placeholder="Search by category name"
               className="rounded-md border pr-10"
               onChange={(e) => handleSearch(e.target.value)}
+              data-id="search-category-input"
             />
             <Button
               type="button"
@@ -85,13 +98,19 @@ export default function AssetReport() {
           </div>
         </div>
         <div className="lg:col-span-2" />
-        <Button variant="default" className="lg:col-span-1" asChild>
-          <Link href="/report">Export</Link>
-        </Button>
+        <LoadingButton
+          variant="default"
+          className="lg:col-span-1"
+          data-id="export-button"
+          onClick={handleExportReport}
+          disabled={isPending}
+        >
+          Export
+        </LoadingButton>
       </div>
 
       <div className="rounded-md border">
-        <Table className="table-fixed">
+        <Table>
           <TableHeader>
             <TableRow>
               {columns.map((column) => (
