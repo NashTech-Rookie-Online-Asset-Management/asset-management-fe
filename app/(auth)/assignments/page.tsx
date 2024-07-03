@@ -233,7 +233,7 @@ export default function ListAssignmentPage() {
                   </Button>
                 </TableHead>
               ))}
-              <TableHead />
+              <TableHead className="w-20" />
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -247,7 +247,10 @@ export default function ListAssignmentPage() {
                     assignment.id === newAssignment?.id && 'bg-muted shadow-lg',
                   )}
                 >
-                  <CustomCell className="pl-4 text-sm" value={assignment.id} />
+                  <CustomCell
+                    className="pl-4 text-sm"
+                    value={assignment.id.toString()}
+                  />
                   <CustomCell
                     className="pl-4 text-sm"
                     value={assignment.asset.assetCode}

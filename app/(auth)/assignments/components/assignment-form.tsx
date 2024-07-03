@@ -86,19 +86,23 @@ export default function AssignmentForm({
   return (
     <>
       <SelectUserModal
+        currentForm={form.getValues()}
         assignment={defaultValue}
         open={openUserModal}
         setOpen={setOpenUserModal}
         onSelect={(user) => {
           form.setValue('assignedTo', user);
         }}
+        type="user"
       />
 
       <SelectAssetModal
+        currentForm={form.getValues()}
         assignment={defaultValue}
         open={openAssetModal}
         setOpen={setOpenAssetModal}
         onSelect={(asset) => form.setValue('asset', asset)}
+        type="asset"
       />
 
       <Form {...form}>

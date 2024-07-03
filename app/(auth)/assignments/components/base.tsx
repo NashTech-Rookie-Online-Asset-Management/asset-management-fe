@@ -6,18 +6,20 @@ import { TableCell as CoreTableCell } from '@/components/ui/table';
 import type { PaginationApiProps } from '@/lib/@types/api';
 import { AccountType, AssignmentState, Order } from '@/lib/@types/api';
 import useDebounce from '@/lib/hooks/useDebounce';
+import { cn } from '@/lib/utils';
 
 interface TabaleCellProps {
   htmlFor: string;
+  className?: string;
 }
 export function TableCell(props: React.PropsWithChildren<TabaleCellProps>) {
   return (
-    <CoreTableCell className="p-0">
+    <CoreTableCell className={cn('p-0', props.className)}>
       <Label
         htmlFor={props.htmlFor}
         className="inline-flex w-full cursor-pointer p-4 font-normal"
       >
-        {props.children}
+        <p className="line-clamp-1">{props.children}</p>
       </Label>
     </CoreTableCell>
   );
@@ -91,8 +93,32 @@ export type FormSchema = z.infer<typeof formSchema>;
 export type AvailableAsset = FormSchema['asset'];
 
 export interface ModalProps<T> {
+  currentForm: FormSchema;
   assignment?: FormSchema;
   open: boolean;
   setOpen: (open: boolean) => void;
   onSelect: (selectValue: T) => void;
+  type: 'user' | 'asset';
 }
+
+export const onModalClose = (
+  props: ModalProps<any>,
+  newValue: string,
+  onSet: () => void,
+) => {
+  if (
+    props.type === 'user' &&
+    props.currentForm.assignedTo.staffCode !== newValue
+  ) {
+    onSet();
+  }
+
+  if (
+    props.type === 'asset' &&
+    props.currentForm.asset.assetCode !== newValue
+  ) {
+    onSet();
+  }
+
+  props.setOpen(false);
+};
