@@ -43,6 +43,7 @@ import { PAGE_SIZE } from '@/lib/constants/pagination';
 import usePagination from '@/lib/hooks/usePagination';
 import { displayDate } from '@/lib/utils/date';
 
+import AssignmentDialog from '../assignments/components/assignment-dialog';
 import AcceptAssignmentDialog from './accept-assignment-dialog';
 import DeclineAssignmentDialog from './decline-assignment-dialog';
 import RequestForReturningDialog from './request-for-returning-dialog';
@@ -68,6 +69,7 @@ function MyAssignments() {
   const [acceptDialogOpen, setAcceptDialogOpen] = useState(false);
   const [declineDialogOpen, setDeclineDialogOpen] = useState(false);
   const [returnDialogOpen, setReturnDialogOpen] = useState(false);
+  const [openAssignmentDialog, setOpenAssignmentDialog] = useState(false);
   const [selectedAssignment, setSelectedAssignment] =
     useState<Assignment | null>(null);
 
@@ -92,6 +94,11 @@ function MyAssignments() {
   const handleReturnClick = (assignment: Assignment) => {
     setSelectedAssignment(assignment);
     setReturnDialogOpen(true);
+  };
+
+  const handleOpenAssignmentClick = (assignment: Assignment) => {
+    setSelectedAssignment(assignment);
+    setOpenAssignmentDialog(true);
   };
 
   return (
@@ -152,7 +159,7 @@ function MyAssignments() {
               assignments.data.map((row: Assignment) => (
                 <TableRow
                   key={row.id}
-                  //   onClick={() => handleOpenDialog(row.id)}
+                  onClick={() => handleOpenAssignmentClick(row)}
                   className="cursor-pointer"
                 >
                   <CustomCell value={row.asset.assetCode} />
@@ -250,6 +257,14 @@ function MyAssignments() {
           isOpen={returnDialogOpen}
           onOpenChange={setReturnDialogOpen}
           assignment={selectedAssignment}
+        />
+      )}
+
+      {selectedAssignment && (
+        <AssignmentDialog
+          assignmentId={selectedAssignment.id}
+          open={openAssignmentDialog}
+          onOpenChange={setOpenAssignmentDialog}
         />
       )}
     </div>
