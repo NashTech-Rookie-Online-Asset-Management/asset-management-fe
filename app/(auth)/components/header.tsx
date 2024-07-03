@@ -26,9 +26,10 @@ import Sidebar from './sidebar';
 
 type Props = {
   initialProfile: Account;
+  className?: string;
 };
 
-function AuthHeader({ initialProfile }: Props) {
+function AuthHeader({ initialProfile, className }: Props) {
   const { data, isPending } = useProfile({
     initialData: initialProfile,
   });
@@ -45,7 +46,7 @@ function AuthHeader({ initialProfile }: Props) {
   } = useBoolean();
 
   return (
-    <div className="w-full">
+    <div className={cn('w-full', className)}>
       <div className="w-full bg-primary">
         <div className="container mx-auto flex items-center justify-between py-2">
           <div className="flex items-center space-x-2">

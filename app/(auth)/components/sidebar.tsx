@@ -10,6 +10,7 @@ import { PROTECTED_ROUTES } from '@/lib/constants/protected-routes';
 import { cn } from '@/lib/utils';
 
 type Props = {
+  className?: string;
   onNavClick?: () => void;
 };
 
@@ -67,7 +68,7 @@ const NavLink = ({
   );
 };
 
-const Sidebar = ({ onNavClick }: Props) => {
+const Sidebar = ({ className, onNavClick }: Props) => {
   const { data: user } = useProfile();
   const currentPath = usePathname();
 
@@ -75,9 +76,9 @@ const Sidebar = ({ onNavClick }: Props) => {
     path.length > 1 ? currentPath.includes(path) : currentPath === path;
 
   return (
-    <div>
+    <div className={className}>
       <div className="mb-6">
-        <DynamicLogo className="size-40 my-2 dark:p-2" />
+        <DynamicLogo className="my-2 size-40 dark:p-2" />
         <h4 className="text-lg font-bold text-primary">
           Online Asset Management
         </h4>
