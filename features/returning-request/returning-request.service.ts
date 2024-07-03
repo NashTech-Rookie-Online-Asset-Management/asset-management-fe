@@ -1,4 +1,4 @@
-import type { Order } from '@/lib/@types/api';
+import type { ApiMessage, Order } from '@/lib/@types/api';
 import BaseApiService from '@/lib/services/baseApi.service';
 
 import type {
@@ -38,6 +38,12 @@ class ReturningRequestApiService extends BaseApiService {
         sortField,
         sortOrder,
       },
+    });
+  }
+
+  toggleReturningRequest(id: number, state: boolean) {
+    return this.httpClient.patch<ApiMessage>(`/${id}`, {
+      state,
     });
   }
 }
