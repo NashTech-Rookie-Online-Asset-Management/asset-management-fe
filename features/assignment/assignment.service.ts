@@ -6,6 +6,7 @@ import type {
   Assignment,
   AssignmentRequest,
   AvailableUser,
+  GetAssignmentProps,
   MyAssignmentSortField,
 } from './assignment.types';
 import { ReturningRequest } from '../returning-request/returning-request.type';
@@ -32,15 +33,21 @@ class AssignmentService extends BaseApiService {
     });
   }
 
-  getAll() {
-    return this.httpClient.get<Assignment[]>('/');
+  getAll(options: GetAssignmentProps) {
+    return this.httpClient.get<GetList<Assignment>>('/', {
+      params: {
+        ...options,
+        states:
+          options.states.length > 0 ? options.states.join(',') : undefined,
+      },
+    });
   }
 
   create(data: AssignmentRequest) {
     return this.httpClient.post<Assignment>(`/`, data);
   }
 
-  async get(id: string) {
+  async get(id: string | number) {
     const result = await this.httpClient.get<Assignment>(`/${id}`);
     return {
       ...result,

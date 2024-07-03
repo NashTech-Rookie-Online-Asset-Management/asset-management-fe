@@ -1,4 +1,4 @@
-import type { AssignmentState } from '@/lib/@types/api';
+import type { AssignmentState, PaginationApiProps } from '@/lib/@types/api';
 
 import type { Asset } from '../asset/asset.types';
 import type { Account } from '../auth/auth.types';
@@ -16,6 +16,7 @@ export type AssignmentResponse = {
   assignedDate: string;
   assignedTo: AvailableUser;
   asset: Asset;
+  id: number;
 };
 
 export type Assignment = {
@@ -33,6 +34,15 @@ export type Assignment = {
   asset: Asset;
 };
 
+export type AssignmentSortField =
+  | 'id'
+  | 'assetCode'
+  | 'assetName'
+  | 'assignedTo'
+  | 'assignedBy'
+  | 'assignedDate'
+  | 'state';
+
 export const myAssignmentsSortFields = [
   'assetCode',
   'name',
@@ -40,5 +50,9 @@ export const myAssignmentsSortFields = [
   'state',
   'assignedDate',
 ] as const;
+
+export type GetAssignmentProps = PaginationApiProps & {
+  states: string[];
+};
 
 export type MyAssignmentSortField = (typeof myAssignmentsSortFields)[number];

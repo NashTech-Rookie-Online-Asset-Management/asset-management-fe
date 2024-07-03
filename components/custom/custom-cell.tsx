@@ -1,9 +1,16 @@
+import { cn } from '@/lib/utils';
+
 import { TableCell } from '../ui/table';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
 
-export const CustomCell = ({ value }: { value: string }) => {
+type CustomCellProps = {
+  value: string | number;
+  className?: string;
+};
+
+export const CustomCell = ({ value, className }: CustomCellProps) => {
   return (
-    <TableCell className="py-2 pl-8">
+    <TableCell className={cn('py-2 pl-8', className)}>
       <Tooltip>
         <TooltipTrigger asChild>
           <p className="truncate">{value}</p>

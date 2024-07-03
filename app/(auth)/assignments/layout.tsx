@@ -9,5 +9,5 @@ export const metadata = {
 export default function AssignmentLayout({
   children,
 }: React.PropsWithChildren<Props>) {
-  return children;
+  return <div className="py-8">{children}</div>;
 }

@@ -22,7 +22,8 @@ export default function EditAssignmentForm({ initialAssignment }: Props) {
   );
   const { mutate, isPending: mutatePending, isSuccess } = useEditAssignment();
 
-  if (isSuccess) router.push('/assignments');
+  if (isSuccess)
+    router.push(`/assignments?assignmentId=${initialAssignment.id}`);
 
   return (
     <>

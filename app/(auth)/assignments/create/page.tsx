@@ -9,9 +9,9 @@ import AssignmentForm from '../components/assignment-form';
 
 export default function CreateAssignmentPage() {
   const router = useRouter();
-  const { mutate, isSuccess, isPending } = useCreateAssignment();
+  const { mutate, isSuccess, isPending, data } = useCreateAssignment();
 
-  if (isSuccess) router.push('/assignments');
+  if (isSuccess) router.push(`/assignments?assignmentId=${data.id}`);
 
   return (
     <>
