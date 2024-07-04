@@ -109,7 +109,7 @@ export default function UserList() {
 
   const getUsersQueryKey = serialize({ ...getUsersOptions });
 
-  const { data: users, refetch: refetchUsers } = useGetUsers(
+  const { data: users } = useGetUsers(
     getUsersOptions,
     getUsersQueryKey,
     newUser,
@@ -302,7 +302,6 @@ export default function UserList() {
           user={deletedUser}
           isOpen={deleteDialogOpen}
           onOpenChange={setDeleteDialogOpen}
-          refetchUsers={refetchUsers}
         />
       )}
     </div>

@@ -114,7 +114,7 @@ export default function AssetList() {
 
   const getAssetsQueryKey = serialize({ ...getAssetsOptions });
 
-  const { data: assets, refetch: refetchAssets } = useGetAssets(
+  const { data: assets } = useGetAssets(
     getAssetsOptions,
     getAssetsQueryKey,
     newAsset,
@@ -323,7 +323,6 @@ export default function AssetList() {
           asset={deletedAsset}
           isOpen={deleteDialogOpen}
           onOpenChange={setDeleteDialogOpen}
-          refetchAssets={refetchAssets}
         />
       )}
     </div>

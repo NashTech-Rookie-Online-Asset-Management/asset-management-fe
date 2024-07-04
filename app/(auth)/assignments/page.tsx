@@ -56,6 +56,7 @@ import { cn } from '@/lib/utils';
 
 import RequestForReturningDialog from '../home/request-for-returning-dialog';
 import AssignmentDialog from './components/assignment-dialog';
+import DeleteAssignmentDialog from './components/delete-assignment-dialog';
 
 const columns = [
   { label: 'No.', key: 'id', width: 'w-[8%]' },
@@ -106,6 +107,11 @@ export default function ListAssignmentPage() {
     parseAsIsoDateTime.withDefault(new Date('2000-01-01')),
   );
 
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [deletedAssignment, setDeletedAssignment] = useState<Assignment | null>(
+    null,
+  );
+
   const pagination = usePagination({
     sortFields: [
       'id',
@@ -153,6 +159,11 @@ export default function ListAssignmentPage() {
     pinned: true,
   });
   const { data } = useAssignments(queryOptions, newAssignment);
+
+  const handleDeleteDialog = (assignment: Assignment) => {
+    setDeletedAssignment(assignment);
+    setDeleteDialogOpen(true);
+  };
 
   return (
     <div className="flex flex-col gap-4">
@@ -313,10 +324,15 @@ export default function ListAssignmentPage() {
                         </DropdownMenuItem>
                         <DropdownMenuItem
                           disabled={
-                            assignment.state !==
-                            AssignmentState.WAITING_FOR_ACCEPTANCE
+                            ![
+                              AssignmentState.WAITING_FOR_ACCEPTANCE,
+                              AssignmentState.DECLINED,
+                            ].includes(assignment.state)
                           }
                           className="cursor-pointer"
+                          onClick={() => {
+                            handleDeleteDialog(assignment);
+                          }}
                         >
                           <Trash2 className="mr-4 size-4" />
                           Delete
@@ -363,6 +379,14 @@ export default function ListAssignmentPage() {
           assignmentId={selectedAssignment.id}
           open={openAssignmentDialog}
           onOpenChange={setOpenAssignmentDialog}
+        />
+      )}
+
+      {deleteDialogOpen && deletedAssignment && (
+        <DeleteAssignmentDialog
+          assignment={deletedAssignment}
+          isOpen={deleteDialogOpen}
+          onOpenChange={setDeleteDialogOpen}
         />
       )}
 

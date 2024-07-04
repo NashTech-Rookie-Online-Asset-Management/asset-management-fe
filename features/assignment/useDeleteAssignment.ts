@@ -2,16 +2,16 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import type { ApiMessage } from '@/lib/@types/api';
 
-import userApi from './user.service';
+import assignmentService from './assignment.service';
 
-function useDeleteUser(staffCode: string) {
+function useDeleteAssignment(id: number) {
   const queryClient = useQueryClient();
   return useMutation<ApiMessage, AppAxiosError>({
-    mutationFn: () => userApi.deleteUser(staffCode),
+    mutationFn: () => assignmentService.delete(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['users'] });
+      queryClient.invalidateQueries({ queryKey: ['assignments'] });
     },
   });
 }
 
-export default useDeleteUser;
+export default useDeleteAssignment;

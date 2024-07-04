@@ -21,24 +21,21 @@ export default function DeleteAssetDialog({
   asset,
   isOpen,
   onOpenChange,
-  refetchAssets,
 }: {
   asset: Asset;
   isOpen: boolean;
   onOpenChange: (isOpen: boolean) => void;
-  refetchAssets: () => void;
 }) {
-  const { mutateAsync: deleteAsset, isPending } = useDeleteAsset();
+  const { mutateAsync: deleteAsset, isPending } = useDeleteAsset(asset.id);
 
   const handleDeleteAsset = async () => {
-    await deleteAsset(asset.id);
+    await deleteAsset();
     toast({
       title: 'Asset deleted',
       description: `Asset ${asset.assetCode} has been deleted successfully`,
       variant: 'success',
       duration: 1500,
     });
-    refetchAssets();
     onOpenChange(false);
   };
 

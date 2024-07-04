@@ -20,24 +20,21 @@ export default function DeleteUserDialog({
   user,
   isOpen,
   onOpenChange,
-  refetchUsers,
 }: {
   user: User;
   isOpen: boolean;
   onOpenChange: (isOpen: boolean) => void;
-  refetchUsers: () => void;
 }) {
-  const { mutateAsync: deleteUser, isPending } = useDeleteUser();
+  const { mutateAsync: deleteUser, isPending } = useDeleteUser(user.staffCode);
 
   const handleDeleteUser = async () => {
-    await deleteUser(user.staffCode);
+    await deleteUser();
     toast({
       title: 'User deleted',
       description: `User ${user.username} has been deleted successfully`,
       variant: 'success',
       duration: 1500,
     });
-    refetchUsers();
     onOpenChange(false);
   };
 

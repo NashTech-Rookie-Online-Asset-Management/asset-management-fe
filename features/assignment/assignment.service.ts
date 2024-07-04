@@ -59,6 +59,10 @@ class AssignmentService extends BaseApiService {
     return this.httpClient.put<Assignment>(`/${id}`, data);
   }
 
+  delete(id: number) {
+    return this.httpClient.delete(`/${id}`) as Promise<ApiMessage>;
+  }
+
   getMyAssignments(pagination: PaginationApiProps<MyAssignmentSortField>) {
     return this.httpClient.get<GetList<Assignment>>('/user/assignments', {
       params: {
