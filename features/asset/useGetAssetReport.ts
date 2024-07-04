@@ -9,7 +9,7 @@ export type GetAssetReportProps = PaginationApiProps<AssetReportSortField>;
 
 function useGetAssetReport(props: GetAssetReportProps, queryKey?: string) {
   return useQuery({
-    queryKey: [`asset-report`, queryKey ?? JSON.stringify(props)],
+    queryKey: ['assets', queryKey ?? JSON.stringify(props)],
     queryFn: async () => {
       const assets = await assetApi.getAssetReport(props);
       return assets;
