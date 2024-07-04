@@ -114,6 +114,9 @@ function EditAssetForm({ initialAsset }: Props) {
         asset.state === AssetState.ASSIGNED
           ? undefined
           : (asset.state as Exclude<AssetState, AssetState.ASSIGNED>),
+      updatedAt: asset?.updatedAt
+        ? new Date(asset.updatedAt).toISOString()
+        : undefined,
     });
   }, [asset, form]);
 

@@ -73,7 +73,7 @@ function EditUserForm({ initialUser }: Props) {
   async function onSubmit(values: z.infer<typeof editUserFormSchema>) {
     const { username } = await editUser({
       userStaffCode: userData!.staffCode,
-      data: values,
+      data: { ...values, updatedAt: initialUser.updatedAt.toString() },
     });
 
     toast({

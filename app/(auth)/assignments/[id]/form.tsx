@@ -39,6 +39,7 @@ export default function EditAssignmentForm({ initialAssignment }: Props) {
               staffCode: values.assignedTo.staffCode,
               assignedDate: values.assignedDate,
               note: values.note,
+              updatedAt: values.updatedAt,
             },
           })
         }

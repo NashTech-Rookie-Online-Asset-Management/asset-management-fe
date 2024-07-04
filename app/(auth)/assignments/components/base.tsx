@@ -87,6 +87,7 @@ export const formSchema = z.object({
   note: z.string().max(256).optional(),
   state: z.nativeEnum(AssignmentState).optional(),
   id: z.number().optional(),
+  updatedAt: z.string().optional(),
 });
 
 export type FormSchema = z.infer<typeof formSchema>;

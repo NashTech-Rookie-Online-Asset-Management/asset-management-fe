@@ -26,6 +26,7 @@ export const editAssetSchema = z.object({
         isValid(new Date(value)),
       'Please select a valid date',
     ),
+  updatedAt: z.string().optional(),
   state: z
     .enum([
       AssetState.AVAILABLE,

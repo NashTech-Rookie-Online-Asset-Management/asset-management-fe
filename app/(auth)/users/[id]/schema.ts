@@ -56,6 +56,7 @@ export const editUserFormSchema = z
             'Joined date is Saturday or Sunday. Please select a different date',
         },
       ),
+    updatedAt: z.string().optional(),
     type: z.enum([AccountType.ADMIN, AccountType.STAFF], {
       required_error: 'You need to select an account type',
     }),

@@ -2,6 +2,7 @@ import type { AssignmentState, PaginationApiProps } from '@/lib/@types/api';
 
 import type { Asset } from '../asset/asset.types';
 import type { Account } from '../auth/auth.types';
+import type { ReturningRequest } from '../returning-request/returning-request.type';
 
 export type AvailableUser = Pick<Account, 'staffCode' | 'fullName' | 'type'>;
 
@@ -10,6 +11,7 @@ export type AssignmentRequest = {
   assetCode: string;
   assignedDate: string;
   note?: string;
+  updatedAt?: string;
 };
 
 export type AssignmentResponse = {
@@ -26,12 +28,9 @@ export type Assignment = {
   note: string;
   assignedBy: Account;
   assignedTo: Account;
-  // ! Change to ReturningRequest's type
-  returningRequest: {
-    id: number;
-    returnedDate: string;
-  };
+  returningRequest?: ReturningRequest;
   asset: Asset;
+  updatedAt: string;
 };
 
 export type AssignmentSortField =

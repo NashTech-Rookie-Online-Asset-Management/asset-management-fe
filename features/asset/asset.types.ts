@@ -9,10 +9,10 @@ export type Asset = {
   name: string;
   state: AssetState;
   category: Category;
-  installedDate: string;
+  installedDate: Date | string;
+  updatedAt: Date | string;
   location: Location;
   specification: string;
-  // TODO: Change to Assignment type
   assignments: Assignment[];
 };
 
@@ -36,7 +36,7 @@ export type CreateAssetRequest = {
 
 export type UpdateAssetRequest = Partial<
   Omit<CreateAssetRequest, 'categoryId'>
-> & { id: number };
+> & { id: number; updatedAt?: Date | string };
 
 export const assetReportSortFields = [
   'categoryName',
