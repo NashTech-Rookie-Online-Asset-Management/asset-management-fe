@@ -54,7 +54,7 @@ export default function DetailedAssetDialog({
               { label: 'Category', value: asset.category.name },
               {
                 label: 'Installed Date',
-                value: displayDate(asset.installedDate),
+                value: displayDate(asset.installedDate.toString()),
               },
               { label: 'State', value: AssetStateOptions[asset.state] },
               { label: 'Location', value: LocationOptions[asset.location] },
