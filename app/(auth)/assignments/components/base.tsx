@@ -83,7 +83,7 @@ export const formSchema = z.object({
       name: z.string().optional(),
     }),
   }),
-  assignedDate: z.string().date(),
+  assignedDate: z.string(),
   note: z.string().max(256).optional(),
   state: z.nativeEnum(AssignmentState).optional(),
   id: z.number().optional(),

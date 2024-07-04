@@ -38,7 +38,7 @@ const defaultFormValues: FormSchema = {
       name: '',
     },
   },
-  assignedDate: new Date().toISOString().split('T')[0],
+  assignedDate: new Date().toISOString(),
   note: '',
   state: AssignmentState.WAITING_FOR_ACCEPTANCE,
 };
@@ -57,6 +57,8 @@ export default function AssignmentForm({
   const [openUserModal, setOpenUserModal] = useState(false);
   const [openAssetModal, setOpenAssetModal] = useState(false);
 
+  console.log(defaultValue);
+
   const form = useForm<FormSchema>({
     values: defaultValue || defaultFormValues,
     resolver: zodResolver(formSchema),
@@ -64,7 +66,7 @@ export default function AssignmentForm({
   });
 
   const values = form.watch();
-  const isDisbled =
+  const isDisabled =
     !values.assignedTo.staffCode ||
     !values.asset.assetCode ||
     !values.assignedDate ||
@@ -73,15 +75,15 @@ export default function AssignmentForm({
   const openUserModalHandler = () => setOpenUserModal(true);
   const openAssetModalHandler = () => setOpenAssetModal(true);
 
-  useLayoutEffect(() => {
-    const datePickerInput = document.getElementById(
-      'assignedDate',
-    ) as HTMLInputElement;
-    if (datePickerInput) {
-      const [currentDate] = new Date().toISOString().split('T');
-      datePickerInput.min = currentDate;
-    }
-  }, []);
+  //   useLayoutEffect(() => {
+  //     const datePickerInput = document.getElementById(
+  //       'assignedDate',
+  //     ) as HTMLInputElement;
+  //     if (datePickerInput) {
+  //       const [currentDate] = new Date().toISOString().split('T');
+  //       datePickerInput.min = currentDate;
+  //     }
+  //   }, []);
 
   return (
     <>
@@ -167,23 +169,27 @@ export default function AssignmentForm({
           <FormField
             control={form.control}
             name="assignedDate"
-            render={({ field }) => (
-              <FormItem className="flex flex-col space-y-2">
-                <FormLabel>
-                  <span className="required">Assigned Date</span>
-                </FormLabel>
-                <FormControl>
-                  <Input
-                    id="assignedDate"
-                    type="date"
-                    className="block"
-                    autoFocus
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+            render={({ field }) => {
+              const value = new Date(field.value).toISOString().split('T')[0];
+              return (
+                <FormItem className="flex flex-col space-y-2">
+                  <FormLabel>
+                    <span className="required">Assigned Date</span>
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      id="assignedDate"
+                      type="date"
+                      className="block"
+                      autoFocus
+                      value={value}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              );
+            }}
           />
 
           <FormField
@@ -204,7 +210,7 @@ export default function AssignmentForm({
             <LoadingButton
               type="submit"
               isLoading={isPending}
-              disabled={isDisbled || isPending}
+              disabled={isDisabled || isPending}
             >
               Save
             </LoadingButton>

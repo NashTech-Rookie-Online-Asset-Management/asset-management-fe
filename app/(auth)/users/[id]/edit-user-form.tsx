@@ -63,6 +63,11 @@ function EditUserForm({ initialUser }: Props) {
   const form = useForm<z.infer<typeof editUserFormSchema>>({
     resolver: zodResolver(editUserFormSchema),
     mode: 'onChange',
+    defaultValues: {
+      ...initialUser,
+      type: initialUser.type as AccountType.ADMIN | AccountType.STAFF,
+      updatedAt: initialUser.updatedAt.toString(),
+    },
   });
   const isNotAbleToSave =
     !form.formState.isValid ||
@@ -123,20 +128,6 @@ function EditUserForm({ initialUser }: Props) {
   }, [isUserSuccess, isLoggedInSuccess, user, userData, router]);
 
   useEffect(() => {
-    if (!userData) return;
-
-    form.reset({
-      firstName: userData.firstName,
-      lastName: userData.lastName,
-      dob: new Date(userData?.dob).toISOString().split('T')[0],
-      gender: userData.gender,
-      joinedAt: new Date(userData?.joinedAt).toISOString().split('T')[0],
-      type: userData.type as AccountType.ADMIN | AccountType.STAFF,
-      location: userData.location,
-    });
-  }, [userData, form]);
-
-  useEffect(() => {
     form.trigger();
   }, [form]);
 
@@ -189,27 +180,31 @@ function EditUserForm({ initialUser }: Props) {
         <FormField
           control={form.control}
           name="dob"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Date of Birth</FormLabel>
-              <FormControl>
-                {isUserPending ? (
-                  <Skeleton className="h-8 w-full rounded-md" />
-                ) : (
-                  <Input
-                    type="date"
-                    className="block"
-                    {...field}
-                    onChange={(e) => {
-                      field.onChange(e);
-                      form.trigger(['dob', 'joinedAt']);
-                    }}
-                  />
-                )}
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          render={({ field }) => {
+            const value = new Date(field.value).toISOString().split('T')[0];
+            return (
+              <FormItem>
+                <FormLabel>Date of Birth</FormLabel>
+                <FormControl>
+                  {isUserPending ? (
+                    <Skeleton className="h-8 w-full rounded-md" />
+                  ) : (
+                    <Input
+                      {...field}
+                      type="date"
+                      className="block"
+                      onChange={(e) => {
+                        field.onChange(e);
+                        form.trigger(['dob', 'joinedAt']);
+                      }}
+                      value={value}
+                    />
+                  )}
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            );
+          }}
         />
         <FormField
           control={form.control}
@@ -252,27 +247,31 @@ function EditUserForm({ initialUser }: Props) {
         <FormField
           control={form.control}
           name="joinedAt"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Joined Date</FormLabel>
-              <FormControl>
-                {isUserPending ? (
-                  <Skeleton className="h-8 w-full rounded-md" />
-                ) : (
-                  <Input
-                    type="date"
-                    className="block"
-                    {...field}
-                    onChange={(e) => {
-                      field.onChange(e);
-                      form.trigger(['dob', 'joinedAt']);
-                    }}
-                  />
-                )}
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          render={({ field }) => {
+            const value = new Date(field.value).toISOString().split('T')[0];
+            return (
+              <FormItem>
+                <FormLabel>Joined Date</FormLabel>
+                <FormControl>
+                  {isUserPending ? (
+                    <Skeleton className="h-8 w-full rounded-md" />
+                  ) : (
+                    <Input
+                      {...field}
+                      type="date"
+                      className="block"
+                      onChange={(e) => {
+                        field.onChange(e);
+                        form.trigger(['dob', 'joinedAt']);
+                      }}
+                      value={value}
+                    />
+                  )}
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            );
+          }}
         />
         <FormField
           control={form.control}

@@ -25,7 +25,7 @@ export default function CreateAssignmentPage() {
           mutate({
             assetCode: values.asset.assetCode,
             staffCode: values.assignedTo.staffCode,
-            assignedDate: values.assignedDate,
+            assignedDate: new Date(values.assignedDate).toISOString(),
             note: values.note,
           });
         }}

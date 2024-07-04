@@ -47,12 +47,8 @@ class AssignmentService extends BaseApiService {
     return this.httpClient.post<Assignment>(`/`, data);
   }
 
-  async get(id: string | number) {
-    const result = await this.httpClient.get<Assignment>(`/${id}`);
-    return {
-      ...result,
-      assignedDate: new Date(result.assignedDate).toISOString().split('T')[0],
-    } as Assignment;
+  get(id: string | number) {
+    return this.httpClient.get<Assignment>(`/${id}`);
   }
 
   edit(id: string, data: AssignmentRequest) {

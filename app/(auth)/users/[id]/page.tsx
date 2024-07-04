@@ -12,6 +12,8 @@ export const metadata = {
   title: 'Edit User',
 };
 
+export const dynamic = 'force-dynamic';
+
 type Props = {
   params: { id: string };
 };
