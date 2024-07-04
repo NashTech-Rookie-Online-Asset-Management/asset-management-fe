@@ -337,7 +337,7 @@ function EditAssetForm({ initialAsset }: Props) {
             Save
           </LoadingButton>
           <Button variant="secondary" asChild>
-            <Link href="/assets">Cancel</Link>
+            <Link href={`/assets?${searchParams.toString()}`}>Cancel</Link>
           </Button>
         </div>
       </form>

@@ -326,13 +326,8 @@ function EditUserForm({ initialUser }: Props) {
           >
             Save
           </LoadingButton>
-          <Button
-            data-id="edit_user_cancel_button"
-            variant="secondary"
-            asChild
-            onClick={() => router.replace('/users')}
-          >
-            <Link href="/users">Cancel</Link>
+          <Button data-id="edit_user_cancel_button" variant="secondary" asChild>
+            <Link href={`/users?${searchParams.toString()}`}>Cancel</Link>
           </Button>
         </div>
       </form>
