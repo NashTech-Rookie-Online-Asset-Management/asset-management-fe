@@ -262,10 +262,8 @@ export default function AssignmentList() {
                 <TableRow
                   key={assignment.id}
                   onClick={() => handleSetAssignment(assignment)}
-                  className={cn(
-                    'cursor-pointer',
-                    assignment.id === newAssignment?.id && 'bg-muted shadow-lg',
-                  )}
+                  data-state={assignment.id === newAssignment?.id && 'selected'}
+                  className="cursor-pointer"
                 >
                   <CustomCell
                     className="pl-4 text-sm"

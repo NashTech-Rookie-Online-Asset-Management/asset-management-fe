@@ -51,7 +51,6 @@ import { AssetState, Order } from '@/lib/@types/api';
 import { AssetStateOptions } from '@/lib/constants/asset';
 import { PAGE_SIZE } from '@/lib/constants/pagination';
 import usePagination from '@/lib/hooks/usePagination';
-import { cn } from '@/lib/utils';
 
 import { CustomCell } from '@/components/custom/custom-cell';
 import DeleteAssetDialog from '../components/delete-asset-dialog';
@@ -242,10 +241,8 @@ export default function AssetList() {
                 <TableRow
                   key={row.id}
                   onClick={() => handleOpenDialog(row.id)}
-                  className={cn(
-                    'cursor-pointer',
-                    newAsset?.id === row.id && 'bg-muted shadow-lg',
-                  )}
+                  data-state={newAsset?.id === row.id && 'selected'}
+                  className='cursor-pointer'
                 >
                   <CustomCell value={row.assetCode} />
                   <CustomCell value={row.name} />

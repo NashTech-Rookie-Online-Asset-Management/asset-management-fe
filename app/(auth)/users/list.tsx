@@ -52,7 +52,6 @@ import usePagination from '@/lib/hooks/usePagination';
 import { displayDate } from '@/lib/utils/date';
 
 import { CustomCell } from '@/components/custom/custom-cell';
-import { cn } from '@/lib/utils';
 import DeleteUserDialog from '../components/delete-user-dialog';
 import DetailedUserDialog from '../components/show-detailed-user-dialog';
 
@@ -219,10 +218,8 @@ export default function UserList() {
                 <TableRow
                   key={row.id}
                   onClick={() => handleOpenDialog(row.username)}
-                  className={cn(
-                    'cursor-pointer',
-                    newUser?.id === row.id && 'bg-muted shadow-lg',
-                  )}
+                  data-state={newUser?.id === row.id && 'selected'}
+                  className="cursor-pointer"
                 >
                   <CustomCell value={row.staffCode} />
                   <CustomCell value={row.fullName} />
