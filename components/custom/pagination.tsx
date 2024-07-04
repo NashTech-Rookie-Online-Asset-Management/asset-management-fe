@@ -29,7 +29,6 @@ const Pagination = ({
   const [inputValue, setInputValue] = useState(currentPage.toString());
   const isDesktop = useMediaQuery('(min-width: 768px)');
   const maxPages = isDesktop ? 3 : 0;
-  console.log(isDesktop);
 
   const handlePageChange = useCallback(
     (page: number) => {

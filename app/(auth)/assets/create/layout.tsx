@@ -1,4 +1,4 @@
-import React from 'react';
+import type React from 'react';
 
 type Props = {};
 
@@ -7,7 +7,7 @@ export const metadata = {
 };
 
 function CreateAssetLayout({ children }: React.PropsWithChildren<Props>) {
-  return <div>{children}</div>;
+  return children;
 }
 
 export default CreateAssetLayout;
