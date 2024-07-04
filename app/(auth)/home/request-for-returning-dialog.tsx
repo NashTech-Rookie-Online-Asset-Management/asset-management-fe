@@ -32,8 +32,8 @@ function RequestForReturningDialog({
   const handleRespondClick = async () => {
     await respond();
     toast({
-      title: 'Assignment accepted',
-      description: `Accepted ${assignment.asset.assetCode} as your assignment!`,
+      title: 'Request created',
+      description: `Created returning request for assignment ${assignment.asset.assetCode}!`,
       variant: 'success',
       duration: 1500,
     });

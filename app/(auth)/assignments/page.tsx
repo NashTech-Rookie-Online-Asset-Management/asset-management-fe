@@ -44,13 +44,17 @@ import {
   useAssignment,
   useAssignments,
 } from '@/features/assignment/assignment.hook';
-import type { AssignmentSortField } from '@/features/assignment/assignment.types';
+import type {
+  Assignment,
+  AssignmentSortField,
+} from '@/features/assignment/assignment.types';
 import { AssignmentState, Order } from '@/lib/@types/api';
 import { AssignmentStateOptions } from '@/lib/constants/assignment';
 import { PAGE_SIZE } from '@/lib/constants/pagination';
 import usePagination from '@/lib/hooks/usePagination';
 import { cn } from '@/lib/utils';
 
+import RequestForReturningDialog from '../home/request-for-returning-dialog';
 import AssignmentDialog from './components/assignment-dialog';
 
 const columns = [
@@ -64,14 +68,19 @@ const columns = [
 ];
 
 export default function ListAssignmentPage() {
-  const [selectedAssignment, setSelectedAssignment] = useState<number | null>(
-    null,
-  );
+  const [selectedAssignment, setSelectedAssignment] =
+    useState<Assignment | null>(null);
   const [openAssignmentDialog, setOpenAssignmentDialog] = useState(false);
+  const [returningRequestDialog, setReturningRequestDialog] = useState(false);
 
-  const handleSetAssignment = (id: number) => {
-    setSelectedAssignment(id);
+  const handleSetAssignment = (data: Assignment) => {
+    setSelectedAssignment(data);
     setOpenAssignmentDialog(true);
+  };
+
+  const handleReturnRequestClick = (data: Assignment) => {
+    setSelectedAssignment(data);
+    setReturningRequestDialog(true);
   };
 
   const [assignmentId] = useQueryState(
@@ -241,7 +250,7 @@ export default function ListAssignmentPage() {
               data.data.map((assignment) => (
                 <TableRow
                   key={assignment.id}
-                  onClick={() => handleSetAssignment(assignment.id)}
+                  onClick={() => handleSetAssignment(assignment)}
                   className={cn(
                     'cursor-pointer',
                     assignment.id === newAssignment?.id && 'bg-muted shadow-lg',
@@ -319,6 +328,7 @@ export default function ListAssignmentPage() {
                             AssignmentState.WAITING_FOR_ACCEPTANCE
                           }
                           className="cursor-pointer"
+                          onClick={() => handleReturnRequestClick(assignment)}
                         >
                           <RotateCcw className="mr-4 size-4" />
                           Return
@@ -350,9 +360,17 @@ export default function ListAssignmentPage() {
 
       {selectedAssignment && (
         <AssignmentDialog
-          assignmentId={selectedAssignment}
+          assignmentId={selectedAssignment.id}
           open={openAssignmentDialog}
           onOpenChange={setOpenAssignmentDialog}
+        />
+      )}
+
+      {selectedAssignment && (
+        <RequestForReturningDialog
+          assignment={selectedAssignment}
+          isOpen={returningRequestDialog}
+          onOpenChange={setReturningRequestDialog}
         />
       )}
     </div>
