@@ -3,7 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Search } from 'lucide-react';
 import Link from 'next/link';
-import { useLayoutEffect, useState } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { LoadingButton } from '@/components/custom/loading-button';
@@ -19,6 +19,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { AccountType, AssignmentState } from '@/lib/@types/api';
+import { inputDateConvert } from '@/lib/utils/date';
 
 import type { FormSchema } from './base';
 import { formSchema } from './base';
@@ -57,8 +58,6 @@ export default function AssignmentForm({
   const [openUserModal, setOpenUserModal] = useState(false);
   const [openAssetModal, setOpenAssetModal] = useState(false);
 
-  console.log(defaultValue);
-
   const form = useForm<FormSchema>({
     values: defaultValue || defaultFormValues,
     resolver: zodResolver(formSchema),
@@ -74,16 +73,6 @@ export default function AssignmentForm({
 
   const openUserModalHandler = () => setOpenUserModal(true);
   const openAssetModalHandler = () => setOpenAssetModal(true);
-
-  //   useLayoutEffect(() => {
-  //     const datePickerInput = document.getElementById(
-  //       'assignedDate',
-  //     ) as HTMLInputElement;
-  //     if (datePickerInput) {
-  //       const [currentDate] = new Date().toISOString().split('T');
-  //       datePickerInput.min = currentDate;
-  //     }
-  //   }, []);
 
   return (
     <>
@@ -170,7 +159,7 @@ export default function AssignmentForm({
             control={form.control}
             name="assignedDate"
             render={({ field }) => {
-              const value = new Date(field.value).toISOString().split('T')[0];
+              const value = inputDateConvert(field.value);
               return (
                 <FormItem className="flex flex-col space-y-2">
                   <FormLabel>

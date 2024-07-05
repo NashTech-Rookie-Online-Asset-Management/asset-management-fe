@@ -1,3 +1,5 @@
+'use client';
+
 import { ArrowDownAZ, ArrowUpAZ, Search } from 'lucide-react';
 import { useParams } from 'next/navigation';
 import { useState } from 'react';

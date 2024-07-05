@@ -30,6 +30,7 @@ import useGetCategories from '@/features/category/useGetCategories';
 import { AssetState } from '@/lib/@types/api';
 import { AssetStateOptions } from '@/lib/constants/asset';
 import { cn } from '@/lib/utils';
+import { inputDateConvert } from '@/lib/utils/date';
 
 import { editAssetSchema } from './schema';
 
@@ -214,7 +215,7 @@ function EditAssetForm({ initialAsset }: Props) {
           control={form.control}
           name="installedDate"
           render={({ field }) => {
-            const value = new Date(field.value).toISOString().split('T')[0];
+            const value = inputDateConvert(field.value);
             return (
               <FormItem>
                 <FormLabel>

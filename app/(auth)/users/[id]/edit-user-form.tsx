@@ -35,6 +35,7 @@ import useGetUser from '@/features/user/useGetUser';
 import type { User } from '@/features/user/user.types';
 import { AccountType, Gender } from '@/lib/@types/api';
 import { normalizeText } from '@/lib/utils';
+import { inputDateConvert } from '@/lib/utils/date';
 
 import { editUserFormSchema } from './schema';
 
@@ -181,7 +182,7 @@ function EditUserForm({ initialUser }: Props) {
           control={form.control}
           name="dob"
           render={({ field }) => {
-            const value = new Date(field.value).toISOString().split('T')[0];
+            const value = inputDateConvert(field.value);
             return (
               <FormItem>
                 <FormLabel>Date of Birth</FormLabel>
@@ -248,7 +249,7 @@ function EditUserForm({ initialUser }: Props) {
           control={form.control}
           name="joinedAt"
           render={({ field }) => {
-            const value = new Date(field.value).toISOString().split('T')[0];
+            const value = inputDateConvert(field.value);
             return (
               <FormItem>
                 <FormLabel>Joined Date</FormLabel>

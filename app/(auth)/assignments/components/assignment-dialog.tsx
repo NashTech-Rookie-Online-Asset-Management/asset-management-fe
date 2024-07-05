@@ -1,3 +1,5 @@
+'use client';
+
 import DataRow from '@/components/custom/data-row';
 import LoadingSpinner from '@/components/custom/loading-spinner';
 import {
@@ -8,6 +10,7 @@ import {
 } from '@/components/ui/dialog';
 import { useAssignment } from '@/features/assignment/assignment.hook';
 import { AssignmentStateOptions } from '@/lib/constants/assignment';
+import { displayDate } from '@/lib/utils/date';
 
 type Props = {
   open: boolean;
@@ -39,7 +42,7 @@ export default function AssignmentDialog(props: Props) {
           { label: 'Specification', value: data.asset.specification },
           { label: 'Assigned to', value: data.assignedTo.username },
           { label: 'Assigned by', value: data.assignedBy.username },
-          { label: 'Assigned date', value: data.assignedDate },
+          { label: 'Assigned date', value: displayDate(data.assignedDate) },
           { label: 'State', value: AssignmentStateOptions[data.state] },
           { label: 'Note', value: data.note },
         ].map(({ label, value }) => (
