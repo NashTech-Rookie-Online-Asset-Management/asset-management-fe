@@ -48,7 +48,7 @@ function AuthHeader({ initialProfile, className }: Props) {
   return (
     <div className={cn('w-full', className)}>
       <div className="w-full bg-primary">
-        <div className="container mx-auto flex items-center justify-between py-2">
+        <div className="container mx-auto flex items-center justify-between pb-2 pt-4 md:pt-2">
           <div className="flex items-center space-x-2">
             {!isDesktop && (
               <Button

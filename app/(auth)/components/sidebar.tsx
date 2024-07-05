@@ -55,7 +55,7 @@ const NavLink = ({
       variant={isActive ? 'default' : 'secondary'}
       className={cn(
         'w-full justify-start font-bold',
-        !isActive && 'hover:bg-slate-200 dark:hover:bg-slate-800',
+        !isActive && 'hover:brightness-90 dark:hover:brightness-125',
       )}
       data-id={`side-bar-${title.toLowerCase().replaceAll(/\s+/g, '-')}`}
       onClick={() => {
