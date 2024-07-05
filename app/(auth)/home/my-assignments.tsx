@@ -38,7 +38,7 @@ import type {
 import { myAssignmentsSortFields } from '@/features/assignment/assignment.types';
 import useGetMyAssignments from '@/features/assignment/useGetMyAssignments';
 import { AssignmentState, Order } from '@/lib/@types/api';
-import { AssignmentStateOptions } from '@/lib/constants/assignments';
+import { AssignmentStateOptions } from '@/lib/constants/assignment';
 import { PAGE_SIZE } from '@/lib/constants/pagination';
 import usePagination from '@/lib/hooks/usePagination';
 import { displayDate } from '@/lib/utils/date';
