@@ -41,7 +41,7 @@ function CreateUserResultDialog({ userData }: CreateUserResultDialogProps) {
     params.set('sortOrder', 'desc');
 
     router.push(
-      `/users?${params.toString()}&newUserUsername=${userData.username}`,
+      `/users?${params.toString()}&newStaffCode=${userData.staffCode}`,
     );
   };
 

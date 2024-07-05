@@ -64,12 +64,12 @@ const columns = [
 ];
 
 export default function UserList() {
-  const [newUserUsername] = useQueryState(
-    'newUserUsername',
+  const [newStaffCode] = useQueryState(
+    'newStaffCode',
     parseAsString.withDefault(''),
   );
 
-  const { data: newUser } = useGetUser(newUserUsername, { pinned: true });
+  const { data: newUser } = useGetUser(newStaffCode, { pinned: true });
 
   const typesParser = parseAsArrayOf(
     parseAsStringEnum<AccountType>(Object.values(AccountType)),
@@ -80,7 +80,9 @@ export default function UserList() {
   );
 
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [selectedUsername, setSelectedUsername] = useState<string | null>(null);
+  const [selectedStaffCode, setSelectedStaffCode] = useState<string | null>(
+    null,
+  );
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [deletedUser, setDeletedUser] = useState<User | null>(null);
   const { data: userProfile } = useProfile();
@@ -119,8 +121,8 @@ export default function UserList() {
     handlePageChange(1);
   };
 
-  const handleOpenDialog = (username: string) => {
-    setSelectedUsername(username);
+  const handleOpenDialog = (staffCode: string) => {
+    setSelectedStaffCode(staffCode);
     setDialogOpen(true);
   };
 
@@ -217,7 +219,7 @@ export default function UserList() {
               users.data.map((row: User) => (
                 <TableRow
                   key={row.id}
-                  onClick={() => handleOpenDialog(row.username)}
+                  onClick={() => handleOpenDialog(row.staffCode)}
                   data-state={newUser?.id === row.id && 'selected'}
                   className="cursor-pointer"
                 >
@@ -245,7 +247,7 @@ export default function UserList() {
                           disabled={row.type === userProfile?.type}
                         >
                           <Link
-                            href={`/users/${row.username}${getUsersQueryKey}`}
+                            href={`/users/${row.staffCode}${getUsersQueryKey}`}
                           >
                             <Pencil className="mr-4 size-4" />
                             Edit
@@ -286,15 +288,15 @@ export default function UserList() {
         onPageChange={handlePageChange}
       />
 
-      {dialogOpen && selectedUsername && (
+      {selectedStaffCode && (
         <DetailedUserDialog
-          username={selectedUsername}
+          staffCode={selectedStaffCode}
           isOpen={dialogOpen}
           onOpenChange={setDialogOpen}
         />
       )}
 
-      {deleteDialogOpen && deletedUser && (
+      {deletedUser && (
         <DeleteUserDialog
           user={deletedUser}
           isOpen={deleteDialogOpen}

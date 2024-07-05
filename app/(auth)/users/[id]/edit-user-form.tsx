@@ -51,7 +51,7 @@ function EditUserForm({ initialUser }: Props) {
     isSuccess: isUserSuccess,
     isError: isUserError,
     error: userError,
-  } = useGetUser(initialUser.username, {
+  } = useGetUser(initialUser.staffCode, {
     initialData: initialUser,
   });
   const {
@@ -76,7 +76,7 @@ function EditUserForm({ initialUser }: Props) {
     isEditUserSuccess;
 
   async function onSubmit(values: z.infer<typeof editUserFormSchema>) {
-    const { username } = await editUser({
+    const { staffCode } = await editUser({
       userStaffCode: userData!.staffCode,
       data: { ...values, updatedAt: initialUser.updatedAt.toString() },
     });
@@ -87,7 +87,7 @@ function EditUserForm({ initialUser }: Props) {
       variant: 'success',
     });
     router.push(
-      `/users?${searchParams.toString()}&newUserUsername=${username}`,
+      `/users?${searchParams.toString()}&newStaffCode=${staffCode}`,
     );
   }
 

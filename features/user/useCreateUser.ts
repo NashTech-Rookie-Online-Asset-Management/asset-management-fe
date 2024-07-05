@@ -9,7 +9,7 @@ function useCreateUser() {
     mutationFn: (data: CreateUserRequest) => userApi.postUser(data),
     onSuccess: (data) => {
       queryClient.setQueryData(
-        ['users', data.username, { pinned: true }],
+        ['users', data.staffCode, { pinned: true }],
         data,
       );
     },

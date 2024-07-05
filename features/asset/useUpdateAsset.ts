@@ -9,6 +9,10 @@ function useUpdateAsset() {
     mutationFn: (data: UpdateAssetRequest) => assetApi.updateAsset(data),
     onSuccess(data) {
       queryClient.setQueryData(['assets', data.id, { pinned: true }], data);
+      queryClient.invalidateQueries({
+        queryKey: ['assets', data.id],
+        exact: true,
+      });
     },
   });
 }

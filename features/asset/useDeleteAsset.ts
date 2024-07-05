@@ -9,6 +9,7 @@ function useDeleteAsset(id: number) {
   return useMutation<ApiMessage, AppAxiosError>({
     mutationFn: () => assetApi.deleteAsset(id),
     onSuccess: () => {
+      queryClient.removeQueries({ queryKey: ['assets', id] });
       queryClient.invalidateQueries({ queryKey: ['assets'] });
     },
   });

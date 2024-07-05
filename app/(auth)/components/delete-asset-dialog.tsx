@@ -16,6 +16,7 @@ import {
 import { toast } from '@/components/ui/use-toast';
 import type { Asset } from '@/features/asset/asset.types';
 import useDeleteAsset from '@/features/asset/useDeleteAsset';
+import useGetAsset from '@/features/asset/useGetAsset';
 
 export default function DeleteAssetDialog({
   asset,
@@ -26,6 +27,7 @@ export default function DeleteAssetDialog({
   isOpen: boolean;
   onOpenChange: (isOpen: boolean) => void;
 }) {
+  const { data } = useGetAsset(asset.id);
   const { mutateAsync: deleteAsset, isPending } = useDeleteAsset(asset.id);
 
   const handleDeleteAsset = async () => {
@@ -39,7 +41,11 @@ export default function DeleteAssetDialog({
     onOpenChange(false);
   };
 
-  const isAbleToDelete = asset && asset.assignments.length === 0;
+  const isAbleToDelete = data?.assignments.length === 0;
+
+  if (!data) {
+    return null;
+  }
 
   return (
     <Dialog open={isOpen} modal onOpenChange={onOpenChange}>

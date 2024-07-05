@@ -1,4 +1,4 @@
-import { keepPreviousData, useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 
 import type { PaginationApiProps } from '@/lib/@types/api';
 
@@ -20,7 +20,6 @@ function useGetReturningRequests(
     queryFn: async () => {
       return returningRequestApi.getReturningRequests(props);
     },
-    placeholderData: keepPreviousData,
   });
 }
 

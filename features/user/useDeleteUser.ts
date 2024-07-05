@@ -9,6 +9,7 @@ function useDeleteUser(staffCode: string) {
   return useMutation<ApiMessage, AppAxiosError>({
     mutationFn: () => userApi.deleteUser(staffCode),
     onSuccess: () => {
+      queryClient.removeQueries({ queryKey: ['users', staffCode] });
       queryClient.invalidateQueries({ queryKey: ['users'] });
     },
   });

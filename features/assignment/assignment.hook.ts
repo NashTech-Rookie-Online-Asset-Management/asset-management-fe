@@ -1,9 +1,4 @@
-import {
-  keepPreviousData,
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import type { PaginationApiProps } from '@/lib/@types/api';
 
@@ -29,7 +24,6 @@ export function useAvailableUser(
     ],
     queryFn: () =>
       assignmentService.getAvailableUser(pagination, transformedId),
-    placeholderData: keepPreviousData,
   });
 }
 
@@ -42,7 +36,6 @@ export function useAvailableAsset(pagination: PaginationApiProps) {
       'available',
     ],
     queryFn: () => assignmentService.getAvailableAsset(pagination),
-    placeholderData: keepPreviousData,
   });
 }
 
@@ -97,6 +90,10 @@ export function useEditAssignment() {
         ['assignments', data.id.toString(), { pinned: true }],
         data,
       );
+      queryClient.invalidateQueries({
+        queryKey: ['assignments', data.id],
+        exact: true,
+      });
     },
   });
 }
@@ -105,21 +102,29 @@ export function useAssignments(
   options: GetAssignmentProps,
   topAssignment?: Assignment,
 ) {
+  const queryClient = useQueryClient();
   return useQuery({
     queryKey: ['assignments', JSON.stringify(options)],
     queryFn: async () => {
       let assignments = await assignmentService.getAll(options);
       if (topAssignment) {
+        const assignment = queryClient.getQueryData<Assignment>([
+          'assignments',
+          topAssignment.id,
+          { pinned: true },
+        ]);
+        if (!assignment) {
+          return assignments;
+        }
         assignments = {
           ...assignments,
           data: [
-            topAssignment,
+            assignment,
             ...assignments.data.filter((a) => a.id !== topAssignment.id),
           ],
         };
       }
       return assignments;
     },
-    placeholderData: keepPreviousData,
   });
 }

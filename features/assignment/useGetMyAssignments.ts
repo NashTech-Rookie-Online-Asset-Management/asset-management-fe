@@ -1,4 +1,4 @@
-import { keepPreviousData, useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 
 import type { PaginationApiProps } from '@/lib/@types/api';
 
@@ -11,7 +11,6 @@ function useGetMyAssignments(props: GetMyAssignments) {
   return useQuery({
     queryKey: [`assignments`, ...Object.values(props), 'user', 'mine'],
     queryFn: () => assignmentService.getMyAssignments(props),
-    placeholderData: keepPreviousData,
   });
 }
 

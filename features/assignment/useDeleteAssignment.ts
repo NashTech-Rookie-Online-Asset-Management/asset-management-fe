@@ -9,6 +9,7 @@ function useDeleteAssignment(id: number) {
   return useMutation<ApiMessage, AppAxiosError>({
     mutationFn: () => assignmentService.delete(id),
     onSuccess: () => {
+      queryClient.removeQueries({ queryKey: ['assignments', id] });
       queryClient.invalidateQueries({ queryKey: ['assignments'] });
     },
   });

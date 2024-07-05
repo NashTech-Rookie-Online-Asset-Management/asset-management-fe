@@ -50,8 +50,8 @@ class UserApiService extends BaseApiService {
     return this.httpClient.get<User>(`/@me`);
   }
 
-  getUser(username: string) {
-    return this.httpClient.get<User>(`/${username}`);
+  getUser(staffCode: string) {
+    return this.httpClient.get<User>(`/${staffCode}`);
   }
 
   postUser(data: CreateUserRequest) {

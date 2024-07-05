@@ -1,4 +1,4 @@
-import { keepPreviousData, useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 
 import type { PaginationApiProps } from '@/lib/@types/api';
 
@@ -14,7 +14,6 @@ function useGetAssetReport(props: GetAssetReportProps, queryKey?: string) {
       const assets = await assetApi.getAssetReport(props);
       return assets;
     },
-    placeholderData: keepPreviousData,
   });
 }
 

@@ -307,7 +307,7 @@ export default function AssetList() {
         onPageChange={handlePageChange}
       />
 
-      {dialogOpen && selectedAssetId && (
+      {selectedAssetId && (
         <DetailedAssetDialog
           isOpen={dialogOpen}
           onOpenChange={setDialogOpen}
@@ -315,7 +315,7 @@ export default function AssetList() {
         />
       )}
 
-      {deleteDialogOpen && deletedAsset && (
+      {deletedAsset && (
         <DeleteAssetDialog
           asset={deletedAsset}
           isOpen={deleteDialogOpen}

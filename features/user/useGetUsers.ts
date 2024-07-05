@@ -1,4 +1,4 @@
-import { keepPreviousData, useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 import type { PaginationApiProps } from '@/lib/@types/api';
 
@@ -10,22 +10,30 @@ export type GetUsersProps = PaginationApiProps<UserSortField> & {
 };
 
 function useGetUsers(props: GetUsersProps, queryKey?: string, topUser?: User) {
+  const queryClient = useQueryClient();
   return useQuery({
     queryKey: [`users`, queryKey ?? JSON.stringify(props)],
     queryFn: async () => {
       let users = await userApi.getUsers(props);
       if (topUser) {
+        const user = queryClient.getQueryData<User>([
+          'users',
+          topUser.staffCode,
+          { pinned: true },
+        ]);
+        if (!user) {
+          return users;
+        }
         users = {
           ...users,
           data: [
-            topUser,
-            ...users.data.filter((a) => a.username !== topUser.username),
+            user,
+            ...users.data.filter((a) => a.staffCode !== topUser.staffCode),
           ],
         };
       }
       return users;
     },
-    placeholderData: keepPreviousData,
   });
 }
 
