@@ -5,6 +5,10 @@ export function displayDate(date: string) {
 }
 
 export function inputDateConvert(date: Date | string) {
-  if (!date) return '';
-  return lightFormat(new Date(date), 'yyyy-MM-dd');
+  try {
+    if (!date) return '';
+    return lightFormat(new Date(date), 'yyyy-MM-dd');
+  } catch {
+    return '';
+  }
 }

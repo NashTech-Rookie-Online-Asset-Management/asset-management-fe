@@ -53,6 +53,7 @@ import { AssignmentStateOptions } from '@/lib/constants/assignment';
 import { PAGE_SIZE } from '@/lib/constants/pagination';
 import usePagination from '@/lib/hooks/usePagination';
 import { cn } from '@/lib/utils';
+import { inputDateConvert } from '@/lib/utils/date';
 
 import RequestForReturningDialog from '../home/request-for-returning-dialog';
 import AssignmentDialog from './components/assignment-dialog';
@@ -102,10 +103,7 @@ export default function AssignmentList() {
     ]),
   );
 
-  const [dateFrom, setDateFrom] = useQueryState(
-    'date',
-    parseAsIsoDateTime.withDefault(new Date('2000-01-01')),
-  );
+  const [dateFrom, setDateFrom] = useQueryState('date', parseAsIsoDateTime);
 
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [deletedAssignment, setDeletedAssignment] = useState<Assignment | null>(
@@ -138,12 +136,12 @@ export default function AssignmentList() {
     handlePageChange(1);
   };
 
-  const handleDateChange = (date: Date) => {
-    setDateFrom(date);
+  const handleDateChange = (date: string) => {
+    setDateFrom(new Date(date));
     handlePageChange(1);
   };
   const debounceSetDate = useDebounceCallback(handleDateChange, 500);
-  const dateString = dateFrom?.toISOString().split('T')[0];
+  const dateString = inputDateConvert(dateFrom || '');
 
   const queryOptions = {
     page,
@@ -198,7 +196,7 @@ export default function AssignmentList() {
             defaultValue={dateString}
             type="date"
             className="block"
-            onChange={(e) => debounceSetDate(new Date(e.target.value))}
+            onChange={(e) => debounceSetDate(e.target.value)}
           />
         </div>
 

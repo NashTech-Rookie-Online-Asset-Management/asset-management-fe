@@ -110,7 +110,7 @@ export function useAssignments(
       if (topAssignment) {
         const assignment = queryClient.getQueryData<Assignment>([
           'assignments',
-          topAssignment.id,
+          topAssignment.id.toString(),
           { pinned: true },
         ]);
         if (!assignment) {
