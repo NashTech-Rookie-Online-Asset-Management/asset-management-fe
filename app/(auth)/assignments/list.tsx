@@ -137,8 +137,13 @@ export default function AssignmentList() {
   };
 
   const handleDateChange = (date: string) => {
-    setDateFrom(new Date(date));
-    handlePageChange(1);
+    try {
+      setDateFrom(new Date(date));
+      handlePageChange(1);
+    } catch {
+      setDateFrom(null);
+      handlePageChange(1);
+    }
   };
   const debounceSetDate = useDebounceCallback(handleDateChange, 500);
   const dateString = inputDateConvert(dateFrom || '');
@@ -150,7 +155,7 @@ export default function AssignmentList() {
     states: assignmentStates,
     sortField,
     sortOrder,
-    date: dateString,
+    date: dateString || undefined,
   };
 
   const { data: newAssignment } = useAssignment(`${assignmentId}`, {
