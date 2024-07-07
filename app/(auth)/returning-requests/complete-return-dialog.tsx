@@ -57,7 +57,7 @@ function CompleteReturnDialog({ request, isOpen, onOpenChange }: Props) {
               isLoading={isPending}
               onClick={handleRespondClick}
             >
-              Accept
+              Yes
             </LoadingButton>
             <DialogClose asChild>
               <Button
@@ -65,7 +65,7 @@ function CompleteReturnDialog({ request, isOpen, onOpenChange }: Props) {
                 onClick={() => onOpenChange(false)}
                 data-id="no-button"
               >
-                Cancel
+                No
               </Button>
             </DialogClose>
           </DialogFooter>
