@@ -69,11 +69,10 @@ export default function SelectAssetModal(props: ModalProps<AvailableAsset>) {
       data && data.data.find((assetTmp) => assetTmp.assetCode === assetCode);
     if (asset) {
       props.onSelect(asset);
-      props.setOpen(false);
     } else if (props.assignment) {
       props.onSelect(props.assignment.asset);
-      props.setOpen(false);
     }
+    props.setOpen(false);
   };
 
   const handleTableHeaderClick = ({ key, sort }: TableCol) => {

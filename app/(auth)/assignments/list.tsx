@@ -53,7 +53,7 @@ import { AssignmentStateOptions } from '@/lib/constants/assignment';
 import { PAGE_SIZE } from '@/lib/constants/pagination';
 import usePagination from '@/lib/hooks/usePagination';
 import { cn } from '@/lib/utils';
-import { inputDateConvert } from '@/lib/utils/date';
+import { displayDate, inputDateConvert } from '@/lib/utils/date';
 
 import RequestForReturningDialog from '../home/request-for-returning-dialog';
 import AssignmentDialog from './components/assignment-dialog';
@@ -98,7 +98,6 @@ export default function AssignmentList() {
     'states',
     statesParser.withDefault([
       AssignmentState.ACCEPTED,
-      AssignmentState.DECLINED,
       AssignmentState.WAITING_FOR_ACCEPTANCE,
     ]),
   );
@@ -178,10 +177,6 @@ export default function AssignmentList() {
               {
                 label: AssignmentStateOptions[AssignmentState.ACCEPTED],
                 value: AssignmentState.ACCEPTED,
-              },
-              {
-                label: AssignmentStateOptions[AssignmentState.DECLINED],
-                value: AssignmentState.DECLINED,
               },
               {
                 label:
@@ -265,7 +260,7 @@ export default function AssignmentList() {
                 <TableRow
                   key={assignment.id}
                   onClick={() => handleSetAssignment(assignment)}
-                  data-state={assignment.id === newAssignment?.id && 'selected'}
+                  data-state={assignment.pinned && 'selected'}
                   className="cursor-pointer"
                 >
                   <CustomCell
@@ -290,7 +285,7 @@ export default function AssignmentList() {
                   />
                   <CustomCell
                     className="pl-4 text-sm"
-                    value={assignment.assignedDate.split('T')[0]}
+                    value={displayDate(assignment.assignedDate)}
                   />
                   <CustomCell
                     className="pl-4 text-sm"

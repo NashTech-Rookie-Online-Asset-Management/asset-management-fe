@@ -76,11 +76,10 @@ export default function SelectUserModal(props: ModalProps<AvailableUser>) {
       data && data.data.find((userTmp) => userTmp.staffCode === staffCode);
     if (user) {
       props.onSelect(user);
-      props.setOpen(false);
     } else if (props.assignment) {
       props.onSelect(props.assignment.assignedTo);
-      props.setOpen(false);
     }
+    props.setOpen(false);
   };
 
   const handleTableHeaderClick = ({ key, sort }: TableCol) => {

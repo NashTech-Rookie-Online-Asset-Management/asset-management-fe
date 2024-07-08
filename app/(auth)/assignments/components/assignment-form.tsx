@@ -3,7 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Search } from 'lucide-react';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useLayoutEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { LoadingButton } from '@/components/custom/loading-button';
@@ -73,6 +73,15 @@ export default function AssignmentForm({
 
   const openUserModalHandler = () => setOpenUserModal(true);
   const openAssetModalHandler = () => setOpenAssetModal(true);
+
+  useLayoutEffect(() => {
+    const inputDate = document.getElementById('assignedDate');
+
+    // Limit the date to today and future
+    if (inputDate) {
+      inputDate.setAttribute('min', new Date().toISOString().split('T')[0]);
+    }
+  }, []);
 
   return (
     <>
@@ -172,6 +181,10 @@ export default function AssignmentForm({
                       type="date"
                       className="block"
                       autoFocus
+                      min={
+                        defaultValue?.assignedDate.split('T')[0] ||
+                        new Date().toISOString().split('T')[0]
+                      }
                       value={value}
                     />
                   </FormControl>
@@ -195,7 +208,7 @@ export default function AssignmentForm({
             )}
           />
 
-          <div className="flex justify-end space-x-4">
+          <div className="flex justify-end space-x-2">
             <LoadingButton
               type="submit"
               isLoading={isPending}

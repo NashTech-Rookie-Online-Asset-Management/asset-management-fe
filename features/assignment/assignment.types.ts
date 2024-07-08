@@ -31,6 +31,7 @@ export type Assignment = {
   returningRequest?: ReturningRequest;
   asset: Asset;
   updatedAt: string;
+  pinned?: boolean;
 };
 
 export type AssignmentSortField =

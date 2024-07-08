@@ -107,22 +107,32 @@ export function useAssignments(
     queryKey: ['assignments', JSON.stringify(options)],
     queryFn: async () => {
       let assignments = await assignmentService.getAll(options);
+
       if (topAssignment) {
-        const assignment = queryClient.getQueryData<Assignment>([
+        const assignmentKeys = [
           'assignments',
           topAssignment.id.toString(),
           { pinned: true },
-        ]);
-        if (!assignment) {
-          return assignments;
+        ];
+
+        const assignment = queryClient.getQueryData<Assignment>(assignmentKeys);
+
+        if (assignment) {
+          assignment.pinned = true;
+          assignmentKeys.pop();
+
+          queryClient.removeQueries({
+            queryKey: assignmentKeys,
+          });
+
+          assignments = {
+            ...assignments,
+            data: [
+              assignment,
+              ...assignments.data.filter((a) => a.id !== topAssignment.id),
+            ],
+          };
         }
-        assignments = {
-          ...assignments,
-          data: [
-            assignment,
-            ...assignments.data.filter((a) => a.id !== topAssignment.id),
-          ],
-        };
       }
       return assignments;
     },

@@ -3,6 +3,11 @@ import { z } from 'zod';
 
 import { Label } from '@/components/ui/label';
 import { TableCell as CoreTableCell } from '@/components/ui/table';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import type { PaginationApiProps } from '@/lib/@types/api';
 import { AccountType, AssignmentState, Order } from '@/lib/@types/api';
 import useDebounce from '@/lib/hooks/useDebounce';
@@ -19,7 +24,12 @@ export function TableCell(props: React.PropsWithChildren<TabaleCellProps>) {
         htmlFor={props.htmlFor}
         className="inline-flex w-full cursor-pointer p-4 font-normal"
       >
-        <p className="line-clamp-1">{props.children}</p>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <p className="line-clamp-1">{props.children}</p>
+          </TooltipTrigger>
+          <TooltipContent>{props.children}</TooltipContent>
+        </Tooltip>
       </Label>
     </CoreTableCell>
   );
