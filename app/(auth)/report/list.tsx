@@ -30,13 +30,13 @@ import { PAGE_SIZE } from '@/lib/constants/pagination';
 import usePagination from '@/lib/hooks/usePagination';
 
 const columns = [
-  { label: 'Category', key: 'categoryName' },
-  { label: 'Total', key: 'total' },
-  { label: 'Assigned', key: 'assigned' },
-  { label: 'Available', key: 'available' },
-  { label: 'Not available', key: 'notAvailable' },
-  { label: 'Waiting for recycling', key: 'waitingForRecycling' },
-  { label: 'Recycled', key: 'recycled' },
+  { label: 'Category', key: 'categoryName', width: '20%' },
+  { label: 'Total', key: 'total', width: '10%' },
+  { label: 'Assigned', key: 'assigned', width: '10%' },
+  { label: 'Available', key: 'available', width: '10%' },
+  { label: 'Not available', key: 'notAvailable', width: '15%' },
+  { label: 'Waiting for recycling', key: 'waitingForRecycling', width: '20%' },
+  { label: 'Recycled', key: 'recycled', width: '15%' },
 ];
 
 export default function AssetReportList() {
@@ -110,11 +110,11 @@ export default function AssetReportList() {
       </div>
 
       <div className="rounded-md border">
-        <Table className="table-fixed">
+        <Table className="w-full table-fixed">
           <TableHeader>
             <TableRow>
               {columns.map((column) => (
-                <TableHead key={column.key}>
+                <TableHead key={column.key} style={{ width: column.width }}>
                   <Button
                     variant="ghost"
                     onClick={() =>

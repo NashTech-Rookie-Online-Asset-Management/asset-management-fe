@@ -81,7 +81,6 @@ function ChangePasswordFirstTimeDialog({ initialProfile }: Props) {
   React.useEffect(() => {
     if (profile) {
       if (profile.status === UserStatus.CREATED) setIsOpen(true);
-      if (profile.status === UserStatus.ACTIVE) setIsOpen(false);
     } else setIsOpen(false);
   }, [profile]);
 

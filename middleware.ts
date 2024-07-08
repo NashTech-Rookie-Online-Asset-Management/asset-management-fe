@@ -2,6 +2,7 @@ import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 
 import authApi from './features/auth/auth.service';
+import { UserStatus } from './lib/@types/api';
 import CookieKeys from './lib/constants/cookieKeys';
 import { PROTECTED_ROUTES } from './lib/constants/protected-routes';
 
@@ -19,6 +20,10 @@ export async function middleware(request: NextRequest) {
     try {
       authApi.setBearerToken(accessToken).useServer();
       const user = await authApi.getProfile();
+
+      if (user.status === UserStatus.DISABLED) {
+        throw new Error();
+      }
 
       const isAccountTypeValid = !!PROTECTED_ROUTES.find((route) =>
         pathName.includes(route.path),
