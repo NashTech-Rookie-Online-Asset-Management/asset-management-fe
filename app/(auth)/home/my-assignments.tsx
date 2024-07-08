@@ -22,6 +22,14 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import {
+  MobileCard,
+  MobileCardActions,
+  MobileCardContainer,
+  MobileCardContent,
+  MobileCardHeader,
+  MobileCardStatus,
+} from '@/components/ui/mobile-card';
+import {
   Table,
   TableBody,
   TableCell,
@@ -38,7 +46,9 @@ import useGetMyAssignments from '@/features/assignment/useGetMyAssignments';
 import { AssignmentState, Order } from '@/lib/@types/api';
 import { AssignmentStateOptions } from '@/lib/constants/assignment';
 import { PAGE_SIZE } from '@/lib/constants/pagination';
+import { useIsDesktop } from '@/lib/hooks/useIsDesktop';
 import usePagination from '@/lib/hooks/usePagination';
+import { cn } from '@/lib/utils';
 import { displayDate } from '@/lib/utils/date';
 
 import AssignmentDialog from '../assignments/components/assignment-dialog';
@@ -54,7 +64,87 @@ const columns = [
   { label: 'State', key: 'state' },
 ];
 
+const colors = {
+  [AssignmentState.ACCEPTED]: 'bg-green-500',
+  [AssignmentState.DECLINED]: 'bg-red-500',
+  [AssignmentState.IS_REQUESTED]: 'bg-blue-500',
+  [AssignmentState.WAITING_FOR_ACCEPTANCE]: 'bg-yellow-500',
+};
+
+const ColorsBox = ({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) => {
+  return (
+    <div className={cn('-mx-4 flex flex-wrap gap-2', className)} {...props}>
+      {Object.entries(colors).map(([key, value]) => (
+        <div key={key} className="flex space-x-1 text-xs">
+          <div className={`aspect-square size-4 rounded-full ${value}`} />
+          <span>
+            {AssignmentStateOptions[key as keyof typeof AssignmentStateOptions]}
+          </span>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+const ItemDropDownMenu = ({
+  row,
+  acceptClick,
+  declineClick,
+  returnClick,
+}: {
+  row: Assignment;
+  acceptClick: () => void;
+  declineClick: () => void;
+  returnClick: () => void;
+}) => {
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" size="icon">
+          <span className="sr-only">Open menu</span>
+          <MoreHorizontal className="md:size-4" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent
+        align="center"
+        className="z-10"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+        <DropdownMenuItem
+          className="cursor-pointer"
+          disabled={row.state !== AssignmentState.WAITING_FOR_ACCEPTANCE}
+          onClick={acceptClick}
+        >
+          <Check className="mr-4 size-4" />
+          Accept
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          className="cursor-pointer"
+          disabled={row.state !== AssignmentState.WAITING_FOR_ACCEPTANCE}
+          onClick={declineClick}
+        >
+          <X className="mr-4 size-4" />
+          Decline
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          disabled={row.state !== AssignmentState.ACCEPTED}
+          className="cursor-pointer"
+          onClick={returnClick}
+        >
+          <Undo className="mr-4 size-4" />
+          Request for returning
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+};
+
 function MyAssignments() {
+  const isDesktop = useIsDesktop();
   const pagination = usePagination({
     sortFields: myAssignmentsSortFields,
     defaultSortField: 'name',
@@ -98,109 +188,110 @@ function MyAssignments() {
   };
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="relative rounded-md border">
+    <div className={cn('flex flex-col gap-2')}>
+      {!isDesktop && <ColorsBox />}
+      <div className="relative rounded-md md:border">
         {isPending && (
           <LoaderCircle className="absolute right-0 top-0 m-4 size-4 animate-spin" />
         )}
-        <Table className="table-fixed">
-          <TableHeader>
-            <TableRow>
-              {columns.map((column) => (
-                <TableHead key={column.key}>
-                  <Button
-                    variant="ghost"
-                    onClick={() =>
-                      handleSortColumn(column.key as MyAssignmentSortField)
-                    }
-                  >
-                    {column.label}
-                    {sortField === column.key &&
-                      (sortOrder === Order.ASC ? (
-                        <ArrowDownAZ className="ml-2 inline size-4" />
-                      ) : (
-                        <ArrowUpAZ className="ml-2 inline size-4" />
-                      ))}
-                  </Button>
-                </TableHead>
-              ))}
-              <TableHead />
-            </TableRow>
-          </TableHeader>
-          <TableBody>
+        {!isDesktop && (
+          <div className="-mx-6 flex flex-col space-y-2">
             {assignments && assignments.data.length > 0 ? (
               assignments.data.map((row: Assignment) => (
-                <TableRow
+                <MobileCard
                   key={row.id}
                   onClick={() => handleOpenAssignmentClick(row)}
-                  className="cursor-pointer"
                 >
-                  <CustomCell value={row.asset.assetCode} />
-                  <CustomCell value={row.asset.name} />
-                  <CustomCell value={row.asset.category.name} />
-                  <CustomCell
-                    value={displayDate(row.assignedDate.toString())}
+                  <MobileCardActions>
+                    <ItemDropDownMenu
+                      row={row}
+                      acceptClick={() => handleAcceptClick(row)}
+                      declineClick={() => handleDeclineClick(row)}
+                      returnClick={() => handleReturnClick(row)}
+                    />
+                  </MobileCardActions>
+                  <MobileCardStatus
+                    color={colors[row.state]}
+                    className="rounded-b-none"
                   />
-                  <CustomCell value={AssignmentStateOptions[row.state]} />
-                  <TableCell className="py-2 pl-8">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="size-8 p-0">
-                          <span className="sr-only">Open menu</span>
-                          <MoreHorizontal className="size-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent
-                        align="center"
-                        className="z-10"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem
-                          className="cursor-pointer"
-                          disabled={
-                            row.state !== AssignmentState.WAITING_FOR_ACCEPTANCE
-                          }
-                          onClick={() => handleAcceptClick(row)}
-                        >
-                          <Check className="mr-4 size-4" />
-                          Accept
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          className="cursor-pointer"
-                          disabled={
-                            row.state !== AssignmentState.WAITING_FOR_ACCEPTANCE
-                          }
-                          onClick={() => handleDeclineClick(row)}
-                        >
-                          <X className="mr-4 size-4" />
-                          Decline
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          disabled={row.state !== AssignmentState.ACCEPTED}
-                          className="cursor-pointer"
-                          onClick={() => handleReturnClick(row)}
-                        >
-                          <Undo className="mr-4 size-4" />
-                          Request for returning
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
-                </TableRow>
+                  <MobileCardContainer>
+                    <MobileCardHeader>{row.asset.assetCode}</MobileCardHeader>
+                    <MobileCardContent>
+                      <p>{row.asset.category.name}</p>
+                      <p>{row.asset.name}</p>
+                      <p>{displayDate(row.assignedDate)}</p>
+                    </MobileCardContent>
+                  </MobileCardContainer>
+                </MobileCard>
               ))
             ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={5}
-                  className="py-2 text-center text-gray-400"
-                >
-                  No assignments to display.
-                </TableCell>
-              </TableRow>
+              <div className="mx-4 px-2">No data</div>
             )}
-          </TableBody>
-        </Table>
+          </div>
+        )}
+        {isDesktop && (
+          <Table className="table-fixed">
+            <TableHeader>
+              <TableRow>
+                {columns.map((column) => (
+                  <TableHead key={column.key}>
+                    <Button
+                      variant="ghost"
+                      onClick={() =>
+                        handleSortColumn(column.key as MyAssignmentSortField)
+                      }
+                    >
+                      {column.label}
+                      {sortField === column.key &&
+                        (sortOrder === Order.ASC ? (
+                          <ArrowDownAZ className="ml-2 inline size-4" />
+                        ) : (
+                          <ArrowUpAZ className="ml-2 inline size-4" />
+                        ))}
+                    </Button>
+                  </TableHead>
+                ))}
+                <TableHead />
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {assignments && assignments.data.length > 0 ? (
+                assignments.data.map((row: Assignment) => (
+                  <TableRow
+                    key={row.id}
+                    onClick={() => handleOpenAssignmentClick(row)}
+                    className="cursor-pointer"
+                  >
+                    <CustomCell value={row.asset.assetCode} />
+                    <CustomCell value={row.asset.name} />
+                    <CustomCell value={row.asset.category.name} />
+                    <CustomCell
+                      value={displayDate(row.assignedDate.toString())}
+                    />
+                    <CustomCell value={AssignmentStateOptions[row.state]} />
+                    <TableCell className="py-2 pl-8">
+                      <ItemDropDownMenu
+                        row={row}
+                        acceptClick={() => handleAcceptClick(row)}
+                        declineClick={() => handleDeclineClick(row)}
+                        returnClick={() => handleReturnClick(row)}
+                      />
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell
+                    colSpan={5}
+                    className="py-2 text-center text-gray-400"
+                  >
+                    No assignments to display.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        )}
       </div>
 
       <Pagination
