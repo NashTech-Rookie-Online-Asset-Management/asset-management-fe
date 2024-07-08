@@ -2,6 +2,7 @@
 
 import { DialogClose } from '@radix-ui/react-dialog';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 
 import { LoadingButton } from '@/components/custom/loading-button';
 import { Button } from '@/components/ui/button';
@@ -27,6 +28,8 @@ export default function DeleteAssetDialog({
   isOpen: boolean;
   onOpenChange: (isOpen: boolean) => void;
 }) {
+  const searchParams = useSearchParams();
+
   const { data } = useGetAsset(asset.id);
   const { mutateAsync: deleteAsset, isPending } = useDeleteAsset(asset.id);
 
@@ -89,7 +92,7 @@ export default function DeleteAssetDialog({
               If the asset is not able to be used anymore, please update its
               state in{' '}
               <Link
-                href="/assets/edit"
+                href={`/assets/${asset.id}?${searchParams.toString()}`}
                 className="cursor-pointer text-blue-500 underline"
               >
                 Edit Asset page
