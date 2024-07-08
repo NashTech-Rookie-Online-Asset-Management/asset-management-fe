@@ -22,7 +22,6 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Input } from '@/components/ui/input';
 import {
   Table,
   TableBody,
@@ -59,11 +58,10 @@ const columns = [
 function MyAssignments() {
   const pagination = usePagination({
     sortFields: myAssignmentsSortFields,
-    defaultSortField: 'assignedDate',
-    defaultSortOrder: Order.DESC,
+    defaultSortField: 'name',
   });
   const { page, searchValue, sortField, sortOrder } = pagination.metadata;
-  const { handlePageChange, handleSearch, handleSortColumn } =
+  const { handlePageChange, handleSortColumn } =
     pagination.handlers;
 
   const [acceptDialogOpen, setAcceptDialogOpen] = useState(false);
@@ -103,29 +101,6 @@ function MyAssignments() {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-4">
-        <div className="lg:col-span-3" />
-        <div className="lg:col-span-1">
-          <div className="relative">
-            <Input
-              type="text"
-              placeholder="Search by name, asset code"
-              className="rounded-md border pr-10"
-              onChange={(e) => handleSearch(e.target.value)}
-            />
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              className="absolute right-0 top-0 h-full px-4 py-2"
-              disabled
-            >
-              <Search className="size-4" aria-hidden="true" />
-            </Button>
-          </div>
-        </div>
-      </div>
-
       <div className="relative rounded-md border">
         {isPending && (
           <LoaderCircle className="absolute right-0 top-0 m-4 size-4 animate-spin" />
