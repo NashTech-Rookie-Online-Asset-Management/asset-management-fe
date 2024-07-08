@@ -110,7 +110,7 @@ export default function AssetReportList() {
       </div>
 
       <div className="rounded-md border">
-        <Table>
+        <Table className="table-fixed">
           <TableHeader>
             <TableRow>
               {columns.map((column) => (
@@ -137,7 +137,7 @@ export default function AssetReportList() {
             {assetReport && assetReport.data.length > 0 ? (
               assetReport.data.map((row: ReportItem) => (
                 <TableRow key={row.categoryName}>
-                  <CustomCell value={row.categoryName} />
+                  <CustomCell value={row.categoryName} className="py-3 pl-8" />
                   <CustomCell value={row.total.toString()} />
                   <CustomCell value={row.assigned.toString()} />
                   <CustomCell value={row.available.toString()} />

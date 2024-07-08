@@ -6,7 +6,6 @@ import {
   Check,
   LoaderCircle,
   MoreHorizontal,
-  Search,
   Undo,
   X,
 } from 'lucide-react';
@@ -61,8 +60,7 @@ function MyAssignments() {
     defaultSortField: 'name',
   });
   const { page, searchValue, sortField, sortOrder } = pagination.metadata;
-  const { handlePageChange, handleSortColumn } =
-    pagination.handlers;
+  const { handlePageChange, handleSortColumn } = pagination.handlers;
 
   const [acceptDialogOpen, setAcceptDialogOpen] = useState(false);
   const [declineDialogOpen, setDeclineDialogOpen] = useState(false);
