@@ -33,6 +33,15 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import {
+  MobileCard,
+  MobileCardActions,
+  MobileCardContainer,
+  MobileCardContent,
+  MobileCardHeader,
+  MobileCardStatus,
+} from '@/components/ui/mobile-card';
+import { Separator } from '@/components/ui/separator';
+import {
   Table,
   TableBody,
   TableCell,
@@ -49,12 +58,17 @@ import type {
   AssignmentSortField,
 } from '@/features/assignment/assignment.types';
 import { AssignmentState, Order } from '@/lib/@types/api';
-import { AssignmentStateOptions } from '@/lib/constants/assignment';
+import {
+  AssignmentStateColors as colors,
+  AssignmentStateOptions,
+} from '@/lib/constants/assignment';
 import { PAGE_SIZE } from '@/lib/constants/pagination';
+import { useIsDesktop } from '@/lib/hooks/useIsDesktop';
 import usePagination from '@/lib/hooks/usePagination';
 import { cn } from '@/lib/utils';
 import { displayDate, inputDateConvert } from '@/lib/utils/date';
 
+import { ColorsBox } from '../components/colors-box';
 import RequestForReturningDialog from '../home/request-for-returning-dialog';
 import AssignmentDialog from './components/assignment-dialog';
 import DeleteAssignmentDialog from './components/delete-assignment-dialog';
@@ -69,7 +83,67 @@ const columns = [
   { label: 'State', key: 'state' },
 ];
 
+const ItemDropDownMenu = ({
+  row,
+
+  deleteClick,
+  returnClick,
+}: {
+  row: Assignment;
+  deleteClick: () => void;
+  returnClick: () => void;
+}) => (
+  <DropdownMenu>
+    <DropdownMenuTrigger asChild>
+      <Button variant="ghost" className="size-8 p-0">
+        <span className="sr-only">Open menu</span>
+        <MoreHorizontal className="size-4" />
+      </Button>
+    </DropdownMenuTrigger>
+    <DropdownMenuContent
+      align="center"
+      className="z-10"
+      onClick={(e) => e.stopPropagation()}
+    >
+      <DropdownMenuLabel>Actions</DropdownMenuLabel>
+      <DropdownMenuItem
+        disabled={row.state !== AssignmentState.WAITING_FOR_ACCEPTANCE}
+        className="cursor-pointer"
+        asChild
+      >
+        <Link href={`/assignments/${row.id}`}>
+          <Pencil className="mr-4 size-4" />
+          Edit
+        </Link>
+      </DropdownMenuItem>
+      <DropdownMenuItem
+        disabled={
+          ![
+            AssignmentState.WAITING_FOR_ACCEPTANCE,
+            AssignmentState.DECLINED,
+          ].includes(row.state)
+        }
+        className="cursor-pointer"
+        onClick={deleteClick}
+      >
+        <Trash2 className="mr-4 size-4" />
+        Delete
+      </DropdownMenuItem>
+
+      <DropdownMenuItem
+        disabled={row.state === AssignmentState.WAITING_FOR_ACCEPTANCE}
+        className="cursor-pointer"
+        onClick={returnClick}
+      >
+        <RotateCcw className="mr-4 size-4" />
+        Return
+      </DropdownMenuItem>
+    </DropdownMenuContent>
+  </DropdownMenu>
+);
+
 export default function AssignmentList() {
+  const isDesktop = useIsDesktop();
   const [selectedAssignment, setSelectedAssignment] =
     useState<Assignment | null>(null);
   const [openAssignmentDialog, setOpenAssignmentDialog] = useState(false);
@@ -149,7 +223,7 @@ export default function AssignmentList() {
 
   const queryOptions = {
     page,
-    take: PAGE_SIZE,
+    take: isDesktop ? PAGE_SIZE : 5,
     search: searchValue,
     states: assignmentStates,
     sortField,
@@ -226,7 +300,56 @@ export default function AssignmentList() {
         </Button>
       </div>
 
-      <div className="rounded-md border">
+      {!isDesktop && (
+        <>
+          <ColorsBox texts={AssignmentStateOptions} colors={colors} />
+          <div className="flex flex-col space-y-2">
+            {data && data.data.length > 0 ? (
+              data.data.map((row: Assignment) => (
+                <MobileCard
+                  key={row.id}
+                  onClick={() => handleSetAssignment(row)}
+                >
+                  <MobileCardActions>
+                    <ItemDropDownMenu
+                      row={row}
+                      deleteClick={() => handleDeleteDialog(row)}
+                      returnClick={() => handleReturnRequestClick(row)}
+                    />
+                  </MobileCardActions>
+                  <MobileCardStatus
+                    color={colors[row.state]}
+                    className="rounded-b-none"
+                  />
+                  <MobileCardContainer>
+                    <MobileCardHeader>{row.asset.assetCode}</MobileCardHeader>
+                    <MobileCardContent>
+                      <p>{row.asset.category.name}</p>
+                      <p>{row.asset.name}</p>
+                      <p>{displayDate(row.assignedDate)}</p>
+                      <div className="flex items-center space-x-2">
+                        <p>
+                          <span className="text-muted-foreground">To:</span>{' '}
+                          {row.assignedTo.username}
+                        </p>
+                        <Separator orientation="vertical" className="h-4" />
+                        <p>
+                          <span className="text-muted-foreground">By:</span>{' '}
+                          {row.assignedBy.username}
+                        </p>
+                      </div>
+                    </MobileCardContent>
+                  </MobileCardContainer>
+                </MobileCard>
+              ))
+            ) : (
+              <div>No assignments to display.</div>
+            )}
+          </div>
+        </>
+      )}
+
+      <div className="hidden rounded-md border md:block">
         <Table className="table-fixed">
           <TableHeader>
             <TableRow>
@@ -292,61 +415,11 @@ export default function AssignmentList() {
                     value={AssignmentStateOptions[assignment.state]}
                   />
                   <TableCell className="py-2 pl-8">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="size-8 p-0">
-                          <span className="sr-only">Open menu</span>
-                          <MoreHorizontal className="size-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent
-                        align="center"
-                        className="z-10"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem
-                          disabled={
-                            assignment.state !==
-                            AssignmentState.WAITING_FOR_ACCEPTANCE
-                          }
-                          className="cursor-pointer"
-                          asChild
-                        >
-                          <Link href={`/assignments/${assignment.id}`}>
-                            <Pencil className="mr-4 size-4" />
-                            Edit
-                          </Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          disabled={
-                            ![
-                              AssignmentState.WAITING_FOR_ACCEPTANCE,
-                              AssignmentState.DECLINED,
-                            ].includes(assignment.state)
-                          }
-                          className="cursor-pointer"
-                          onClick={() => {
-                            handleDeleteDialog(assignment);
-                          }}
-                        >
-                          <Trash2 className="mr-4 size-4" />
-                          Delete
-                        </DropdownMenuItem>
-
-                        <DropdownMenuItem
-                          disabled={
-                            assignment.state ===
-                            AssignmentState.WAITING_FOR_ACCEPTANCE
-                          }
-                          className="cursor-pointer"
-                          onClick={() => handleReturnRequestClick(assignment)}
-                        >
-                          <RotateCcw className="mr-4 size-4" />
-                          Return
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+                    <ItemDropDownMenu
+                      row={assignment}
+                      deleteClick={() => handleDeleteDialog(assignment)}
+                      returnClick={() => handleReturnRequestClick(assignment)}
+                    />
                   </TableCell>
                 </TableRow>
               ))

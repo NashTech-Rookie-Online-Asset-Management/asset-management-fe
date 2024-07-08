@@ -44,7 +44,10 @@ import type {
 import { myAssignmentsSortFields } from '@/features/assignment/assignment.types';
 import useGetMyAssignments from '@/features/assignment/useGetMyAssignments';
 import { AssignmentState, Order } from '@/lib/@types/api';
-import { AssignmentStateOptions } from '@/lib/constants/assignment';
+import {
+  AssignmentStateColors as colors,
+  AssignmentStateOptions,
+} from '@/lib/constants/assignment';
 import { PAGE_SIZE } from '@/lib/constants/pagination';
 import { useIsDesktop } from '@/lib/hooks/useIsDesktop';
 import usePagination from '@/lib/hooks/usePagination';
@@ -52,6 +55,7 @@ import { cn } from '@/lib/utils';
 import { displayDate } from '@/lib/utils/date';
 
 import AssignmentDialog from '../assignments/components/assignment-dialog';
+import { ColorsBox } from '../components/colors-box';
 import AcceptAssignmentDialog from './accept-assignment-dialog';
 import DeclineAssignmentDialog from './decline-assignment-dialog';
 import RequestForReturningDialog from './request-for-returning-dialog';
@@ -63,31 +67,6 @@ const columns = [
   { label: 'Assigned Date', key: 'assignedDate' },
   { label: 'State', key: 'state' },
 ];
-
-const colors = {
-  [AssignmentState.ACCEPTED]: 'bg-green-500',
-  [AssignmentState.DECLINED]: 'bg-red-500',
-  [AssignmentState.IS_REQUESTED]: 'bg-blue-500',
-  [AssignmentState.WAITING_FOR_ACCEPTANCE]: 'bg-yellow-500',
-};
-
-const ColorsBox = ({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLDivElement>) => {
-  return (
-    <div className={cn('-mx-4 flex flex-wrap gap-2', className)} {...props}>
-      {Object.entries(colors).map(([key, value]) => (
-        <div key={key} className="flex space-x-1 text-xs">
-          <div className={`aspect-square size-4 rounded-full ${value}`} />
-          <span>
-            {AssignmentStateOptions[key as keyof typeof AssignmentStateOptions]}
-          </span>
-        </div>
-      ))}
-    </div>
-  );
-};
 
 const ItemDropDownMenu = ({
   row,
@@ -189,13 +168,15 @@ function MyAssignments() {
 
   return (
     <div className={cn('flex flex-col gap-2')}>
-      {!isDesktop && <ColorsBox />}
+      {!isDesktop && (
+        <ColorsBox texts={AssignmentStateOptions} colors={colors} />
+      )}
       <div className="relative rounded-md md:border">
         {isPending && (
           <LoaderCircle className="absolute right-0 top-0 m-4 size-4 animate-spin" />
         )}
         {!isDesktop && (
-          <div className="-mx-6 flex flex-col space-y-2">
+          <div className="flex flex-col space-y-2">
             {assignments && assignments.data.length > 0 ? (
               assignments.data.map((row: Assignment) => (
                 <MobileCard
@@ -225,7 +206,7 @@ function MyAssignments() {
                 </MobileCard>
               ))
             ) : (
-              <div className="mx-4 px-2">No data</div>
+              <div>No assignments to display.</div>
             )}
           </div>
         )}
