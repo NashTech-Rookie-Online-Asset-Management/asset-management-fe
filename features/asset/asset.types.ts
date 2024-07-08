@@ -14,6 +14,7 @@ export type Asset = {
   location: Location;
   specification: string;
   assignments: Assignment[];
+  pinned?: boolean;
 };
 
 export const assetSortFields = [

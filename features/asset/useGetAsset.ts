@@ -19,12 +19,15 @@ function useGetAsset(
   return useQuery({
     queryKey,
     queryFn: async ({ queryKey: [, id] }) => {
+      if (Number(id) < 0) {
+        return undefined;
+      }
       if (pinned) {
         return queryClient.getQueryData<Asset>(queryKey);
       }
       return assetApi.getAsset(id as number);
     },
-    initialData: () => initialData || queryClient.getQueryData<Asset>(queryKey),
+    initialData,
   });
 }
 

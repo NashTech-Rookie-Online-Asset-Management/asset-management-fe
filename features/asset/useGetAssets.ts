@@ -29,6 +29,13 @@ function useGetAssets(
         if (!asset) {
           return assets;
         }
+
+        asset.pinned = true;
+
+        queryClient.removeQueries({
+          queryKey: ['assets', topAsset.id],
+        });
+
         assets = {
           ...assets,
           data: [asset, ...assets.data.filter((a) => a.id !== topAsset.id)],

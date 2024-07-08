@@ -1,6 +1,5 @@
 'use client';
 
-// eslint-disable-next-line simple-import-sort/imports
 import {
   ArrowDownAZ,
   ArrowUpAZ,
@@ -10,7 +9,6 @@ import {
   Trash2,
 } from 'lucide-react';
 import Link from 'next/link';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import {
   parseAsArrayOf,
   parseAsInteger,
@@ -20,6 +18,7 @@ import {
 } from 'nuqs';
 import { useState } from 'react';
 
+import { CustomCell } from '@/components/custom/custom-cell';
 import { MultipleSelect } from '@/components/custom/multiple-select';
 import Pagination from '@/components/custom/pagination';
 import { Button } from '@/components/ui/button';
@@ -40,9 +39,9 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import {
-  assetSortFields,
   type Asset,
   type AssetSortField,
+  assetSortFields,
 } from '@/features/asset/asset.types';
 import useGetAsset from '@/features/asset/useGetAsset';
 import useGetAssets from '@/features/asset/useGetAssets';
@@ -52,7 +51,6 @@ import { AssetStateOptions } from '@/lib/constants/asset';
 import { PAGE_SIZE } from '@/lib/constants/pagination';
 import usePagination from '@/lib/hooks/usePagination';
 
-import { CustomCell } from '@/components/custom/custom-cell';
 import DeleteAssetDialog from '../components/delete-asset-dialog';
 import DetailedAssetDialog from '../components/show-detailed-asset-dialog';
 
@@ -241,8 +239,8 @@ export default function AssetList() {
                 <TableRow
                   key={row.id}
                   onClick={() => handleOpenDialog(row.id)}
-                  data-state={newAsset?.id === row.id && 'selected'}
-                  className='cursor-pointer'
+                  data-state={row?.pinned && 'selected'}
+                  className="cursor-pointer"
                 >
                   <CustomCell value={row.assetCode} />
                   <CustomCell value={row.name} />
