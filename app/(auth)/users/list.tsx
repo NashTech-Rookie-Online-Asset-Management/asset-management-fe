@@ -1,6 +1,7 @@
 'use client';
 
 // eslint-disable-next-line simple-import-sort/imports
+import { useState } from 'react';
 import {
   ArrowDownAZ,
   ArrowUpAZ,
@@ -16,7 +17,6 @@ import {
   parseAsStringEnum,
   useQueryState,
 } from 'nuqs';
-import { useState } from 'react';
 
 import { MultipleSelect } from '@/components/custom/multiple-select';
 import Pagination from '@/components/custom/pagination';
@@ -220,7 +220,7 @@ export default function UserList() {
                 <TableRow
                   key={row.id}
                   onClick={() => handleOpenDialog(row.staffCode)}
-                  data-state={newUser?.id === row.id && 'selected'}
+                  data-state={row?.pinned && 'selected'}
                   className="cursor-pointer"
                 >
                   <CustomCell value={row.staffCode} />

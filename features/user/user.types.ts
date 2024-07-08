@@ -14,6 +14,7 @@ export type User = {
   location: Location;
   canDisable?: boolean;
   updatedAt: Date | string;
+  pinned?: boolean;
 };
 
 export const userSortFields = [

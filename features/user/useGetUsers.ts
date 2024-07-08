@@ -24,6 +24,13 @@ function useGetUsers(props: GetUsersProps, queryKey?: string, topUser?: User) {
         if (!user) {
           return users;
         }
+
+        user.pinned = true;
+
+        queryClient.removeQueries({
+          queryKey: ['users', user.staffCode],
+        });
+
         users = {
           ...users,
           data: [
