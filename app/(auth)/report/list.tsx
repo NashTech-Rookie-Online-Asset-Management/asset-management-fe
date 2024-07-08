@@ -85,6 +85,7 @@ export default function AssetReportList() {
               className="rounded-md border pr-10"
               onChange={(e) => handleSearch(e.target.value)}
               data-id="search-category-input"
+              defaultValue={searchValue}
             />
             <Button
               type="button"

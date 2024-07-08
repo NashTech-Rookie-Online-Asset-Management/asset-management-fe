@@ -1,7 +1,6 @@
 'use client';
 
 // eslint-disable-next-line simple-import-sort/imports
-import { useState } from 'react';
 import {
   ArrowDownAZ,
   ArrowUpAZ,
@@ -17,6 +16,7 @@ import {
   parseAsStringEnum,
   useQueryState,
 } from 'nuqs';
+import { useState } from 'react';
 
 import { MultipleSelect } from '@/components/custom/multiple-select';
 import Pagination from '@/components/custom/pagination';
@@ -161,6 +161,7 @@ export default function UserList() {
               placeholder="Search by name, staff code"
               className="rounded-md border pr-10"
               onChange={(e) => handleSearch(e.target.value)}
+              defaultValue={searchValue}
             />
             <Button
               type="button"

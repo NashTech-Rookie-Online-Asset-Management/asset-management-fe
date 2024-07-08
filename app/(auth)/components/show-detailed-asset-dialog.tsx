@@ -64,7 +64,7 @@ export default function DetailedAssetDialog({
             ))}
 
             <div className="flex gap-4">
-              <p className="w-1/4">History</p>
+              <p className="w-1/4">Assigned</p>
               <div className="mt-2 max-h-[210px] w-3/4 overflow-auto rounded-md border">
                 <Table>
                   <TableHeader>

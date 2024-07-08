@@ -50,11 +50,11 @@ import useGetReturningRequests from '@/features/returning-request/useGetReturnin
 import { ReturningRequestStateOptions } from '@/lib/constants/returning-request';
 import { displayDate } from '@/lib/utils/date';
 import { useState } from 'react';
-import CompleteReturnDialog from './complete-return-dialog';
 import CancelReturnDialog from './cancel-return-dialog';
+import CompleteReturnDialog from './complete-return-dialog';
 
 const columns = [
-  { label: 'No', key: 'id' },
+  { label: 'No.', key: 'id' },
   { label: 'Asset Code', key: 'assetCode' },
   { label: 'Asset Name', key: 'assetName' },
   {
@@ -180,6 +180,7 @@ export default function ReturningRequestList() {
               type="text"
               placeholder="Search by asset code, asset name, requester's username"
               className="rounded-md border pr-10"
+              defaultValue={searchValue}
               onChange={(e) => handleSearch(e.target.value)}
             />
             <Button

@@ -189,6 +189,7 @@ export default function AssetList() {
               placeholder="Search by name, asset code"
               className="rounded-md border pr-10"
               onChange={(e) => handleSearch(e.target.value)}
+              defaultValue={searchValue}
             />
             <Button
               type="button"
