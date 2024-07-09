@@ -1,8 +1,5 @@
 'use client';
 
-// eslint-disable-next-line simple-import-sort/imports
-// eslint-disable-next-line import/no-extraneous-dependencies
-
 import { ArrowDownAZ, ArrowUpAZ, Search } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
@@ -11,6 +8,12 @@ import { LoadingButton } from '@/components/custom/loading-button';
 import Pagination from '@/components/custom/pagination';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import {
+  MobileCard,
+  MobileCardContainer,
+  MobileCardContent,
+  MobileCardHeader,
+} from '@/components/ui/mobile-card';
 import {
   Table,
   TableBody,
@@ -28,7 +31,9 @@ import useGetAssetReport from '@/features/asset/useGetAssetReport';
 import useGetAssetReportFileUrl from '@/features/asset/useGetAssetReportFileUrl';
 import { Order } from '@/lib/@types/api';
 import { PAGE_SIZE } from '@/lib/constants/pagination';
+import { useIsDesktop } from '@/lib/hooks/useIsDesktop';
 import usePagination from '@/lib/hooks/usePagination';
+import { cn } from '@/lib/utils';
 
 const columns = [
   { label: 'Category', key: 'categoryName', width: '20%' },
@@ -40,7 +45,21 @@ const columns = [
   { label: 'Recycled', key: 'recycled', width: '15%' },
 ];
 
+const ReportMobileRow = ({
+  title,
+  number,
+}: {
+  title: string;
+  number: React.ReactNode;
+}) => (
+  <div className="flex items-center justify-between">
+    <div className="font-medium">{title}</div>
+    <div className="font-semibold">{number}</div>
+  </div>
+);
+
 export default function AssetReportList() {
+  const isDesktop = useIsDesktop();
   const pagination = usePagination({
     sortFields: assetReportSortFields,
     defaultSortField: 'categoryName',
@@ -109,7 +128,7 @@ export default function AssetReportList() {
             </Button>
           </div>
         </div>
-        <div className="lg:col-span-2" />
+        <div className="hidden md:col-span-2 lg:block" />
         <LoadingButton
           variant="default"
           className="lg:col-span-1"
@@ -121,7 +140,41 @@ export default function AssetReportList() {
         </LoadingButton>
       </div>
 
-      <div className="rounded-md border">
+      {!isDesktop && (
+        <div className="flex flex-col space-y-2">
+          {assetReport && assetReport.data.length > 0 ? (
+            assetReport.data.map((row: ReportItem) => (
+              <MobileCard key={row.categoryName}>
+                <MobileCardContainer>
+                  <MobileCardHeader className="flex justify-between mb-2">
+                    <span>{row.categoryName}</span>
+                    <div className="text-right font-semibold text-muted-foreground">
+                      {row.total}
+                    </div>
+                  </MobileCardHeader>
+                  <MobileCardContent>
+                    <ReportMobileRow title="Assigned" number={row.assigned} />
+                    <ReportMobileRow title="Available" number={row.available} />
+                    <ReportMobileRow
+                      title="Not Available"
+                      number={row.notAvailable}
+                    />
+                    <ReportMobileRow
+                      title="Waiting for Recycling"
+                      number={row.waitingForRecycling}
+                    />
+                    <ReportMobileRow title="Recycled" number={row.recycled} />
+                  </MobileCardContent>
+                </MobileCardContainer>
+              </MobileCard>
+            ))
+          ) : (
+            <div>No data to display.</div>
+          )}
+        </div>
+      )}
+
+      <div className="hidden rounded-md border md:block">
         <Table className="w-full table-fixed">
           <TableHeader>
             <TableRow>
