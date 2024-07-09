@@ -31,6 +31,14 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import {
+  MobileCard,
+  MobileCardActions,
+  MobileCardContainer,
+  MobileCardContent,
+  MobileCardHeader,
+  MobileCardStatus,
+} from '@/components/ui/mobile-card';
+import {
   Table,
   TableBody,
   TableCell,
@@ -47,10 +55,15 @@ import useGetAsset from '@/features/asset/useGetAsset';
 import useGetAssets from '@/features/asset/useGetAssets';
 import useGetCategories from '@/features/category/useGetCategories';
 import { AssetState, Order } from '@/lib/@types/api';
-import { AssetStateOptions } from '@/lib/constants/asset';
+import {
+  AssetStateColors as colors,
+  AssetStateOptions,
+} from '@/lib/constants/asset';
 import { PAGE_SIZE } from '@/lib/constants/pagination';
+import { useIsDesktop } from '@/lib/hooks/useIsDesktop';
 import usePagination from '@/lib/hooks/usePagination';
 
+import { ColorsBox } from '../components/colors-box';
 import DeleteAssetDialog from '../components/delete-asset-dialog';
 import DetailedAssetDialog from '../components/show-detailed-asset-dialog';
 
@@ -61,7 +74,54 @@ const columns = [
   { label: 'State', key: 'state' },
 ];
 
+const ItemDropDownMenu = ({
+  row,
+  editLink,
+  deleteClick,
+}: {
+  row: Asset;
+  editLink: string;
+  deleteClick: () => void;
+}) => {
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" className="size-8 p-0">
+          <span className="sr-only">Open menu</span>
+          <MoreHorizontal className="size-4" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent
+        align="center"
+        className="z-10"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+        <DropdownMenuItem
+          className="cursor-pointer"
+          asChild
+          disabled={row.state === AssetState.ASSIGNED}
+        >
+          <Link href={editLink}>
+            <Pencil className="mr-4 size-4" />
+            Edit
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          disabled={row.state === AssetState.ASSIGNED}
+          className="cursor-pointer"
+          onClick={deleteClick}
+        >
+          <Trash2 className="mr-4 size-4" />
+          Delete
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+};
+
 export default function AssetList() {
+  const isDesktop = useIsDesktop();
   const [newAssetId] = useQueryState(
     'newAssetId',
     parseAsInteger.withDefault(-1),
@@ -101,7 +161,7 @@ export default function AssetList() {
 
   const getAssetsOptions = {
     page,
-    take: PAGE_SIZE,
+    take: isDesktop ? PAGE_SIZE : 5,
     search: searchValue,
     states: selectedAssetStates as string[],
     categoryIds: selectedCategoryIds,
@@ -209,7 +269,44 @@ export default function AssetList() {
         </Button>
       </div>
 
-      <div className="rounded-md border">
+      {!isDesktop && (
+        <>
+          <ColorsBox texts={AssetStateOptions} colors={colors} />
+          <div className="flex flex-col space-y-2">
+            {assets && assets.data.length > 0 ? (
+              assets.data.map((row: Asset) => (
+                <MobileCard
+                  key={row.id}
+                  onClick={() => handleOpenDialog(row.id)}
+                >
+                  <MobileCardActions>
+                    <ItemDropDownMenu
+                      row={row}
+                      editLink={`/assets/${row.id}${getAssetsQueryKey}`}
+                      deleteClick={() => handleDeleteDialog(row)}
+                    />
+                  </MobileCardActions>
+                  <MobileCardStatus
+                    color={colors[row.state]}
+                    className="rounded-b-none"
+                  />
+                  <MobileCardContainer>
+                    <MobileCardHeader>{row.assetCode}</MobileCardHeader>
+                    <MobileCardContent>
+                      <p>{row.category.name}</p>
+                      <p>{row.name}</p>
+                    </MobileCardContent>
+                  </MobileCardContainer>
+                </MobileCard>
+              ))
+            ) : (
+              <div>No assets to display.</div>
+            )}
+          </div>
+        </>
+      )}
+
+      <div className="rounded-md border hidden md:block">
         <Table className="table-fixed">
           <TableHeader>
             <TableRow>
@@ -248,41 +345,11 @@ export default function AssetList() {
                   <CustomCell value={row.category.name} />
                   <CustomCell value={AssetStateOptions[row.state]} />
                   <TableCell className="py-2 pl-8">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="size-8 p-0">
-                          <span className="sr-only">Open menu</span>
-                          <MoreHorizontal className="size-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent
-                        align="center"
-                        className="z-10"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem
-                          className="cursor-pointer"
-                          asChild
-                          disabled={row.state === AssetState.ASSIGNED}
-                        >
-                          <Link href={`/assets/${row.id}${getAssetsQueryKey}`}>
-                            <Pencil className="mr-4 size-4" />
-                            Edit
-                          </Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          disabled={row.state === AssetState.ASSIGNED}
-                          className="cursor-pointer"
-                          onClick={() => {
-                            handleDeleteDialog(row);
-                          }}
-                        >
-                          <Trash2 className="mr-4 size-4" />
-                          Delete
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+                    <ItemDropDownMenu
+                      row={row}
+                      editLink={`/assets/${row.id}${getAssetsQueryKey}`}
+                      deleteClick={() => handleDeleteDialog(row)}
+                    />
                   </TableCell>
                 </TableRow>
               ))
