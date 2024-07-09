@@ -1,12 +1,17 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import type { ApiMessage } from '@/lib/@types/api';
 
 import assetApi from './asset.service';
 
-function useDeleteAsset() {
-  return useMutation<ApiMessage, AppAxiosError, number>({
-    mutationFn: (assetId: number) => assetApi.deleteAsset(assetId),
+function useDeleteAsset(id: number) {
+  const queryClient = useQueryClient();
+  return useMutation<ApiMessage, AppAxiosError>({
+    mutationFn: () => assetApi.deleteAsset(id),
+    onSuccess: () => {
+      queryClient.removeQueries({ queryKey: ['assets', id] });
+      queryClient.invalidateQueries({ queryKey: ['assets'] });
+    },
   });
 }
 

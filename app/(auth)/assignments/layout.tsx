@@ -3,7 +3,7 @@ import type React from 'react';
 type Props = {};
 
 export const metadata = {
-  title: 'Assignments',
+  title: 'Manage Assignment',
 };
 
 export default function AssignmentLayout({

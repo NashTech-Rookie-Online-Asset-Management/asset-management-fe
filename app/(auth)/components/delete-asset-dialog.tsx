@@ -2,6 +2,7 @@
 
 import { DialogClose } from '@radix-ui/react-dialog';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 
 import { LoadingButton } from '@/components/custom/loading-button';
 import { Button } from '@/components/ui/button';
@@ -16,33 +17,38 @@ import {
 import { toast } from '@/components/ui/use-toast';
 import type { Asset } from '@/features/asset/asset.types';
 import useDeleteAsset from '@/features/asset/useDeleteAsset';
+import useGetAsset from '@/features/asset/useGetAsset';
 
 export default function DeleteAssetDialog({
   asset,
   isOpen,
   onOpenChange,
-  refetchAssets,
 }: {
   asset: Asset;
   isOpen: boolean;
   onOpenChange: (isOpen: boolean) => void;
-  refetchAssets: () => void;
 }) {
-  const { mutateAsync: deleteAsset, isPending } = useDeleteAsset();
+  const searchParams = useSearchParams();
+
+  const { data } = useGetAsset(asset.id);
+  const { mutateAsync: deleteAsset, isPending } = useDeleteAsset(asset.id);
 
   const handleDeleteAsset = async () => {
-    await deleteAsset(asset.id);
+    await deleteAsset();
     toast({
       title: 'Asset deleted',
       description: `Asset ${asset.assetCode} has been deleted successfully`,
       variant: 'success',
       duration: 1500,
     });
-    refetchAssets();
     onOpenChange(false);
   };
 
-  const isAbleToDelete = asset && asset.assignments.length === 0;
+  const isAbleToDelete = data?.assignments.length === 0;
+
+  if (!data) {
+    return null;
+  }
 
   return (
     <Dialog open={isOpen} modal onOpenChange={onOpenChange}>
@@ -86,7 +92,7 @@ export default function DeleteAssetDialog({
               If the asset is not able to be used anymore, please update its
               state in{' '}
               <Link
-                href="/assets/edit"
+                href={`/assets/${asset.id}?${searchParams.toString()}`}
                 className="cursor-pointer text-blue-500 underline"
               >
                 Edit Asset page

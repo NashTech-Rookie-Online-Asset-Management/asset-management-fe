@@ -1,5 +1,14 @@
-import { format } from 'date-fns';
+import { format, lightFormat } from 'date-fns';
 
 export function displayDate(date: string) {
   return format(new Date(date), 'dd/MM/yyyy');
+}
+
+export function inputDateConvert(date: Date | string) {
+  try {
+    if (!date) return '';
+    return lightFormat(new Date(date), 'yyyy-MM-dd');
+  } catch {
+    return '';
+  }
 }

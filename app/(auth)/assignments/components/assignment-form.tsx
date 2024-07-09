@@ -3,6 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Search } from 'lucide-react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import { useLayoutEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
@@ -19,6 +20,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { AccountType, AssignmentState } from '@/lib/@types/api';
+import { inputDateConvert } from '@/lib/utils/date';
 
 import type { FormSchema } from './base';
 import { formSchema } from './base';
@@ -38,7 +40,7 @@ const defaultFormValues: FormSchema = {
       name: '',
     },
   },
-  assignedDate: new Date().toISOString().split('T')[0],
+  assignedDate: new Date().toISOString(),
   note: '',
   state: AssignmentState.WAITING_FOR_ACCEPTANCE,
 };
@@ -54,6 +56,7 @@ export default function AssignmentForm({
   isPending,
   defaultValue,
 }: AssignmentFormProps) {
+  const searchParams = useSearchParams();
   const [openUserModal, setOpenUserModal] = useState(false);
   const [openAssetModal, setOpenAssetModal] = useState(false);
 
@@ -64,7 +67,7 @@ export default function AssignmentForm({
   });
 
   const values = form.watch();
-  const isDisbled =
+  const isDisabled =
     !values.assignedTo.staffCode ||
     !values.asset.assetCode ||
     !values.assignedDate ||
@@ -74,31 +77,37 @@ export default function AssignmentForm({
   const openAssetModalHandler = () => setOpenAssetModal(true);
 
   useLayoutEffect(() => {
-    const datePickerInput = document.getElementById(
-      'assignedDate',
-    ) as HTMLInputElement;
-    if (datePickerInput) {
-      const [currentDate] = new Date().toISOString().split('T');
-      datePickerInput.min = currentDate;
+    const inputDate = document.getElementById('assignedDate');
+
+    // Limit the date to today and future
+    const minDate =
+      defaultValue?.assignedDate.split('T')[0] ||
+      new Date().toISOString().split('T')[0];
+    if (inputDate) {
+      inputDate.setAttribute('min', minDate);
     }
-  }, []);
+  }, [defaultValue]);
 
   return (
     <>
       <SelectUserModal
+        currentForm={form.getValues()}
         assignment={defaultValue}
         open={openUserModal}
         setOpen={setOpenUserModal}
         onSelect={(user) => {
           form.setValue('assignedTo', user);
         }}
+        type="user"
       />
 
       <SelectAssetModal
+        currentForm={form.getValues()}
         assignment={defaultValue}
         open={openAssetModal}
         setOpen={setOpenAssetModal}
         onSelect={(asset) => form.setValue('asset', asset)}
+        type="asset"
       />
 
       <Form {...form}>
@@ -163,23 +172,27 @@ export default function AssignmentForm({
           <FormField
             control={form.control}
             name="assignedDate"
-            render={({ field }) => (
-              <FormItem className="flex flex-col space-y-2">
-                <FormLabel>
-                  <span className="required">Assigned Date</span>
-                </FormLabel>
-                <FormControl>
-                  <Input
-                    id="assignedDate"
-                    type="date"
-                    className="block"
-                    autoFocus
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+            render={({ field }) => {
+              const value = inputDateConvert(field.value);
+              return (
+                <FormItem className="flex flex-col space-y-2">
+                  <FormLabel>
+                    <span className="required">Assigned Date</span>
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      id="assignedDate"
+                      type="date"
+                      className="block"
+                      autoFocus
+                      value={value}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              );
+            }}
           />
 
           <FormField
@@ -196,15 +209,15 @@ export default function AssignmentForm({
             )}
           />
 
-          <div className="flex justify-end space-x-4">
+          <div className="flex justify-end space-x-2">
             <LoadingButton
               type="submit"
               isLoading={isPending}
-              disabled={isDisbled || isPending}
+              disabled={isDisabled || isPending}
             >
               Save
             </LoadingButton>
-            <Link href="/assignments">
+            <Link href={`/assignments?${searchParams.toString()}`}>
               <Button variant="secondary" disabled={isPending}>
                 Cancel
               </Button>

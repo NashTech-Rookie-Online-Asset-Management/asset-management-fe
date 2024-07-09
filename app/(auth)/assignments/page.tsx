@@ -1,9 +1,12 @@
-'use client';
+import AssignmentList from './list';
 
-import { useAssignments } from '@/features/assignment/assignment.hook';
-
-export default function ListAssignmentPage() {
-  const { data } = useAssignments();
-
-  return <h1>{JSON.stringify(data?.map((assignment) => assignment.id))}</h1>;
+function ManageAssignmentPage() {
+  return (
+    <main className="w-full py-8">
+      <h3 className="mb-8 text-xl font-bold text-primary">Assignment List</h3>
+      <AssignmentList />
+    </main>
+  );
 }
+
+export default ManageAssignmentPage;

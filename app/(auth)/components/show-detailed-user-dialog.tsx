@@ -18,15 +18,15 @@ import {
 import { displayDate } from '@/lib/utils/date';
 
 export default function DetailedUserDialog({
-  username,
+  staffCode,
   isOpen,
   onOpenChange,
 }: {
-  username: string;
+  staffCode: string;
   isOpen: boolean;
   onOpenChange: (isOpen: boolean) => void;
 }) {
-  const { data: user, isLoading } = useGetUser(username);
+  const { data: user, isLoading } = useGetUser(staffCode);
 
   return (
     <Dialog open={isOpen} modal onOpenChange={onOpenChange}>

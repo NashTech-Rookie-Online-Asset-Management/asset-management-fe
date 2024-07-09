@@ -1,5 +1,4 @@
-import ChangePasswordFirstTimeDialog from './components/change-password-first-time-dialog';
-import ShowUserData from './components/show-user-data';
+import MyAssignments from './home/my-assignments';
 
 export const metadata = {
   title: 'Home',
@@ -7,10 +6,9 @@ export const metadata = {
 
 export default function Home() {
   return (
-    <main>
-      <p>Online Asset Management</p>
-      <ShowUserData />
-      <ChangePasswordFirstTimeDialog />
+    <main className="w-full py-8">
+      <h3 className="mb-8 text-xl font-bold text-primary">My Assignments</h3>
+      <MyAssignments />
     </main>
   );
 }

@@ -30,6 +30,7 @@ import useGetCategories from '@/features/category/useGetCategories';
 import { AssetState } from '@/lib/@types/api';
 import { AssetStateOptions } from '@/lib/constants/asset';
 import { cn } from '@/lib/utils';
+import { inputDateConvert } from '@/lib/utils/date';
 
 import { editAssetSchema } from './schema';
 
@@ -51,6 +52,16 @@ function EditAssetForm({ initialAsset }: Props) {
   const form = useForm<z.infer<typeof editAssetSchema>>({
     resolver: zodResolver(editAssetSchema),
     mode: 'onChange',
+    defaultValues: {
+      ...initialAsset,
+      category: initialAsset.category.id.toString(),
+      installedDate: initialAsset.installedDate.toString(),
+      state:
+        initialAsset.state === AssetState.ASSIGNED
+          ? undefined
+          : (initialAsset.state as Exclude<AssetState, AssetState.ASSIGNED>),
+      updatedAt: initialAsset.updatedAt.toString(),
+    },
   });
   const isAbleToEdit = asset?.state !== AssetState.ASSIGNED;
   const isNotAbleToSave =
@@ -102,20 +113,6 @@ function EditAssetForm({ initialAsset }: Props) {
       router.push('/assets');
     }
   }, [isAbleToEdit, router]);
-
-  React.useEffect(() => {
-    if (!asset) return;
-    form.reset({
-      name: asset.name,
-      specification: asset.specification,
-      category: asset.category.id.toString(),
-      installedDate: new Date(asset?.installedDate).toISOString().split('T')[0],
-      state:
-        asset.state === AssetState.ASSIGNED
-          ? undefined
-          : (asset.state as Exclude<AssetState, AssetState.ASSIGNED>),
-    });
-  }, [asset, form]);
 
   React.useEffect(() => {
     form.trigger();
@@ -217,28 +214,32 @@ function EditAssetForm({ initialAsset }: Props) {
         <FormField
           control={form.control}
           name="installedDate"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>
-                <span className="required">Installed Date</span>
-              </FormLabel>
-              <div>
-                <FormControl>
-                  {isAssetPending ? (
-                    <Skeleton className="h-8 w-full rounded-md" />
-                  ) : (
-                    <Input
-                      disabled={!isAbleToEdit}
-                      type="date"
-                      className="block"
-                      {...field}
-                    />
-                  )}
-                </FormControl>
-                <FormMessage />
-              </div>
-            </FormItem>
-          )}
+          render={({ field }) => {
+            const value = inputDateConvert(field.value);
+            return (
+              <FormItem>
+                <FormLabel>
+                  <span className="required">Installed Date</span>
+                </FormLabel>
+                <div>
+                  <FormControl>
+                    {isAssetPending ? (
+                      <Skeleton className="h-8 w-full rounded-md" />
+                    ) : (
+                      <Input
+                        {...field}
+                        disabled={!isAbleToEdit}
+                        type="date"
+                        className="block"
+                        value={value}
+                      />
+                    )}
+                  </FormControl>
+                  <FormMessage />
+                </div>
+              </FormItem>
+            );
+          }}
         />
         <FormField
           control={form.control}
@@ -334,7 +335,7 @@ function EditAssetForm({ initialAsset }: Props) {
             Save
           </LoadingButton>
           <Button variant="secondary" asChild>
-            <Link href="/assets">Cancel</Link>
+            <Link href={`/assets?${searchParams.toString()}`}>Cancel</Link>
           </Button>
         </div>
       </form>

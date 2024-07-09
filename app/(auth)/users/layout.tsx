@@ -3,11 +3,11 @@ import React from 'react';
 type Props = {};
 
 export const metadata = {
-  title: 'Users',
+  title: 'Manage User',
 };
 
 function UserLayout({ children }: React.PropsWithChildren<Props>) {
-  return <div className="py-8">{children}</div>;
+  return children;
 }
 
 export default UserLayout;

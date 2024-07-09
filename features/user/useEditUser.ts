@@ -14,7 +14,7 @@ function useEditUser() {
       userApi.updateUser(userStaffCode, data),
     onSuccess: (data) => {
       queryClient.setQueryData(
-        ['users', data.username, { pinned: true }],
+        ['users', data.staffCode, { pinned: true }],
         data,
       );
     },

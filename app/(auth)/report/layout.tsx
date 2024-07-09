@@ -7,7 +7,7 @@ export const metadata = {
 };
 
 function ReportLayout({ children }: React.PropsWithChildren<Props>) {
-  return <div>{children}</div>;
+  return children;
 }
 
 export default ReportLayout;

@@ -1,8 +1,4 @@
-import {
-  keepPreviousData,
-  useQuery,
-  useQueryClient,
-} from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 import assetApi from './asset.service';
 import type { Asset } from './asset.types';
@@ -23,13 +19,15 @@ function useGetAsset(
   return useQuery({
     queryKey,
     queryFn: async ({ queryKey: [, id] }) => {
+      if (Number(id) < 0) {
+        return undefined;
+      }
       if (pinned) {
         return queryClient.getQueryData<Asset>(queryKey);
       }
       return assetApi.getAsset(id as number);
     },
-    initialData: () => initialData || queryClient.getQueryData<Asset>(queryKey),
-    placeholderData: keepPreviousData,
+    initialData,
   });
 }
 

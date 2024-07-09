@@ -1,14 +1,29 @@
+import { cn } from '@/lib/utils';
+
 import { TableCell } from '../ui/table';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
 
-export const CustomCell = ({ value }: { value: string }) => {
+type Props = {
+  className?: string;
+  value?: string;
+  disableTooltip?: boolean;
+};
+
+export const CustomCell = ({
+  value,
+  children,
+  className,
+  disableTooltip = false,
+}: React.PropsWithChildren<Props>) => {
   return (
-    <TableCell className="py-2 pl-8">
+    <TableCell className={cn('py-2 pl-8', className)}>
       <Tooltip>
         <TooltipTrigger asChild>
-          <p className="truncate">{value}</p>
+          {children || <p className="truncate">{value}</p>}
         </TooltipTrigger>
-        <TooltipContent>{value}</TooltipContent>
+        {!disableTooltip && (
+          <TooltipContent>{children || value}</TooltipContent>
+        )}
       </Tooltip>
     </TableCell>
   );

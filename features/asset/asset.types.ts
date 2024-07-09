@@ -7,13 +7,14 @@ export type Asset = {
   id: number;
   assetCode: string;
   name: string;
-  state: keyof typeof AssetState;
-  category: Omit<Category, 'prefix'>;
-  installedDate: string;
-  location: keyof typeof Location;
+  state: AssetState;
+  category: Category;
+  installedDate: Date | string;
+  updatedAt: Date | string;
+  location: Location;
   specification: string;
-  // TODO: Change to Assignment type
   assignments: Assignment[];
+  pinned?: boolean;
 };
 
 export const assetSortFields = [
@@ -36,4 +37,26 @@ export type CreateAssetRequest = {
 
 export type UpdateAssetRequest = Partial<
   Omit<CreateAssetRequest, 'categoryId'>
-> & { id: number };
+> & { id: number; updatedAt?: Date | string };
+
+export const assetReportSortFields = [
+  'categoryName',
+  'total',
+  'assigned',
+  'available',
+  'notAvailable',
+  'waitingForRecycling',
+  'recycled',
+] as const;
+
+export type AssetReportSortField = (typeof assetReportSortFields)[number];
+
+export type ReportItem = {
+  categoryName: string;
+  total: number;
+  assigned: number;
+  available: number;
+  notAvailable: number;
+  waitingForRecycling: number;
+  recycled: number;
+};

@@ -161,12 +161,12 @@ function ChangePasswordDialog({
                   </FormItem>
                 )}
               />
-              <DialogFooter className="flex flex-col items-center justify-center gap-2 md:flex-row">
+              <DialogFooter className="flex flex-col items-center justify-center gap-2 lg:flex-row">
                 <LoadingButton
                   data-id="change-password-button"
                   type="submit"
                   isLoading={isPending}
-                  className="w-full md:w-fit"
+                  className="w-full lg:w-fit"
                   disabled={
                     !(
                       form.getValues('oldPassword') &&
@@ -182,7 +182,7 @@ function ChangePasswordDialog({
                   <Button
                     variant="secondary"
                     onClick={handleCancelDialog}
-                    className="w-full md:w-fit"
+                    className="w-full lg:w-fit"
                     data-id="change-password-cancel-button"
                   >
                     Cancel

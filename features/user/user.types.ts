@@ -13,6 +13,8 @@ export type User = {
   type: AccountType;
   location: Location;
   canDisable?: boolean;
+  updatedAt: Date | string;
+  pinned?: boolean;
 };
 
 export const userSortFields = [
@@ -39,6 +41,7 @@ export type UpdateUserRequest = {
   gender?: string;
   joinedAt?: string;
   type?: string;
+  updatedAt: string;
 };
 
 export type CreateUserResponse = {
@@ -47,9 +50,9 @@ export type CreateUserResponse = {
   lastName: string;
   username: string;
   password: string;
-  dob: Date;
+  dob: string;
   gender: Gender;
-  joinedAt: Date;
+  joinedAt: string;
   type: AccountType;
   location: Location;
 };

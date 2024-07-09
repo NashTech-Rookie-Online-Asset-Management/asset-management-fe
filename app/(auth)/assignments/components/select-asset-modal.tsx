@@ -1,3 +1,5 @@
+'use client';
+
 import { ArrowDownAZ, ArrowUpAZ, Search } from 'lucide-react';
 import { useState } from 'react';
 
@@ -24,7 +26,7 @@ import { useAvailableAsset } from '@/features/assignment/assignment.hook';
 import { Order } from '@/lib/@types/api';
 
 import type { AvailableAsset, ModalProps, TableCol } from './base';
-import { TableCell, usePaginate } from './base';
+import { onModalClose, TableCell, usePaginate } from './base';
 
 const colums = [
   {
@@ -47,7 +49,7 @@ const colums = [
 function AssetTableRow({ asset }: { asset: AvailableAsset }) {
   return (
     <TableRow key={asset.assetCode}>
-      <TableCell htmlFor={asset.assetCode}>
+      <TableCell isTooltip={false} htmlFor={asset.assetCode}>
         <RadioGroupItem value={asset.assetCode} id={asset.assetCode} />
       </TableCell>
       <TableCell htmlFor={asset.assetCode}>{asset.assetCode}</TableCell>
@@ -67,8 +69,10 @@ export default function SelectAssetModal(props: ModalProps<AvailableAsset>) {
       data && data.data.find((assetTmp) => assetTmp.assetCode === assetCode);
     if (asset) {
       props.onSelect(asset);
-      props.setOpen(false);
+    } else if (props.assignment) {
+      props.onSelect(props.assignment.asset);
     }
+    props.setOpen(false);
   };
 
   const handleTableHeaderClick = ({ key, sort }: TableCol) => {
@@ -83,10 +87,10 @@ export default function SelectAssetModal(props: ModalProps<AvailableAsset>) {
     }
   };
 
-  const onClose = () => {
-    setAssetCode('');
-    props.setOpen(false);
-  };
+  const onClose = () =>
+    onModalClose(props, assetCode, () =>
+      setAssetCode(props.currentForm.asset.assetCode),
+    );
 
   return (
     <Dialog open={props.open} onOpenChange={onClose}>
@@ -108,12 +112,12 @@ export default function SelectAssetModal(props: ModalProps<AvailableAsset>) {
           onValueChange={(value) => setAssetCode(value)}
         >
           <div className="relative max-h-[60vh] overflow-y-auto">
-            <Table>
+            <Table className="table-fixed">
               <TableHeader className="sticky top-0 z-10 bg-background">
                 <TableRow>
-                  <TableHead />
+                  <TableHead className="w-20" />
                   {colums.map((col) => (
-                    <TableHead key={col.key}>
+                    <TableHead className="relative" key={col.key}>
                       <Button
                         variant="ghost"
                         className="-ml-4 flex gap-4"

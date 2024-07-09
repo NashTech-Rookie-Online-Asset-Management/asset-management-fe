@@ -1,4 +1,4 @@
-import { keepPreviousData, useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import type { PaginationApiProps } from '@/lib/@types/api';
 
@@ -7,6 +7,7 @@ import type {
   Assignment,
   AssignmentRequest,
   AssignmentResponse,
+  GetAssignmentProps,
 } from './assignment.types';
 
 export function useAvailableUser(
@@ -16,37 +17,38 @@ export function useAvailableUser(
   const transformedId = Array.isArray(id) ? id.join(',') : id;
   return useQuery({
     queryKey: [
-      'assignment/user/available',
-      pagination?.page,
-      pagination?.take,
-      pagination?.search,
-      pagination?.sortField,
-      pagination?.sortOrder,
+      'assignments',
+      ...Object.values(pagination),
+      'user',
+      'available',
     ],
     queryFn: () =>
       assignmentService.getAvailableUser(pagination, transformedId),
-    placeholderData: keepPreviousData,
   });
 }
 
 export function useAvailableAsset(pagination: PaginationApiProps) {
   return useQuery({
     queryKey: [
-      'assignment/asset/available',
-      pagination.page,
-      pagination.take,
-      pagination.search,
-      pagination?.sortField,
-      pagination?.sortOrder,
+      'assignments',
+      ...Object.values(pagination),
+      'asset',
+      'available',
     ],
     queryFn: () => assignmentService.getAvailableAsset(pagination),
-    placeholderData: keepPreviousData,
   });
 }
 
 export function useCreateAssignment() {
+  const queryClient = useQueryClient();
   return useMutation<AssignmentResponse, AppAxiosError, AssignmentRequest>({
     mutationFn: (data) => assignmentService.create(data),
+    onSuccess: (data) => {
+      queryClient.setQueryData(
+        ['assignments', data.id.toString(), { pinned: true }],
+        data,
+      );
+    },
   });
 }
 
@@ -56,28 +58,83 @@ type GetAssignmentOptions = {
 };
 
 export function useAssignment(
-  id: string,
-  { initialData }: GetAssignmentOptions = {},
+  assignmentId: string | number,
+  { initialData, pinned }: GetAssignmentOptions = {},
 ) {
+  const queryClient = useQueryClient();
+  const queryKey = pinned
+    ? ['assignments', assignmentId, { pinned }]
+    : ['assignments', assignmentId];
+
   return useQuery({
-    queryKey: ['assignment', id],
-    queryFn: () => assignmentService.get(id),
-    initialData: () => initialData,
+    queryKey,
+    queryFn: async ({ queryKey: [, id] }) => {
+      if (pinned) {
+        return queryClient.getQueryData<Assignment>(queryKey);
+      }
+      return assignmentService.get(id as string);
+    },
+    initialData: () =>
+      initialData || queryClient.getQueryData<Assignment>(queryKey),
   });
 }
 
 type EditAssignmentRequest = { id: string; data: AssignmentRequest };
 
 export function useEditAssignment() {
-  return useMutation({
-    mutationFn: (props: EditAssignmentRequest) =>
-      assignmentService.edit(props.id, props.data),
+  const queryClient = useQueryClient();
+  return useMutation<AssignmentResponse, AppAxiosError, EditAssignmentRequest>({
+    mutationFn: (props) => assignmentService.edit(props.id, props.data),
+    onSuccess: (data) => {
+      queryClient.setQueryData(
+        ['assignments', data.id.toString(), { pinned: true }],
+        data,
+      );
+      queryClient.invalidateQueries({
+        queryKey: ['assignments', data.id],
+        exact: true,
+      });
+    },
   });
 }
 
-export function useAssignments() {
+export function useAssignments(
+  options: GetAssignmentProps,
+  topAssignment?: Assignment,
+) {
+  const queryClient = useQueryClient();
   return useQuery({
-    queryKey: ['assignments'],
-    queryFn: () => assignmentService.getAll(),
+    queryKey: ['assignments', JSON.stringify(options)],
+    queryFn: async () => {
+      let assignments = await assignmentService.getAll(options);
+
+      if (topAssignment) {
+        const assignmentKeys = [
+          'assignments',
+          topAssignment.id.toString(),
+          { pinned: true },
+        ];
+
+        const assignment = queryClient.getQueryData<Assignment>(assignmentKeys);
+
+        if (assignment) {
+          assignment.pinned = true;
+          assignmentKeys.pop();
+
+          queryClient.removeQueries({
+            queryKey: assignmentKeys,
+          });
+
+          assignments = {
+            ...assignments,
+            data: [
+              assignment,
+              ...assignments.data.filter((a) => a.id !== topAssignment.id),
+            ],
+          };
+        }
+      }
+      return assignments;
+    },
   });
 }

@@ -35,6 +35,7 @@ import useGetUser from '@/features/user/useGetUser';
 import type { User } from '@/features/user/user.types';
 import { AccountType, Gender } from '@/lib/@types/api';
 import { normalizeText } from '@/lib/utils';
+import { inputDateConvert } from '@/lib/utils/date';
 
 import { editUserFormSchema } from './schema';
 
@@ -51,7 +52,7 @@ function EditUserForm({ initialUser }: Props) {
     isSuccess: isUserSuccess,
     isError: isUserError,
     error: userError,
-  } = useGetUser(initialUser.username, {
+  } = useGetUser(initialUser.staffCode, {
     initialData: initialUser,
   });
   const {
@@ -63,6 +64,11 @@ function EditUserForm({ initialUser }: Props) {
   const form = useForm<z.infer<typeof editUserFormSchema>>({
     resolver: zodResolver(editUserFormSchema),
     mode: 'onChange',
+    defaultValues: {
+      ...initialUser,
+      type: initialUser.type as AccountType.ADMIN | AccountType.STAFF,
+      updatedAt: initialUser.updatedAt.toString(),
+    },
   });
   const isNotAbleToSave =
     !form.formState.isValid ||
@@ -71,9 +77,9 @@ function EditUserForm({ initialUser }: Props) {
     isEditUserSuccess;
 
   async function onSubmit(values: z.infer<typeof editUserFormSchema>) {
-    const { username } = await editUser({
+    const { staffCode } = await editUser({
       userStaffCode: userData!.staffCode,
-      data: values,
+      data: { ...values, updatedAt: initialUser.updatedAt.toString() },
     });
 
     toast({
@@ -82,7 +88,7 @@ function EditUserForm({ initialUser }: Props) {
       variant: 'success',
     });
     router.push(
-      `/users?${searchParams.toString()}&newUserUsername=${username}`,
+      `/users?${searchParams.toString()}&newStaffCode=${staffCode}`,
     );
   }
 
@@ -121,20 +127,6 @@ function EditUserForm({ initialUser }: Props) {
       }
     }
   }, [isUserSuccess, isLoggedInSuccess, user, userData, router]);
-
-  useEffect(() => {
-    if (!userData) return;
-
-    form.reset({
-      firstName: userData.firstName,
-      lastName: userData.lastName,
-      dob: new Date(userData?.dob).toISOString().split('T')[0],
-      gender: userData.gender,
-      joinedAt: new Date(userData?.joinedAt).toISOString().split('T')[0],
-      type: userData.type as AccountType.ADMIN | AccountType.STAFF,
-      location: userData.location,
-    });
-  }, [userData, form]);
 
   useEffect(() => {
     form.trigger();
@@ -189,27 +181,31 @@ function EditUserForm({ initialUser }: Props) {
         <FormField
           control={form.control}
           name="dob"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Date of Birth</FormLabel>
-              <FormControl>
-                {isUserPending ? (
-                  <Skeleton className="h-8 w-full rounded-md" />
-                ) : (
-                  <Input
-                    type="date"
-                    className="block"
-                    {...field}
-                    onChange={(e) => {
-                      field.onChange(e);
-                      form.trigger(['dob', 'joinedAt']);
-                    }}
-                  />
-                )}
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          render={({ field }) => {
+            const value = inputDateConvert(field.value);
+            return (
+              <FormItem>
+                <FormLabel>Date of Birth</FormLabel>
+                <FormControl>
+                  {isUserPending ? (
+                    <Skeleton className="h-8 w-full rounded-md" />
+                  ) : (
+                    <Input
+                      {...field}
+                      type="date"
+                      className="block"
+                      onChange={(e) => {
+                        field.onChange(e);
+                        form.trigger(['dob', 'joinedAt']);
+                      }}
+                      value={value}
+                    />
+                  )}
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            );
+          }}
         />
         <FormField
           control={form.control}
@@ -252,27 +248,31 @@ function EditUserForm({ initialUser }: Props) {
         <FormField
           control={form.control}
           name="joinedAt"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Joined Date</FormLabel>
-              <FormControl>
-                {isUserPending ? (
-                  <Skeleton className="h-8 w-full rounded-md" />
-                ) : (
-                  <Input
-                    type="date"
-                    className="block"
-                    {...field}
-                    onChange={(e) => {
-                      field.onChange(e);
-                      form.trigger(['dob', 'joinedAt']);
-                    }}
-                  />
-                )}
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          render={({ field }) => {
+            const value = inputDateConvert(field.value);
+            return (
+              <FormItem>
+                <FormLabel>Joined Date</FormLabel>
+                <FormControl>
+                  {isUserPending ? (
+                    <Skeleton className="h-8 w-full rounded-md" />
+                  ) : (
+                    <Input
+                      {...field}
+                      type="date"
+                      className="block"
+                      onChange={(e) => {
+                        field.onChange(e);
+                        form.trigger(['dob', 'joinedAt']);
+                      }}
+                      value={value}
+                    />
+                  )}
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            );
+          }}
         />
         <FormField
           control={form.control}
@@ -326,13 +326,8 @@ function EditUserForm({ initialUser }: Props) {
           >
             Save
           </LoadingButton>
-          <Button
-            data-id="edit_user_cancel_button"
-            variant="secondary"
-            asChild
-            onClick={() => router.replace('/users')}
-          >
-            <Link href="/users">Cancel</Link>
+          <Button data-id="edit_user_cancel_button" variant="secondary" asChild>
+            <Link href={`/users?${searchParams.toString()}`}>Cancel</Link>
           </Button>
         </div>
       </form>

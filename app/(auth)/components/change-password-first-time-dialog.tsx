@@ -26,12 +26,18 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
+import type { Account } from '@/features/auth/auth.types';
 import useChangePasswordFirstTime from '@/features/auth/useChangePasswordFirstTime';
 import useProfile from '@/features/auth/useProfile';
+import { UserStatus } from '@/lib/@types/api';
 
 import { changePasswordFirstTimeSchema } from '../schema';
 
-function ChangePasswordFirstTimeDialog() {
+type Props = {
+  initialProfile: Account;
+};
+
+function ChangePasswordFirstTimeDialog({ initialProfile }: Props) {
   const modalRef = React.useRef<HTMLDivElement>(null);
   const form = useForm<z.infer<typeof changePasswordFirstTimeSchema>>({
     resolver: zodResolver(changePasswordFirstTimeSchema),
@@ -41,7 +47,9 @@ function ChangePasswordFirstTimeDialog() {
     reValidateMode: 'onSubmit',
   });
   const { mutate: submit, isPending, isSuccess } = useChangePasswordFirstTime();
-  const { refetch: refetchProfile, data: profile } = useProfile();
+  const { refetch: refetchProfile, data: profile } = useProfile({
+    initialData: initialProfile,
+  });
   const [isOpen, setIsOpen] = React.useState(false);
 
   const newPasswordValue = form.getValues('newPassword');
@@ -72,8 +80,8 @@ function ChangePasswordFirstTimeDialog() {
 
   React.useEffect(() => {
     if (profile) {
-      if (profile.status === 'CREATED') setIsOpen(true);
-    }
+      if (profile.status === UserStatus.CREATED) setIsOpen(true);
+    } else setIsOpen(false);
   }, [profile]);
 
   React.useEffect(() => {
@@ -144,12 +152,12 @@ function ChangePasswordFirstTimeDialog() {
                   </FormItem>
                 )}
               />
-              <DialogFooter className="mt-10 flex flex-col items-center justify-center gap-2 md:flex-row">
+              <DialogFooter className="mt-10 flex flex-col items-center justify-center gap-2 lg:flex-row">
                 <LoadingButton
                   data-id="change-password-first-time-button"
                   type="submit"
                   isLoading={isPending}
-                  className="w-full md:w-fit"
+                  className="w-full lg:w-fit"
                   disabled={
                     !form.getValues('newPassword') || isSuccess || isPending
                   }

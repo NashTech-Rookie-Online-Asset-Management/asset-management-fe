@@ -1,3 +1,5 @@
+'use client';
+
 import { ArrowDownAZ, ArrowUpAZ, Search } from 'lucide-react';
 import { useParams } from 'next/navigation';
 import { useState } from 'react';
@@ -27,7 +29,7 @@ import { Order } from '@/lib/@types/api';
 import { AccountTypeOptions } from '@/lib/constants/user';
 
 import type { ModalProps, TableCol } from './base';
-import { TableCell, usePaginate } from './base';
+import { onModalClose, TableCell, usePaginate } from './base';
 
 const colums = [
   {
@@ -50,7 +52,7 @@ const colums = [
 function UserTableRow({ user }: { user: AvailableUser }) {
   return (
     <TableRow key={user.staffCode}>
-      <TableCell htmlFor={user.staffCode}>
+      <TableCell isTooltip={false} htmlFor={user.staffCode}>
         <RadioGroupItem value={user.staffCode} id={user.staffCode} />
       </TableCell>
       <TableCell htmlFor={user.staffCode}>{user.staffCode}</TableCell>
@@ -74,8 +76,10 @@ export default function SelectUserModal(props: ModalProps<AvailableUser>) {
       data && data.data.find((userTmp) => userTmp.staffCode === staffCode);
     if (user) {
       props.onSelect(user);
-      props.setOpen(false);
+    } else if (props.assignment) {
+      props.onSelect(props.assignment.assignedTo);
     }
+    props.setOpen(false);
   };
 
   const handleTableHeaderClick = ({ key, sort }: TableCol) => {
@@ -90,10 +94,10 @@ export default function SelectUserModal(props: ModalProps<AvailableUser>) {
     }
   };
 
-  const onClose = () => {
-    setStaffCode('');
-    props.setOpen(false);
-  };
+  const onClose = () =>
+    onModalClose(props, staffCode, () =>
+      setStaffCode(props.currentForm.assignedTo.staffCode),
+    );
 
   return (
     <Dialog open={props.open} onOpenChange={onClose}>
@@ -115,10 +119,10 @@ export default function SelectUserModal(props: ModalProps<AvailableUser>) {
           onValueChange={(value) => setStaffCode(value)}
         >
           <div className="relative max-h-[60vh] overflow-y-auto">
-            <Table>
+            <Table className="table-fixed">
               <TableHeader className="sticky top-0 z-10 bg-background">
                 <TableRow>
-                  <TableHead />
+                  <TableHead className="w-20" />
                   {colums.map((col) => (
                     <TableHead className="relative" key={col.key}>
                       <Button

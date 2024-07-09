@@ -1,17 +1,19 @@
-// eslint-disable-next-line simple-import-sort/imports
+'use client';
+
 import { useCallback, useState } from 'react';
+import ReactPagination from 'react-paginate';
+import { useMediaQuery } from 'usehooks-ts';
 
 import {
+  Pagination as UIPagination,
   PaginationContent,
   PaginationEllipsis,
   PaginationNext,
   PaginationPrevious,
-  Pagination as UIPagination,
 } from '@/components/ui/pagination';
-import { Input } from '../ui/input';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import ReactPagination from 'react-paginate';
 import { cn } from '@/lib/utils';
+
+import { Input } from '../ui/input';
 
 const Pagination = ({
   totalPages,
@@ -24,8 +26,9 @@ const Pagination = ({
   className?: string;
   onPageChange: (page: number) => void;
 }) => {
-  const maxPages = 3;
   const [inputValue, setInputValue] = useState(currentPage.toString());
+  const isDesktop = useMediaQuery('(min-width: 768px)');
+  const maxPages = isDesktop ? 3 : 0;
 
   const handlePageChange = useCallback(
     (page: number) => {
@@ -42,7 +45,12 @@ const Pagination = ({
   }
 
   return (
-    <UIPagination className={cn('flex justify-end gap-8', className)}>
+    <UIPagination
+      className={cn(
+        'flex flex-row-reverse md:flex-row justify-between md:justify-end gap-2 md:gap-8',
+        className,
+      )}
+    >
       <PaginationContent>
         <ReactPagination
           pageCount={totalPages}
@@ -55,17 +63,20 @@ const Pagination = ({
           forcePage={currentPage - 1}
           disableInitialCallback
           containerClassName="flex items-center gap-2"
-          pageLinkClassName="inline-flex size-10 items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground"
-          activeLinkClassName="inline-flex size-10 items-center justify-center whitespace-nowrap rounded-md border border-gray-300 text-sm font-medium ring-offset-background transition-colors"
+          pageClassName="hidden md:block"
+          pageLinkClassName="inline-flex size-9 md:size-10 items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground"
+          activeClassName="hidden md:block"
+          activeLinkClassName="inline-flex size-9 md:size-10 items-center justify-center whitespace-nowrap rounded-md border border-gray-300 text-sm font-medium ring-offset-background transition-colors"
           previousLabel={
             <PaginationPrevious
               aria-disabled={currentPage <= 1}
               tabIndex={currentPage <= 1 ? -1 : 0}
               className={
                 currentPage <= 1
-                  ? 'cursor-default opacity-50 hover:bg-white'
+                  ? 'cursor-default opacity-50 hover:bg-transparent'
                   : ''
               }
+              size={isDesktop ? 'default' : 'sm'}
             >
               Previous
             </PaginationPrevious>
@@ -76,13 +87,15 @@ const Pagination = ({
               tabIndex={currentPage >= totalPages ? -1 : 0}
               className={
                 currentPage >= totalPages
-                  ? 'cursor-default opacity-50 hover:bg-white'
+                  ? 'cursor-default opacity-50 hover:bg-transparent'
                   : ''
               }
+              size={isDesktop ? 'default' : 'sm'}
             >
               Next
             </PaginationNext>
           }
+          breakClassName="hidden md:block"
           breakLabel={<PaginationEllipsis />}
         />
       </PaginationContent>
@@ -90,7 +103,7 @@ const Pagination = ({
       <Input
         type="number"
         placeholder="Go to"
-        className="w-20"
+        className="h-9 w-20 md:h-10"
         value={inputValue}
         min={1}
         max={totalPages}

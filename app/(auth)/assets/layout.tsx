@@ -1,13 +1,13 @@
-import React from 'react';
+import type React from 'react';
 
 type Props = {};
 
 export const metadata = {
-  title: 'Assets',
+  title: 'Manage Asset',
 };
 
 function AssetLayout({ children }: React.PropsWithChildren<Props>) {
-  return <div className="py-8">{children}</div>;
+  return children;
 }
 
 export default AssetLayout;

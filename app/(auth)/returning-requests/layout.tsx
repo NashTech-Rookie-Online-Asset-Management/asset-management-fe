@@ -7,7 +7,7 @@ export const metadata = {
 };
 
 function ReturningRequestLayout({ children }: React.PropsWithChildren<Props>) {
-  return <div>{children}</div>;
+  return children;
 }
 
 export default ReturningRequestLayout;

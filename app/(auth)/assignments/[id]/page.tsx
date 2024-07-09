@@ -7,6 +7,8 @@ import CookieKeys from '@/lib/constants/cookieKeys';
 
 import EditAssignmentForm from './form';
 
+export const dynamic = 'force-dynamic';
+
 type Props = {
   params: {
     id: string;

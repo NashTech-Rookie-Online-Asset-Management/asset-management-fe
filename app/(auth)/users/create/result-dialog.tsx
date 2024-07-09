@@ -1,10 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
+// eslint-disable-next-line simple-import-sort/imports
 
 'use client';
 
-// eslint-disable-next-line simple-import-sort/imports
-import { useRouter } from 'next-nprogress-bar';
 import { useSearchParams } from 'next/navigation';
+import { useRouter } from 'next-nprogress-bar';
 import { useEffect, useRef, useState } from 'react';
 import { useOnClickOutside } from 'usehooks-ts';
 
@@ -23,6 +23,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { type CreateUserResponse } from '@/features/user/user.types';
 import { getLocationText, normalizeText } from '@/lib/utils';
+import { displayDate } from '@/lib/utils/date';
 
 export type CreateUserResultDialogProps = {
   userData: CreateUserResponse;
@@ -40,7 +41,7 @@ function CreateUserResultDialog({ userData }: CreateUserResultDialogProps) {
     params.set('sortOrder', 'desc');
 
     router.push(
-      `/users?${params.toString()}&newUserUsername=${userData.username}`,
+      `/users?${params.toString()}&newStaffCode=${userData.staffCode}`,
     );
   };
 
@@ -62,7 +63,7 @@ function CreateUserResultDialog({ userData }: CreateUserResultDialogProps) {
           <DialogTitle>User created</DialogTitle>
           <DialogClose data-id="close-button" />
 
-          <DialogDescription>
+          <DialogDescription className="text-orange-500">
             Warning: You will not be able to see this information again after
             closing this window.
           </DialogDescription>
@@ -90,19 +91,13 @@ function CreateUserResultDialog({ userData }: CreateUserResultDialogProps) {
             <Label>
               <span>Date of Birth</span>
             </Label>
-            <Input
-              value={new Date(userData?.dob).toLocaleDateString()}
-              readOnly
-            />
+            <Input value={displayDate(userData?.dob)} readOnly />
           </div>
           <div className="col-span-1">
             <Label>
               <span>Joined Date</span>
             </Label>
-            <Input
-              value={new Date(userData?.joinedAt).toLocaleDateString()}
-              readOnly
-            />
+            <Input value={displayDate(userData?.joinedAt)} readOnly />
           </div>
           <div className="col-span-1">
             <Label>

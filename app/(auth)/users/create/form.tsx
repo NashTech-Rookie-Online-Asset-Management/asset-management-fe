@@ -126,9 +126,9 @@ function CreateUserForm() {
                 </FormLabel>
                 <FormControl>
                   <Input
+                    {...field}
                     type="date"
                     className="block"
-                    {...field}
                     onChange={(e) => {
                       field.onChange(e);
                       form.trigger(['dob', 'joinedAt']);
@@ -182,9 +182,9 @@ function CreateUserForm() {
                 </FormLabel>
                 <FormControl>
                   <Input
+                    {...field}
                     type="date"
                     className="block"
-                    {...field}
                     onChange={(e) => {
                       field.onChange(e);
                       form.trigger(['dob', 'joinedAt']);

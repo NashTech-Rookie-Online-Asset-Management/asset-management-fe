@@ -1,8 +1,4 @@
-import {
-  keepPreviousData,
-  useQuery,
-  useQueryClient,
-} from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 import userApi from './user.service';
 import type { User } from './user.types';
@@ -13,23 +9,22 @@ type GetUserOptions = {
 };
 
 function useGetUser(
-  username: string,
+  staffCode: string,
   { pinned, initialData }: GetUserOptions = {},
 ) {
   const queryClient = useQueryClient();
   const queryKey = pinned
-    ? ['users', username, { pinned }]
-    : ['users', username];
+    ? ['users', staffCode, { pinned }]
+    : ['users', staffCode];
   return useQuery({
     queryKey,
-    queryFn: async ({ queryKey: [, userUsername] }) => {
+    queryFn: async ({ queryKey: [, userStaffCode] }) => {
       if (pinned) {
         return queryClient.getQueryData<User>(queryKey);
       }
-      return userApi.getUser(userUsername as string);
+      return userApi.getUser(userStaffCode as string);
     },
     initialData: () => initialData || queryClient.getQueryData<User>(queryKey),
-    placeholderData: keepPreviousData,
   });
 }
 

@@ -12,6 +12,8 @@ export const metadata = {
   title: 'Edit Asset',
 };
 
+export const dynamic = 'force-dynamic';
+
 async function getAsset(id: number) {
   const accessToken = cookies().get(CookieKeys.ACCESS_TOKEN)?.value!;
   assetApi.setBearerToken(accessToken).useServer();
