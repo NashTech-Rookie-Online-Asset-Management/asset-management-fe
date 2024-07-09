@@ -33,7 +33,6 @@ import { Order } from '@/lib/@types/api';
 import { PAGE_SIZE } from '@/lib/constants/pagination';
 import { useIsDesktop } from '@/lib/hooks/useIsDesktop';
 import usePagination from '@/lib/hooks/usePagination';
-import { cn } from '@/lib/utils';
 
 const columns = [
   { label: 'Category', key: 'categoryName', width: '20%' },
@@ -85,12 +84,12 @@ export default function AssetReportList() {
 
   const getAssetReportQueryKey = serialize({ ...getAssetReportOptions });
 
-  const { data: assetReport } = useGetAssetReport(
+  const { data: assetReport, isPending } = useGetAssetReport(
     getAssetReportOptions,
     getAssetReportQueryKey,
   );
 
-  const { mutateAsync: getAssetReportFileUrl, isPending } =
+  const { mutateAsync: getAssetReportFileUrl, isPending: isExporting } =
     useGetAssetReportFileUrl();
 
   const handleExportReport = async () => {
@@ -134,7 +133,7 @@ export default function AssetReportList() {
           className="lg:col-span-1"
           data-id="export-button"
           onClick={handleExportReport}
-          disabled={isPending}
+          disabled={isExporting}
         >
           Export
         </LoadingButton>
@@ -146,7 +145,7 @@ export default function AssetReportList() {
             assetReport.data.map((row: ReportItem) => (
               <MobileCard key={row.categoryName}>
                 <MobileCardContainer>
-                  <MobileCardHeader className="flex justify-between mb-2">
+                  <MobileCardHeader className="mb-2 flex justify-between">
                     <span>{row.categoryName}</span>
                     <div className="text-right font-semibold text-muted-foreground">
                       {row.total}
@@ -169,7 +168,7 @@ export default function AssetReportList() {
               </MobileCard>
             ))
           ) : (
-            <div>No data to display.</div>
+            <div>{isPending ? 'Loading...' : 'No data to display.'}</div>
           )}
         </div>
       )}

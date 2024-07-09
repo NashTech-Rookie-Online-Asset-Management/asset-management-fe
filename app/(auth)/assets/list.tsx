@@ -178,7 +178,7 @@ export default function AssetList() {
 
   const getAssetsQueryKey = serialize({ ...getAssetsOptions });
 
-  const { data: assets } = useGetAssets(
+  const { data: assets, isPending } = useGetAssets(
     getAssetsOptions,
     getAssetsQueryKey,
     newAsset,
@@ -310,7 +310,7 @@ export default function AssetList() {
                 </MobileCard>
               ))
             ) : (
-              <div>No assets to display.</div>
+              <div>{isPending ? 'Loading...' : 'No assets to display.'}</div>
             )}
           </div>
         </>

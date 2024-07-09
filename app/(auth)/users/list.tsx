@@ -174,7 +174,7 @@ export default function UserList() {
 
   const getUsersQueryKey = serialize({ ...getUsersOptions });
 
-  const { data: users } = useGetUsers(
+  const { data: users, isPending } = useGetUsers(
     getUsersOptions,
     getUsersQueryKey,
     newUser,
@@ -283,7 +283,7 @@ export default function UserList() {
                 </MobileCard>
               ))
             ) : (
-              <div>No users to display.</div>
+              <div>{isPending ? 'Loading...' : 'No users to display.'}</div>
             )}
           </div>
         </>

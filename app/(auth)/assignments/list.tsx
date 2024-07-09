@@ -251,7 +251,7 @@ export default function AssignmentList() {
   const { data: newAssignment } = useAssignment(`${assignmentId}`, {
     pinned: true,
   });
-  const { data } = useAssignments(queryOptions, newAssignment);
+  const { data, isPending } = useAssignments(queryOptions, newAssignment);
 
   const handleDeleteDialog = (assignment: Assignment) => {
     setDeletedAssignment(assignment);
@@ -371,7 +371,9 @@ export default function AssignmentList() {
                 </MobileCard>
               ))
             ) : (
-              <div>No assignments to display.</div>
+              <div>
+                {isPending ? 'Loading...' : 'No assignments to display.'}
+              </div>
             )}
           </div>
         </>

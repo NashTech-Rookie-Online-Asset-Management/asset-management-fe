@@ -206,7 +206,9 @@ function MyAssignments() {
                 </MobileCard>
               ))
             ) : (
-              <div>No assignments to display.</div>
+              <div>
+                {isPending ? 'Loading...' : 'No assignments to display.'}
+              </div>
             )}
           </div>
         )}

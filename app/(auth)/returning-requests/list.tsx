@@ -29,6 +29,14 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import {
+  MobileCard,
+  MobileCardActions,
+  MobileCardContainer,
+  MobileCardContent,
+  MobileCardHeader,
+  MobileCardStatus,
+} from '@/components/ui/mobile-card';
+import {
   Table,
   TableBody,
   TableCell,
@@ -47,11 +55,16 @@ import type {
 } from '@/features/returning-request/returning-request.type';
 import { returningRequestSortFields } from '@/features/returning-request/returning-request.type';
 import useGetReturningRequests from '@/features/returning-request/useGetReturningRequests';
-import { ReturningRequestStateOptions } from '@/lib/constants/returning-request';
+import {
+  ReturningRequestStateOptions,
+  ReturningRequestStateColors as colors,
+} from '@/lib/constants/returning-request';
 import { displayDate } from '@/lib/utils/date';
 import { useEffect, useState } from 'react';
 import CancelReturnDialog from './cancel-return-dialog';
 import CompleteReturnDialog from './complete-return-dialog';
+import { useIsDesktop } from '@/lib/hooks/useIsDesktop';
+import { ColorsBox } from '../components/colors-box';
 
 const columns = [
   { label: 'No.', key: 'id' },
@@ -70,7 +83,53 @@ const columns = [
   { label: 'State', key: 'state' },
 ];
 
+const ItemDropDownMenu = ({
+  row,
+  completeClick,
+  cancelClick,
+}: {
+  row: ReturningRequest;
+  completeClick: () => void;
+  cancelClick: () => void;
+}) => (
+  <DropdownMenu>
+    <DropdownMenuTrigger
+      asChild
+      disabled={row.state === RequestState.COMPLETED}
+    >
+      <Button variant="ghost" className="size-8 p-0">
+        <span className="sr-only">Open menu</span>
+        <MoreHorizontal className="size-4" />
+      </Button>
+    </DropdownMenuTrigger>
+    <DropdownMenuContent
+      align="center"
+      className="z-10"
+      onClick={(e) => e.stopPropagation()}
+    >
+      <DropdownMenuLabel>Actions</DropdownMenuLabel>
+      <DropdownMenuItem
+        className="cursor-pointer"
+        disabled={row.state === RequestState.COMPLETED}
+        onClick={completeClick}
+      >
+        <Check className="mr-4 size-4" />
+        Complete request
+      </DropdownMenuItem>
+      <DropdownMenuItem
+        className="cursor-pointer"
+        disabled={row.state === RequestState.COMPLETED}
+        onClick={cancelClick}
+      >
+        <X className="mr-4 size-4" />
+        Cancel request
+      </DropdownMenuItem>
+    </DropdownMenuContent>
+  </DropdownMenu>
+);
+
 export default function ReturningRequestList() {
+  const isDesktop = useIsDesktop();
   const statesParser = parseAsArrayOf(
     parseAsStringEnum<RequestState>(Object.values(RequestState)),
   );
@@ -110,7 +169,7 @@ export default function ReturningRequestList() {
 
   const getReturningRequestsOptions = {
     page,
-    take: PAGE_SIZE,
+    take: isDesktop ? PAGE_SIZE : 5,
     search: searchValue,
     states: selectedRequestStates as string[],
     returnedDate,
@@ -122,7 +181,7 @@ export default function ReturningRequestList() {
     ...getReturningRequestsOptions,
   });
 
-  const { data: returningRequests } = useGetReturningRequests(
+  const { data: returningRequests, isPending } = useGetReturningRequests(
     getReturningRequestsOptions,
     getReturningRequestsQueryKey,
   );
@@ -206,7 +265,58 @@ export default function ReturningRequestList() {
         </div>
       </div>
 
-      <div className="rounded-md border">
+      {!isDesktop && (
+        <ColorsBox texts={ReturningRequestStateOptions} colors={colors} />
+      )}
+
+      {!isDesktop && (
+        <div className="flex flex-col space-y-2">
+          {returningRequests && returningRequests.data.length > 0 ? (
+            returningRequests.data.map((row: ReturningRequest) => (
+              <MobileCard key={row.id}>
+                <MobileCardActions>
+                  <ItemDropDownMenu
+                    row={row}
+                    completeClick={() => handleCompleteClick(row)}
+                    cancelClick={() => handleCancelClick(row)}
+                  />
+                </MobileCardActions>
+                <MobileCardStatus
+                  color={colors[row.state]}
+                  className="rounded-b-none"
+                />
+                <MobileCardContainer>
+                  <MobileCardHeader>
+                    {row.assignment.asset.assetCode}
+                  </MobileCardHeader>
+                  <MobileCardContent>
+                    <p>{row.assignment.asset.name}</p>
+                    <p>
+                      <span className="text-muted-foreground">
+                        Requested By:
+                      </span>{' '}
+                      {row.requestedBy.username}
+                    </p>
+                    {row?.acceptedBy?.username && (
+                      <p>
+                        <span className="text-muted-foreground">
+                          Accepted By:
+                        </span>{' '}
+                        {row?.acceptedBy?.username}
+                      </p>
+                    )}
+                    {row.returnedDate && <p>{displayDate(row.returnedDate)}</p>}
+                  </MobileCardContent>
+                </MobileCardContainer>
+              </MobileCard>
+            ))
+          ) : (
+            <div>{isPending ? 'Loading...' : 'No requests to display.'}</div>
+          )}
+        </div>
+      )}
+
+      <div className="hidden rounded-md border md:block">
         <Table className="table-fixed" data-id="table">
           <TableHeader>
             <TableRow>
