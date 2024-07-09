@@ -16,7 +16,7 @@ import {
   parseAsStringEnum,
   useQueryState,
 } from 'nuqs';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { MultipleSelect } from '@/components/custom/multiple-select';
 import Pagination from '@/components/custom/pagination';
@@ -155,6 +155,13 @@ export default function UserList() {
   const { page, searchValue, sortField, sortOrder } = pagination.metadata;
   const { handlePageChange, handleSearch, handleSortColumn, serialize } =
     pagination.handlers;
+  const [inputValue, setInputValue] = useState(searchValue);
+
+  useEffect(() => {
+    if (searchValue === '') {
+      setInputValue('');
+    }
+  }, [searchValue]);
 
   const getUsersOptions = {
     page,
@@ -217,8 +224,11 @@ export default function UserList() {
               type="text"
               placeholder="Search by name, staff code"
               className="rounded-md border pr-10"
-              onChange={(e) => handleSearch(e.target.value)}
-              defaultValue={searchValue}
+              onChange={(e) => {
+                setInputValue(e.target.value);
+                handleSearch(e.target.value);
+              }}
+              value={inputValue}
             />
             <Button
               type="button"
@@ -279,7 +289,7 @@ export default function UserList() {
         </>
       )}
 
-      <div className="rounded-md border hidden md:block">
+      <div className="hidden rounded-md border md:block">
         <Table className="table-fixed">
           <TableHeader>
             <TableRow>

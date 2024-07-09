@@ -4,6 +4,7 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 
 import { ArrowDownAZ, ArrowUpAZ, Search } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 import { CustomCell } from '@/components/custom/custom-cell';
 import { LoadingButton } from '@/components/custom/loading-button';
@@ -47,6 +48,13 @@ export default function AssetReportList() {
   const { page, searchValue, sortField, sortOrder } = pagination.metadata;
   const { handlePageChange, handleSearch, handleSortColumn, serialize } =
     pagination.handlers;
+  const [inputValue, setInputValue] = useState(searchValue);
+
+  useEffect(() => {
+    if (searchValue === '') {
+      setInputValue('');
+    }
+  }, [searchValue]);
 
   const getAssetReportOptions = {
     page,
@@ -83,9 +91,12 @@ export default function AssetReportList() {
               type="text"
               placeholder="Search by category name"
               className="rounded-md border pr-10"
-              onChange={(e) => handleSearch(e.target.value)}
               data-id="search-category-input"
-              defaultValue={searchValue}
+              onChange={(e) => {
+                setInputValue(e.target.value);
+                handleSearch(e.target.value);
+              }}
+              value={inputValue}
             />
             <Button
               type="button"

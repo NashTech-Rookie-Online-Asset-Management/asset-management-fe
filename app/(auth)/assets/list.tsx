@@ -16,7 +16,7 @@ import {
   parseAsStringEnum,
   useQueryState,
 } from 'nuqs';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { CustomCell } from '@/components/custom/custom-cell';
 import { MultipleSelect } from '@/components/custom/multiple-select';
@@ -158,6 +158,13 @@ export default function AssetList() {
   const { page, searchValue, sortField, sortOrder } = pagination.metadata;
   const { handlePageChange, handleSearch, handleSortColumn, serialize } =
     pagination.handlers;
+  const [inputValue, setInputValue] = useState(searchValue);
+
+  useEffect(() => {
+    if (searchValue === '') {
+      setInputValue('');
+    }
+  }, [searchValue]);
 
   const getAssetsOptions = {
     page,
@@ -248,8 +255,11 @@ export default function AssetList() {
               type="text"
               placeholder="Search by name, asset code"
               className="rounded-md border pr-10"
-              onChange={(e) => handleSearch(e.target.value)}
-              defaultValue={searchValue}
+              onChange={(e) => {
+                setInputValue(e.target.value);
+                handleSearch(e.target.value);
+              }}
+              value={inputValue}
             />
             <Button
               type="button"
@@ -306,7 +316,7 @@ export default function AssetList() {
         </>
       )}
 
-      <div className="rounded-md border hidden md:block">
+      <div className="hidden rounded-md border md:block">
         <Table className="table-fixed">
           <TableHeader>
             <TableRow>

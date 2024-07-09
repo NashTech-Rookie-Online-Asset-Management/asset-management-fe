@@ -1,5 +1,6 @@
 'use client';
 
+// eslint-disable-next-line simple-import-sort/imports
 import {
   ArrowDownAZ,
   ArrowUpAZ,
@@ -17,7 +18,7 @@ import {
   parseAsStringEnum,
   useQueryState,
 } from 'nuqs';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDebounceCallback } from 'usehooks-ts';
 
 import { CustomCell } from '@/components/custom/custom-cell';
@@ -59,8 +60,8 @@ import type {
 } from '@/features/assignment/assignment.types';
 import { AssignmentState, Order } from '@/lib/@types/api';
 import {
-  AssignmentStateColors as colors,
   AssignmentStateOptions,
+  AssignmentStateColors as colors,
 } from '@/lib/constants/assignment';
 import { PAGE_SIZE } from '@/lib/constants/pagination';
 import { useIsDesktop } from '@/lib/hooks/useIsDesktop';
@@ -206,6 +207,13 @@ export default function AssignmentList() {
   const { page, searchValue, sortField, sortOrder } = pagination.metadata;
   const { handlePageChange, handleSearch, handleSortColumn } =
     pagination.handlers;
+  const [inputValue, setInputValue] = useState(searchValue);
+
+  useEffect(() => {
+    if (searchValue === '') {
+      setInputValue('');
+    }
+  }, [searchValue]);
 
   const handleAssignmentStateChange = (state: string[]) => {
     setAssignmentStates(state as AssignmentState[]);
@@ -285,9 +293,13 @@ export default function AssignmentList() {
             <Input
               defaultValue={searchValue}
               type="text"
-              onChange={(e) => handleSearch(e.target.value)}
               placeholder="Search by asset code, name or assignee"
               className="rounded-md border pr-10"
+              onChange={(e) => {
+                setInputValue(e.target.value);
+                handleSearch(e.target.value);
+              }}
+              value={inputValue}
             />
             <Button
               type="button"

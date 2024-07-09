@@ -49,7 +49,7 @@ import { returningRequestSortFields } from '@/features/returning-request/returni
 import useGetReturningRequests from '@/features/returning-request/useGetReturningRequests';
 import { ReturningRequestStateOptions } from '@/lib/constants/returning-request';
 import { displayDate } from '@/lib/utils/date';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import CancelReturnDialog from './cancel-return-dialog';
 import CompleteReturnDialog from './complete-return-dialog';
 
@@ -100,6 +100,13 @@ export default function ReturningRequestList() {
   const { page, searchValue, sortField, sortOrder } = pagination.metadata;
   const { handlePageChange, handleSearch, handleSortColumn, serialize } =
     pagination.handlers;
+  const [inputValue, setInputValue] = useState(searchValue);
+
+  useEffect(() => {
+    if (searchValue === '') {
+      setInputValue('');
+    }
+  }, [searchValue]);
 
   const getReturningRequestsOptions = {
     page,
@@ -180,8 +187,11 @@ export default function ReturningRequestList() {
               type="text"
               placeholder="Search by asset code, asset name, requester's username"
               className="rounded-md border pr-10"
-              defaultValue={searchValue}
-              onChange={(e) => handleSearch(e.target.value)}
+              onChange={(e) => {
+                setInputValue(e.target.value);
+                handleSearch(e.target.value);
+              }}
+              value={inputValue}
             />
             <Button
               type="button"
