@@ -18,6 +18,7 @@ import {
 import { Sheet, SheetContent } from '@/components/ui/sheet';
 import type { Account } from '@/features/auth/auth.types';
 import useProfile from '@/features/auth/useProfile';
+import { useIsDesktop } from '@/lib/hooks/useIsDesktop';
 import { cn } from '@/lib/utils';
 
 import ChangePasswordDialog from './change-password-dialog';
@@ -36,7 +37,7 @@ function AuthHeader({ initialProfile, className }: Props) {
   const [changePasswordDialogOpen, setChangePasswordDialogOpen] =
     useState(false);
   const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
-  const isDesktop = useMediaQuery('(min-width: 768px)');
+  const isDesktop = useIsDesktop();
   const { value: isMobileAuthBoxOpen, toggle: toggleIsMobileAuthBoxOpen } =
     useBoolean();
   const {
@@ -48,7 +49,7 @@ function AuthHeader({ initialProfile, className }: Props) {
   return (
     <div className={cn('w-full', className)}>
       <div className="w-full bg-primary">
-        <div className="container mx-auto flex items-center justify-between pb-2 pt-4 md:pt-2">
+        <div className="container mx-auto flex items-center justify-between pb-2 pt-4 lg:pt-2">
           <div className="flex items-center space-x-2">
             {!isDesktop && (
               <Button

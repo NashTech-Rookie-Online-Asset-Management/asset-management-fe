@@ -330,7 +330,7 @@ export default function AssignmentList() {
       {!isDesktop && (
         <>
           <ColorsBox texts={AssignmentStateOptions} colors={colors} />
-          <div className="flex flex-col space-y-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
             {data && data.data.length > 0 ? (
               data.data.map((row: Assignment) => (
                 <MobileCard
@@ -379,7 +379,7 @@ export default function AssignmentList() {
         </>
       )}
 
-      <div className="hidden rounded-md border md:block">
+      <div className="hidden rounded-md border lg:block">
         <Table className="table-fixed">
           <TableHeader>
             <TableRow>

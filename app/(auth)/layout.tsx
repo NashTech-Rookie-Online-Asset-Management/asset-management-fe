@@ -31,8 +31,8 @@ async function AuthLayout({ children }: React.PropsWithChildren) {
         initialProfile={profile}
         className="sticky inset-x-0 top-0 z-50"
       />
-      <div className="container mx-auto flex flex-col pb-24 pt-4 md:flex-row md:space-x-8 md:pt-10">
-        <nav className="relative hidden w-0 md:block md:w-64 md:max-w-64">
+      <div className="container mx-auto flex flex-col pb-24 pt-4 lg:flex-row lg:space-x-8 lg:pt-10">
+        <nav className="relative hidden w-0 lg:block lg:w-64 lg:max-w-64">
           <Sidebar className="fixed top-0 max-w-64 pt-24" />
         </nav>
         <div className="flex-1">

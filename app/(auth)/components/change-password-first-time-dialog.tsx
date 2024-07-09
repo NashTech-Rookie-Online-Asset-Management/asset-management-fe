@@ -152,12 +152,12 @@ function ChangePasswordFirstTimeDialog({ initialProfile }: Props) {
                   </FormItem>
                 )}
               />
-              <DialogFooter className="mt-10 flex flex-col items-center justify-center gap-2 md:flex-row">
+              <DialogFooter className="mt-10 flex flex-col items-center justify-center gap-2 lg:flex-row">
                 <LoadingButton
                   data-id="change-password-first-time-button"
                   type="submit"
                   isLoading={isPending}
-                  className="w-full md:w-fit"
+                  className="w-full lg:w-fit"
                   disabled={
                     !form.getValues('newPassword') || isSuccess || isPending
                   }

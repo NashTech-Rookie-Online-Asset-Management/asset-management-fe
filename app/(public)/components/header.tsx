@@ -8,7 +8,7 @@ function PublicHeader() {
       <div className="container mx-auto flex items-center justify-between py-2">
         <div className="flex items-center space-x-2">
           <DynamicLogo className="size-12 p-1" />
-          <h1 className="text-base font-bold text-primary-foreground md:text-xl">
+          <h1 className="text-base font-bold text-primary-foreground lg:text-xl">
             Online Asset Management
           </h1>
         </div>

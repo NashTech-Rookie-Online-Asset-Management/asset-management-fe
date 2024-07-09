@@ -208,7 +208,7 @@ export default function AssetList() {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
         <div className="lg:col-span-1">
           <MultipleSelect
             title="State"
@@ -282,7 +282,7 @@ export default function AssetList() {
       {!isDesktop && (
         <>
           <ColorsBox texts={AssetStateOptions} colors={colors} />
-          <div className="flex flex-col space-y-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
             {assets && assets.data.length > 0 ? (
               assets.data.map((row: Asset) => (
                 <MobileCard
@@ -316,7 +316,7 @@ export default function AssetList() {
         </>
       )}
 
-      <div className="hidden rounded-md border md:block">
+      <div className="hidden rounded-md border lg:block">
         <Table className="table-fixed">
           <TableHeader>
             <TableRow>

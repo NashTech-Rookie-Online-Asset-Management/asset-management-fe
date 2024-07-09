@@ -38,13 +38,13 @@ function LogoutDialog({
           <DialogTitle>Are you sure?</DialogTitle>
         </DialogHeader>
         <div className="pb-4">Do you want to log out?</div>
-        <DialogFooter className="flex flex-col items-center justify-center gap-2 md:flex-row">
+        <DialogFooter className="flex flex-col items-center justify-center gap-2 lg:flex-row">
           <LoadingButton
             data-id="logout-confirm-button"
             isLoading={isPending}
             disabled={isSuccess || isPending}
             onClick={() => handleOnClick()}
-            className="w-full md:w-fit"
+            className="w-full lg:w-fit"
             size="sm"
           >
             <span>Log out</span>
@@ -54,7 +54,7 @@ function LogoutDialog({
               data-id="logout-cancel-button"
               variant="secondary"
               onClick={() => onOpenChange(false)}
-              className="w-full md:w-fit"
+              className="w-full lg:w-fit"
               size="sm"
             >
               Cancel

@@ -169,7 +169,7 @@ export default function ReturningRequestList() {
 
   const getReturningRequestsOptions = {
     page,
-    take: isDesktop ? PAGE_SIZE : 5,
+    take: PAGE_SIZE,
     search: searchValue,
     states: selectedRequestStates as string[],
     returnedDate,
@@ -208,7 +208,7 @@ export default function ReturningRequestList() {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
         <div className="lg:col-span-1">
           <MultipleSelect
             data-id="input-states"
@@ -270,7 +270,7 @@ export default function ReturningRequestList() {
       )}
 
       {!isDesktop && (
-        <div className="flex flex-col space-y-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
           {returningRequests && returningRequests.data.length > 0 ? (
             returningRequests.data.map((row: ReturningRequest) => (
               <MobileCard key={row.id}>
@@ -316,7 +316,7 @@ export default function ReturningRequestList() {
         </div>
       )}
 
-      <div className="hidden rounded-md border md:block">
+      <div className="hidden rounded-md border lg:block">
         <Table className="table-fixed" data-id="table">
           <TableHeader>
             <TableRow>

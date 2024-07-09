@@ -84,7 +84,7 @@ const ItemDropDownMenu = ({
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon">
           <span className="sr-only">Open menu</span>
-          <MoreHorizontal className="md:size-4" />
+          <MoreHorizontal className="lg:size-4" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
@@ -171,12 +171,12 @@ function MyAssignments() {
       {!isDesktop && (
         <ColorsBox texts={AssignmentStateOptions} colors={colors} />
       )}
-      <div className="relative rounded-md md:border">
+      <div className="relative rounded-md lg:border">
         {isPending && (
           <LoaderCircle className="absolute right-0 top-0 m-4 size-4 animate-spin" />
         )}
         {!isDesktop && (
-          <div className="flex flex-col space-y-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
             {assignments && assignments.data.length > 0 ? (
               assignments.data.map((row: Assignment) => (
                 <MobileCard

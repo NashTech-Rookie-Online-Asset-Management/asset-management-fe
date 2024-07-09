@@ -102,7 +102,7 @@ export default function AssetReportList() {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
         <div className="lg:col-span-1">
           <div className="relative">
             <Input
@@ -127,7 +127,7 @@ export default function AssetReportList() {
             </Button>
           </div>
         </div>
-        <div className="hidden md:col-span-2 lg:block" />
+        <div className="hidden lg:col-span-2 lg:block" />
         <LoadingButton
           variant="default"
           className="lg:col-span-1"
@@ -140,7 +140,7 @@ export default function AssetReportList() {
       </div>
 
       {!isDesktop && (
-        <div className="flex flex-col space-y-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
           {assetReport && assetReport.data.length > 0 ? (
             assetReport.data.map((row: ReportItem) => (
               <MobileCard key={row.categoryName}>
@@ -173,7 +173,7 @@ export default function AssetReportList() {
         </div>
       )}
 
-      <div className="hidden rounded-md border md:block">
+      <div className="hidden rounded-md border lg:block">
         <Table className="w-full table-fixed">
           <TableHeader>
             <TableRow>

@@ -197,7 +197,7 @@ export default function UserList() {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
         <div className="lg:col-span-1">
           <MultipleSelect
             title="Type"
@@ -217,7 +217,7 @@ export default function UserList() {
             }
           />
         </div>
-        <div className="lg:col-span-1" />
+        <div className="hidden lg:block lg:col-span-1" />
         <div className="lg:col-span-1">
           <div className="relative">
             <Input
@@ -243,7 +243,7 @@ export default function UserList() {
         </div>
         <Button
           variant="default"
-          className="lg:col-span-1"
+          className="md:col-span-2 lg:col-span-1"
           asChild
           data-id="create-button"
         >
@@ -254,7 +254,7 @@ export default function UserList() {
       {!isDesktop && (
         <>
           <ColorsBox texts={AccountTypeOptions} colors={colors} />
-          <div className="flex flex-col space-y-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
             {users && users.data.length > 0 ? (
               users.data.map((row: User) => (
                 <MobileCard
@@ -289,7 +289,7 @@ export default function UserList() {
         </>
       )}
 
-      <div className="hidden rounded-md border md:block">
+      <div className="hidden rounded-md border lg:block">
         <Table className="table-fixed">
           <TableHeader>
             <TableRow>
