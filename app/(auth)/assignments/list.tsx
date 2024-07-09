@@ -88,8 +88,10 @@ const ItemDropDownMenu = ({
   row,
   deleteClick,
   returnClick,
+  queryKeys,
 }: {
   row: Assignment;
+  queryKeys: string;
   deleteClick: () => void;
   returnClick: () => void;
 }) => (
@@ -111,7 +113,7 @@ const ItemDropDownMenu = ({
         className="cursor-pointer"
         asChild
       >
-        <Link href={`/assignments/${row.id}`}>
+        <Link href={`/assignments/${row.id}${queryKeys}`}>
           <Pencil className="mr-4 size-4" />
           Edit
         </Link>
@@ -205,7 +207,7 @@ export default function AssignmentList() {
   });
 
   const { page, searchValue, sortField, sortOrder } = pagination.metadata;
-  const { handlePageChange, handleSearch, handleSortColumn } =
+  const { handlePageChange, handleSearch, handleSortColumn, serialize } =
     pagination.handlers;
   const [inputValue, setInputValue] = useState(searchValue);
 
@@ -240,6 +242,11 @@ export default function AssignmentList() {
     sortOrder,
     date: dateString || undefined,
   };
+
+  const queryKeys = serialize({
+    ...queryOptions,
+    date: dateString ? new Date(dateString) : undefined,
+  } as any);
 
   const { data: newAssignment } = useAssignment(`${assignmentId}`, {
     pinned: true,
@@ -314,7 +321,9 @@ export default function AssignmentList() {
         </div>
 
         <Button variant="default" className="col-span-1 xl:col-span-3" asChild>
-          <Link href="/assignments/create">Create new assignment</Link>
+          <Link href={`/assignments/create${queryKeys}`}>
+            Create new assignment
+          </Link>
         </Button>
       </div>
 
@@ -331,6 +340,7 @@ export default function AssignmentList() {
                   <MobileCardActions>
                     <ItemDropDownMenu
                       row={row}
+                      queryKeys={queryKeys}
                       deleteClick={() => handleDeleteDialog(row)}
                       returnClick={() => handleReturnRequestClick(row)}
                     />
@@ -435,6 +445,7 @@ export default function AssignmentList() {
                   <TableCell className="py-2 pl-8">
                     <ItemDropDownMenu
                       row={assignment}
+                      queryKeys={queryKeys}
                       deleteClick={() => handleDeleteDialog(assignment)}
                       returnClick={() => handleReturnRequestClick(assignment)}
                     />

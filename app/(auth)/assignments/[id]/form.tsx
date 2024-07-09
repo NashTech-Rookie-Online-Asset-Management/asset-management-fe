@@ -1,6 +1,6 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 import { TypographyH4 } from '@/components/typos/h4';
 import {
@@ -17,13 +17,16 @@ type Props = {
 
 export default function EditAssignmentForm({ initialAssignment }: Props) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { data, isPending: queryPending } = useAssignment(
     initialAssignment.id.toString(),
   );
   const { mutate, isPending: mutatePending, isSuccess } = useEditAssignment();
 
   if (isSuccess)
-    router.push(`/assignments?assignmentId=${initialAssignment.id}`);
+    router.push(
+      `/assignments?${searchParams.toString()}&assignmentId=${initialAssignment.id}`,
+    );
 
   return (
     <>

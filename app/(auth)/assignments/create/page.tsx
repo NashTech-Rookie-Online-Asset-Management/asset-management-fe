@@ -1,6 +1,6 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 import { TypographyH4 } from '@/components/typos/h4';
 import { useCreateAssignment } from '@/features/assignment/assignment.hook';
@@ -9,9 +9,13 @@ import AssignmentForm from '../components/assignment-form';
 
 export default function CreateAssignmentPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { mutate, isSuccess, isPending, data } = useCreateAssignment();
 
-  if (isSuccess) router.push(`/assignments?assignmentId=${data.id}`);
+  if (isSuccess)
+    router.push(
+      `/assignments?${searchParams.toString()}&assignmentId=${data.id}`,
+    );
 
   return (
     <>

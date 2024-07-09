@@ -3,6 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Search } from 'lucide-react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import { useLayoutEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
@@ -55,6 +56,7 @@ export default function AssignmentForm({
   isPending,
   defaultValue,
 }: AssignmentFormProps) {
+  const searchParams = useSearchParams();
   const [openUserModal, setOpenUserModal] = useState(false);
   const [openAssetModal, setOpenAssetModal] = useState(false);
 
@@ -78,10 +80,13 @@ export default function AssignmentForm({
     const inputDate = document.getElementById('assignedDate');
 
     // Limit the date to today and future
+    const minDate =
+      defaultValue?.assignedDate.split('T')[0] ||
+      new Date().toISOString().split('T')[0];
     if (inputDate) {
-      inputDate.setAttribute('min', new Date().toISOString().split('T')[0]);
+      inputDate.setAttribute('min', minDate);
     }
-  }, []);
+  }, [defaultValue]);
 
   return (
     <>
@@ -181,10 +186,6 @@ export default function AssignmentForm({
                       type="date"
                       className="block"
                       autoFocus
-                      min={
-                        defaultValue?.assignedDate.split('T')[0] ||
-                        new Date().toISOString().split('T')[0]
-                      }
                       value={value}
                     />
                   </FormControl>
@@ -216,7 +217,7 @@ export default function AssignmentForm({
             >
               Save
             </LoadingButton>
-            <Link href="/assignments">
+            <Link href={`/assignments?${searchParams.toString()}`}>
               <Button variant="secondary" disabled={isPending}>
                 Cancel
               </Button>
