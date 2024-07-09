@@ -49,7 +49,7 @@ const colums = [
 function AssetTableRow({ asset }: { asset: AvailableAsset }) {
   return (
     <TableRow key={asset.assetCode}>
-      <TableCell htmlFor={asset.assetCode}>
+      <TableCell isTooltip={false} htmlFor={asset.assetCode}>
         <RadioGroupItem value={asset.assetCode} id={asset.assetCode} />
       </TableCell>
       <TableCell htmlFor={asset.assetCode}>{asset.assetCode}</TableCell>

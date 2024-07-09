@@ -16,20 +16,26 @@ import { cn } from '@/lib/utils';
 interface TabaleCellProps {
   htmlFor: string;
   className?: string;
+  isTooltip?: boolean;
 }
 export function TableCell(props: React.PropsWithChildren<TabaleCellProps>) {
+  const isTooltip = props.isTooltip ?? true;
   return (
     <CoreTableCell className={cn('p-0', props.className)}>
       <Label
         htmlFor={props.htmlFor}
         className="inline-flex w-full cursor-pointer p-4 font-normal"
       >
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <p className="line-clamp-1">{props.children}</p>
-          </TooltipTrigger>
-          <TooltipContent>{props.children}</TooltipContent>
-        </Tooltip>
+        {isTooltip ? (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <p className="line-clamp-1">{props.children}</p>
+            </TooltipTrigger>
+            <TooltipContent>{props.children}</TooltipContent>
+          </Tooltip>
+        ) : (
+          <p className="line-clamp-1">{props.children}</p>
+        )}
       </Label>
     </CoreTableCell>
   );

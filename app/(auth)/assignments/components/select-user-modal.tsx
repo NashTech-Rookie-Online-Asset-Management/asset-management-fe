@@ -52,7 +52,7 @@ const colums = [
 function UserTableRow({ user }: { user: AvailableUser }) {
   return (
     <TableRow key={user.staffCode}>
-      <TableCell htmlFor={user.staffCode}>
+      <TableCell isTooltip={false} htmlFor={user.staffCode}>
         <RadioGroupItem value={user.staffCode} id={user.staffCode} />
       </TableCell>
       <TableCell htmlFor={user.staffCode}>{user.staffCode}</TableCell>

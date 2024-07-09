@@ -130,7 +130,10 @@ const ItemDropDownMenu = ({
       </DropdownMenuItem>
 
       <DropdownMenuItem
-        disabled={row.state === AssignmentState.WAITING_FOR_ACCEPTANCE}
+        disabled={[
+          AssignmentState.WAITING_FOR_ACCEPTANCE,
+          AssignmentState.DECLINED,
+        ].includes(row.state)}
         className="cursor-pointer"
         onClick={returnClick}
       >
@@ -171,6 +174,7 @@ export default function AssignmentList() {
     'states',
     statesParser.withDefault([
       AssignmentState.ACCEPTED,
+      AssignmentState.DECLINED,
       AssignmentState.WAITING_FOR_ACCEPTANCE,
     ]),
   );
@@ -211,11 +215,10 @@ export default function AssignmentList() {
   const handleDateChange = (date: string) => {
     try {
       setDateFrom(new Date(date));
-      handlePageChange(1);
     } catch {
       setDateFrom(null);
-      handlePageChange(1);
     }
+    handlePageChange(1);
   };
   const debounceSetDate = useDebounceCallback(handleDateChange, 500);
   const dateString = inputDateConvert(dateFrom || '');
@@ -242,14 +245,18 @@ export default function AssignmentList() {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-4">
-        <div className="lg:col-span-1">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 xl:grid-cols-12">
+        <div className="col-span-1 xl:col-span-3">
           <MultipleSelect
             title="State"
             items={[
               {
                 label: AssignmentStateOptions[AssignmentState.ACCEPTED],
                 value: AssignmentState.ACCEPTED,
+              },
+              {
+                label: AssignmentStateOptions[AssignmentState.DECLINED],
+                value: AssignmentState.DECLINED,
               },
               {
                 label:
@@ -264,7 +271,7 @@ export default function AssignmentList() {
           />
         </div>
 
-        <div className="lg:col-span-1">
+        <div className="col-span-1 xl:col-span-2">
           <Input
             defaultValue={dateString}
             type="date"
@@ -273,13 +280,13 @@ export default function AssignmentList() {
           />
         </div>
 
-        <div className="lg:col-span-1">
+        <div className="col-span-1 xl:col-span-4">
           <div className="relative">
             <Input
               defaultValue={searchValue}
               type="text"
               onChange={(e) => handleSearch(e.target.value)}
-              placeholder="Search by asset code, asset name or assignee's username"
+              placeholder="Search by asset code, name or assignee"
               className="rounded-md border pr-10"
             />
             <Button
@@ -294,7 +301,7 @@ export default function AssignmentList() {
           </div>
         </div>
 
-        <Button variant="default" className="lg:col-span-1" asChild>
+        <Button variant="default" className="col-span-1 xl:col-span-3" asChild>
           <Link href="/assignments/create">Create new assignment</Link>
         </Button>
       </div>
