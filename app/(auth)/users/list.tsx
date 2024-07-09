@@ -30,6 +30,14 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import {
+  MobileCard,
+  MobileCardActions,
+  MobileCardContainer,
+  MobileCardContent,
+  MobileCardHeader,
+  MobileCardStatus,
+} from '@/components/ui/mobile-card';
+import {
   Table,
   TableBody,
   TableCell,
@@ -47,13 +55,18 @@ import {
 } from '@/features/user/user.types';
 import { AccountType, Order } from '@/lib/@types/api';
 import { PAGE_SIZE } from '@/lib/constants/pagination';
-import { AccountTypeOptions } from '@/lib/constants/user';
+import {
+  AccountTypeOptions,
+  AccountTypeColors as colors,
+} from '@/lib/constants/user';
 import usePagination from '@/lib/hooks/usePagination';
 import { displayDate } from '@/lib/utils/date';
 
 import { CustomCell } from '@/components/custom/custom-cell';
 import DeleteUserDialog from '../components/delete-user-dialog';
 import DetailedUserDialog from '../components/show-detailed-user-dialog';
+import { useIsDesktop } from '@/lib/hooks/useIsDesktop';
+import { ColorsBox } from '../components/colors-box';
 
 const columns = [
   { label: 'Staff Code', key: 'staffCode' },
@@ -63,7 +76,52 @@ const columns = [
   { label: 'Type', key: 'type' },
 ];
 
+const ItemDropDownMenu = ({
+  row,
+  editLink,
+  disableClick,
+}: {
+  row: User;
+  editLink: string;
+  disableClick: () => void;
+}) => {
+  const { data: userProfile } = useProfile();
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" className="size-8 p-0">
+          <span className="sr-only">Open menu</span>
+          <MoreHorizontal className="size-4" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="center" onClick={(e) => e.stopPropagation()}>
+        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+        <DropdownMenuItem
+          className="cursor-pointer"
+          asChild
+          disabled={row.type === userProfile?.type}
+        >
+          <Link href={editLink}>
+            <Pencil className="mr-4 size-4" />
+            Edit
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          disabled={row.type === userProfile?.type}
+          className="cursor-pointer"
+          onClick={disableClick}
+        >
+          <Trash2 className="mr-4 size-4" />
+          Disable
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+};
+
 export default function UserList() {
+  const isDesktop = useIsDesktop();
   const [newStaffCode] = useQueryState(
     'newStaffCode',
     parseAsString.withDefault(''),
@@ -85,7 +143,6 @@ export default function UserList() {
   );
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [deletedUser, setDeletedUser] = useState<User | null>(null);
-  const { data: userProfile } = useProfile();
 
   const pagination = usePagination({
     sortFields: userSortFields,
@@ -101,7 +158,7 @@ export default function UserList() {
 
   const getUsersOptions = {
     page,
-    take: PAGE_SIZE,
+    take: isDesktop ? PAGE_SIZE : 5,
     search: searchValue,
     types: selectedUserTypes,
     sortField,
@@ -184,7 +241,45 @@ export default function UserList() {
         </Button>
       </div>
 
-      <div className="rounded-md border">
+      {!isDesktop && (
+        <>
+          <ColorsBox texts={AccountTypeOptions} colors={colors} />
+          <div className="flex flex-col space-y-2">
+            {users && users.data.length > 0 ? (
+              users.data.map((row: User) => (
+                <MobileCard
+                  key={row.id}
+                  onClick={() => handleOpenDialog(row.staffCode)}
+                >
+                  <MobileCardActions>
+                    <ItemDropDownMenu
+                      row={row}
+                      editLink={`/users/${row.staffCode}${getUsersQueryKey}`}
+                      disableClick={() => handleDeleteDialog(row)}
+                    />
+                  </MobileCardActions>
+                  <MobileCardStatus
+                    color={colors[row.type]}
+                    className="rounded-b-none"
+                  />
+                  <MobileCardContainer>
+                    <MobileCardHeader>{row.staffCode}</MobileCardHeader>
+                    <MobileCardContent>
+                      <p className="font-semibold">{row.fullName}</p>
+                      <p className="text-muted-foreground">{row.username}</p>
+                      <p>{displayDate(row.joinedAt)}</p>
+                    </MobileCardContent>
+                  </MobileCardContainer>
+                </MobileCard>
+              ))
+            ) : (
+              <div>No users to display.</div>
+            )}
+          </div>
+        </>
+      )}
+
+      <div className="rounded-md border hidden md:block">
         <Table className="table-fixed">
           <TableHeader>
             <TableRow>
@@ -230,42 +325,11 @@ export default function UserList() {
                   <CustomCell value={displayDate(row.joinedAt)} />
                   <CustomCell value={AccountTypeOptions[row.type]} />
                   <TableCell className="py-2 pl-8">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="size-8 p-0">
-                          <span className="sr-only">Open menu</span>
-                          <MoreHorizontal className="size-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent
-                        align="center"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem
-                          className="cursor-pointer"
-                          asChild
-                          disabled={row.type === userProfile?.type}
-                        >
-                          <Link
-                            href={`/users/${row.staffCode}${getUsersQueryKey}`}
-                          >
-                            <Pencil className="mr-4 size-4" />
-                            Edit
-                          </Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          disabled={row.type === userProfile?.type}
-                          className="cursor-pointer"
-                          onClick={() => {
-                            handleDeleteDialog(row);
-                          }}
-                        >
-                          <Trash2 className="mr-4 size-4" />
-                          Disable
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+                    <ItemDropDownMenu
+                      row={row}
+                      editLink={`/users/${row.staffCode}${getUsersQueryKey}`}
+                      disableClick={() => handleDeleteDialog(row)}
+                    />
                   </TableCell>
                 </TableRow>
               ))

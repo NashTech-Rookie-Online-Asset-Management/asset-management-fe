@@ -6,6 +6,12 @@ export const AccountTypeOptions = {
   [AccountType.ROOT]: 'Root',
 };
 
+export const AccountTypeColors = {
+  [AccountType.ROOT]: 'bg-yellow-500',
+  [AccountType.ADMIN]: 'bg-red-500',
+  [AccountType.STAFF]: 'bg-blue-500',
+};
+
 export const GenderOptions = {
   [Gender.MALE]: 'Male',
   [Gender.FEMALE]: 'Female',
