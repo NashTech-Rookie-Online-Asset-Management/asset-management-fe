@@ -6,6 +6,7 @@ import authApi from '@/features/auth/auth.service';
 import CookieKeys from '@/lib/constants/cookieKeys';
 
 import ChangePasswordFirstTimeDialog from './components/change-password-first-time-dialog';
+import ClientReady from './components/client-ready';
 import AuthHeader from './components/header';
 import ShowUserData from './components/show-user-data';
 import Sidebar from './components/sidebar';
@@ -34,7 +35,9 @@ async function AuthLayout({ children }: React.PropsWithChildren) {
         <nav className="relative hidden w-0 md:block md:w-64 md:max-w-64">
           <Sidebar className="fixed top-0 max-w-64 pt-24" />
         </nav>
-        <div className="flex-1">{children}</div>
+        <div className="flex-1">
+          <ClientReady>{children}</ClientReady>
+        </div>
       </div>
       <ShowUserData />
       <ChangePasswordFirstTimeDialog initialProfile={profile} />
