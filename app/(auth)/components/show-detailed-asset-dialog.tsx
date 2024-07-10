@@ -38,7 +38,7 @@ export default function DetailedAssetDialog({
 
   return (
     <Dialog open={isOpen} modal onOpenChange={onOpenChange}>
-      <DialogContent className="min-w-fit max-w-[320px] overflow-auto">
+      <DialogContent className="max-h-dvh min-w-fit max-w-[320px] overflow-auto">
         <DialogHeader>
           <DialogTitle>Detailed Asset Information</DialogTitle>
         </DialogHeader>
