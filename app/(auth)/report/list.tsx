@@ -216,7 +216,7 @@ export default function AssetReportList() {
                   colSpan={7}
                   className="py-2 text-center text-gray-400"
                 >
-                  No data to display
+                  No data to display.
                 </TableCell>
               </TableRow>
             )}
