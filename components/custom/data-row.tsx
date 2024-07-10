@@ -6,9 +6,11 @@ export default function DataRow({
   value: string;
 }) {
   return (
-    <div className="flex gap-4">
-      <p className="w-1/4">{label}</p>
-      <p className="w-3/4">{value}</p>
+    <div className="flex max-w-64 items-center gap-4">
+      <p className="min-w-fit break-all">{label}</p>
+      <p className="overflow-hidden text-ellipsis text-pretty break-words font-medium text-foreground">
+        {value}
+      </p>
     </div>
   );
 }

@@ -140,7 +140,7 @@ export default function AssetReportList() {
       </div>
 
       {!isDesktop && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-3">
           {assetReport && assetReport.data.length > 0 ? (
             assetReport.data.map((row: ReportItem) => (
               <MobileCard key={row.categoryName}>
@@ -216,7 +216,7 @@ export default function AssetReportList() {
                   colSpan={7}
                   className="py-2 text-center text-gray-400"
                 >
-                  The report is empty.
+                  No data to display
                 </TableCell>
               </TableRow>
             )}

@@ -20,6 +20,7 @@ import {
 import useGetAsset from '@/features/asset/useGetAsset';
 import { AssetStateOptions } from '@/lib/constants/asset';
 import { LocationOptions } from '@/lib/constants/user';
+import { cn } from '@/lib/utils';
 import { displayDate } from '@/lib/utils/date';
 
 const columns = ['Date', 'Assigned to', 'Assigned by', 'Returned date'];
@@ -37,7 +38,7 @@ export default function DetailedAssetDialog({
 
   return (
     <Dialog open={isOpen} modal onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[600px] min-w-[750px] overflow-auto">
+      <DialogContent className="max-h-dvh min-w-fit max-w-[320px] overflow-auto">
         <DialogHeader>
           <DialogTitle>Detailed Asset Information</DialogTitle>
         </DialogHeader>
@@ -63,9 +64,34 @@ export default function DetailedAssetDialog({
               <DataRow key={label} label={label} value={value} />
             ))}
 
-            <div className="flex gap-4">
-              <p className="w-1/4">Assigned</p>
-              <div className="mt-2 max-h-[210px] w-3/4 overflow-auto rounded-md border">
+            <div className="flex flex-col gap-1 lg:flex-row lg:gap-4">
+              <p className="w-fit">Assigned</p>
+              <div className="rounded bg-muted px-4 py-2 text-muted-foreground">
+                {asset.assignments && asset.assignments.length > 0
+                  ? asset.assignments.map((assignment, index, assignments) => (
+                      <div
+                        key={assignment.id}
+                        className={cn(
+                          index !== assignments.length - 1 &&
+                            "after:my-2 after:block after:h-px after:w-full after:rounded-full after:bg-muted-foreground/25 after:content-['']",
+                        )}
+                      >
+                        <p>Date: {displayDate(assignment.assignedDate)}</p>
+                        <p>To: {assignment.assignedTo.username}</p>
+                        <p>By: {assignment.assignedBy.username}</p>
+                        <p>
+                          Returned Date:{' '}
+                          {assignment.returningRequest?.returnedDate
+                            ? displayDate(
+                                assignment.returningRequest.returnedDate,
+                              )
+                            : ''}
+                        </p>
+                      </div>
+                    ))
+                  : 'No assignment to display.'}
+              </div>
+              <div className="mt-2 hidden max-h-[210px] overflow-auto rounded-md lg:block lg:border">
                 <Table>
                   <TableHeader>
                     <TableRow>
