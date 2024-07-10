@@ -66,7 +66,7 @@ export default function DetailedAssetDialog({
 
             <div className="flex flex-col gap-1 lg:flex-row lg:gap-4">
               <p className="w-fit">Assigned</p>
-              <div className="rounded bg-muted px-4 py-2 text-muted-foreground">
+              <div className="block rounded bg-muted px-4 py-2 text-muted-foreground lg:hidden">
                 {asset.assignments && asset.assignments.length > 0
                   ? asset.assignments.map((assignment, index, assignments) => (
                       <div
